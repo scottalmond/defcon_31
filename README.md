@@ -14,16 +14,16 @@ Created in collaboration with Sugar Morning (artist), these badges present "My L
 
 - ~400 mA battery can fit in cavity
 - 0.5C charge while sleeping = + 200 mA/day
--- day 1: 300 mA (10 hours)
--- day 2: 300 mA (10 hours)
--- day 3: 200 mA (5 hours)
+    - day 1: 300 mA (10 hours)
+    - day 2: 300 mA (10 hours)
+    - day 3: 200 mA (5 hours)
 - 30 mA
 
 - daisy-chain ~10 badges to charge and residual cal the clocks
--- 200 mA/badge * 10 bages --> 5V/2A wall wart, USB
+    - 200 mA/badge * 10 bages --> 5V/2A wall wart, USB
 - 9600 buad for long wire runs, EMI
 - 10 ppm is 0.4 seconds error over 12 hours
--- objective is 30 FPS --> 0.03 seconds of error
+    - objective is 30 FPS --> 0.03 seconds of error
 
 - SAO 2*3 header
 - USB, micro/C
@@ -31,13 +31,14 @@ Created in collaboration with Sugar Morning (artist), these badges present "My L
 
 - team logo
 - space theme
--- orbital dynamics
--- LEDs light up in sequence along orbital track
+    - orbital dynamics
+    - LEDs light up in sequence along orbital track
 - gold ENIG for shiny orbit
 - JSWT in gold ENIG
 - and/or cubesat in PCB artwork (ref competition host is in orbit)
 - noodle strand LED (yellow), straight lines work well, 80 mm
 
+<img alt="alt_text" width="100px" src="doc\ideas_space_bits\img\DC31BADGE-CARD-OUTLINE_idea.png" />
 
 # Eratta
 
