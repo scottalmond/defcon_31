@@ -40,6 +40,8 @@ Created in collaboration with Sugar Morning (artist), these badges present "My L
 
 <img alt="alt_text" width="500px" src="doc\ideas_space_bits\img\DC31BADGE-CARD-OUTLINE_idea.png" />
 
+<img alt="alt_text" width="500px" src="doc\ideas_space_bits\img\delete_me4.png" />
+
 # Eratta
 
 How to fix git login: https://www.youtube.com/watch?v=EaN7TnD8RvM
