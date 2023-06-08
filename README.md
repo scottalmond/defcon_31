@@ -38,9 +38,14 @@ Created in collaboration with Sugar Morning (artist), these badges present "My L
 - and/or cubesat in PCB artwork (ref competition host is in orbit)
 - noodle strand LED (yellow), straight lines work well, 80 mm
 
+- Space badge, orbital silkscreen art at bottom left tip, logo (as a sticker to get blue color?), gold ENIG and JSWT honey comb.  red, green blue leds throughout (stars, respond to audio level in the room)
+
 <img alt="alt_text" width="500px" src="doc\ideas_space_bits\img\DC31BADGE-CARD-OUTLINE_idea.png" />
 
+- Pony badge, cannot fit CR2032 on front, will need to be on back
+
 <img alt="alt_text" width="500px" src="doc\ideas_space_bits\img\delete_me4.png" />
+
 
 # Eratta
 
