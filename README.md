@@ -38,7 +38,7 @@ Created in collaboration with Sugar Morning (artist), these badges present "My L
 - and/or cubesat in PCB artwork (ref competition host is in orbit)
 - noodle strand LED (yellow), straight lines work well, 80 mm
 
-<img alt="alt_text" width="100px" src="doc\ideas_space_bits\img\DC31BADGE-CARD-OUTLINE_idea.png" />
+<img alt="alt_text" width="500px" src="doc\ideas_space_bits\img\DC31BADGE-CARD-OUTLINE_idea.png" />
 
 # Eratta
 
