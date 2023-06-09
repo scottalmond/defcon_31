@@ -8,7 +8,7 @@ This is the team badge for those competing in the Hack-a-Sat competition.
 
 ## Pony Circuit Board
 
-Created in collaboration with Sugar Morning (artist), these badges present "My Little Pony Friendship is Magic" characters illuminated with LEDs
+These badges present "My Little Pony Friendship is Magic" characters illuminated with LEDs
 
 # Design Notes
 
@@ -38,14 +38,17 @@ Created in collaboration with Sugar Morning (artist), these badges present "My L
 - and/or cubesat in PCB artwork (ref competition host is in orbit)
 - noodle strand LED (yellow), straight lines work well, 80 mm
 
-- Space badge, orbital silkscreen art at bottom left tip, logo (as a sticker to get blue color?), gold ENIG and JSWT honey comb.  red, green blue leds throughout (stars, respond to audio level in the room)
+- Space badge, orbital silkscreen art at bottom left tip, logo (as a sticker to get blue color?), gold ENIG and JSWT honey comb.  red, green blue leds throughout (stars, respond to audio level in the room):
 
 <img alt="alt_text" width="500px" src="doc\ideas_space_bits\img\DC31BADGE-CARD-OUTLINE_idea.png" />
 
-- Pony badge, cannot fit CR2032 on front, will need to be on back
+- Pony badge, cannot fit CR2032 on front, will need to be on back:
 
 <img alt="alt_text" width="500px" src="doc\ideas_space_bits\img\delete_me4.png" />
 
+- KISS, pony badge with dime cell and same (?) LED driver as space badge; test out i2c communication early to buy down risk
+
+- TODO: test brightness of 3 mA
 
 # Eratta
 
