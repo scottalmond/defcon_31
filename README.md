@@ -13,11 +13,11 @@ These badges present "My Little Pony Friendship is Magic" characters illuminated
 # Design Notes
 
 - ~400 mA battery can fit in cavity
-- 0.5C charge while sleeping = + 200 mA/day
-    - day 1: 300 mA (10 hours)
-    - day 2: 300 mA (10 hours)
-    - day 3: 200 mA (5 hours)
-- 30 mA
+- 0.5C charge while sleeping (2 hour charge) = + 400 mA/day
+    - day 1: 400 mA (10 hours)
+    - day 2: 400 mA (10 hours)
+    - day 3: 400 mA (5 hours)
+- 40 mA continuous
 
 - daisy-chain ~10 badges to charge and residual cal the clocks
     - 200 mA/badge * 10 bages --> 5V/2A wall wart, USB
@@ -50,6 +50,18 @@ These badges present "My Little Pony Friendship is Magic" characters illuminated
 
 - TODO: test brightness of 3 mA
 
+- menus/games:
+	- circle track from arcade
+	- simon?
+	- clock?
+	- brightness adjust
+
 # Eratta
 
 How to fix git login: https://www.youtube.com/watch?v=EaN7TnD8RvM
+STM8 preogramming ref: https://hackaday.io/project/161239-stm8s-development-board
+
+# TODO
+how to charge
+how to use castellted pads
+how menu works
