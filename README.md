@@ -63,5 +63,5 @@ STM8 preogramming ref: https://hackaday.io/project/161239-stm8s-development-boar
 
 # TODO
 how to charge
-how to use castellted pads
+how to use interface pads
 how menu works
