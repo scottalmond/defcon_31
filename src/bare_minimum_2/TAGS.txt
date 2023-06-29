@@ -3150,8 +3150,7 @@ interrupt_handler	stm8_interrupt_vector.c	9;"	member	struct:interrupt_vector	fil
 interrupt_handler_t	stm8_interrupt_vector.c	5;"	typedef	file:
 interrupt_instruction	stm8_interrupt_vector.c	8;"	member	struct:interrupt_vector	file:
 interrupt_vector	stm8_interrupt_vector.c	7;"	struct	file:
-iter	main.c	7;"	variable
-main	main.c	9;"	function
+main	main.c	8;"	function
 nop	..\stm8s103f3_spl-master\inc\stm8s.h	2720;"	macro
 nop	..\stm8s103f3_spl-master\inc\stm8s.h	2729;"	macro
 nop	..\stm8s103f3_spl-master\inc\stm8s.h	2739;"	macro
@@ -3161,6 +3160,9 @@ rim	..\stm8s103f3_spl-master\inc\stm8s.h	2737;"	macro
 s16	..\stm8s103f3_spl-master\inc\stm8s.h	223;"	typedef
 s32	..\stm8s103f3_spl-master\inc\stm8s.h	222;"	typedef
 s8	..\stm8s103f3_spl-master\inc\stm8s.h	224;"	typedef
+setMatrixHighZ	main.c	33;"	function
+setRGB	main.c	39;"	function	signature:(int led_index,int rgb_index,bool is_high)
+setWhite	main.c	56;"	function	signature:(int led_index,bool is_high)
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2719;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2728;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2738;"	macro
