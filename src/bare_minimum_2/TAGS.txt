@@ -170,6 +170,7 @@ ADC2_TypeDef	..\stm8s103f3_spl-master\inc\stm8s.h	401;"	typedef	typeref:struct:A
 ADC2_struct	..\stm8s103f3_spl-master\inc\stm8s.h	390;"	struct
 ADC_CHANNEL_TypeDef	..\stm8s103f3_spl-master\inc\stm8s103_adc.h	21;"	typedef	typeref:enum:__anon14
 ADC_Read	..\stm8s103f3_spl-master\inc\stm8s103_adc.h	23;"	function	signature:(ADC_CHANNEL_TypeDef ADC_Channel_Number)
+ADC_Read	main.c	108;"	function	signature:(ADC_CHANNEL_TypeDef ADC_Channel_Number)
 AIN2	..\stm8s103f3_spl-master\inc\stm8s103_adc.h	16;"	enumerator	enum:__anon14
 AIN3	..\stm8s103f3_spl-master\inc\stm8s103_adc.h	17;"	enumerator	enum:__anon14
 AIN4	..\stm8s103f3_spl-master\inc\stm8s103_adc.h	18;"	enumerator	enum:__anon14
@@ -1848,12 +1849,18 @@ Serial_begin	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	16;"	prototype	signa
 Serial_begin	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	38;"	function	signature:(uint32_t baud_rate)
 Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	20;"	prototype	signature:(void)
 Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	76;"	function	signature:(void)
+Serial_newline	main.c	12;"	prototype	file:	signature:(void)
+Serial_newline	main.c	161;"	function	signature:(void)
 Serial_print_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	18;"	prototype	signature:(char)
 Serial_print_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	32;"	function	signature:(char value)
 Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	17;"	prototype	signature:(int)
 Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	56;"	function	signature:(int number)
+Serial_print_int	main.c	11;"	prototype	file:	signature:(int number)
+Serial_print_int	main.c	141;"	function	signature:(int number)
 Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	19;"	prototype	signature:(char[])
 Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	82;"	function	signature:(char string[])
+Serial_print_string	main.c	128;"	function	signature:(char string[])
+Serial_print_string	main.c	13;"	prototype	file:	signature:(char string[])
 Serial_read_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	22;"	prototype	signature:(void)
 Serial_read_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	25;"	function	signature:(void)
 SetBit	..\stm8s103f3_spl-master\inc\stm8s.h	2789;"	macro
@@ -3132,7 +3139,6 @@ assert_failed	..\stm8s103f3_spl-master\inc\stm8s_conf.h	108;"	prototype	signatur
 assert_param	..\stm8s103f3_spl-master\inc\stm8s_conf.h	106;"	macro
 assert_param	..\stm8s103f3_spl-master\inc\stm8s_conf.h	110;"	macro
 bool	..\stm8s103f3_spl-master\inc\stm8s.h	231;"	typedef	typeref:enum:__anon1
-debug	main.c	10;"	variable
 delay_ms	..\stm8s103f3_spl-master\inc\stm8s103_lcd_16x2.h	16;"	prototype	signature:(int ms)
 delay_ms	..\stm8s103f3_spl-master\inc\stm8s103_lcd_16x2.h	27;"	function	signature:(int ms)
 disableInterrupts	..\stm8s103f3_spl-master\inc\stm8s.h	2717;"	macro
@@ -3151,7 +3157,7 @@ interrupt_handler	stm8_interrupt_vector.c	9;"	member	struct:interrupt_vector	fil
 interrupt_handler_t	stm8_interrupt_vector.c	5;"	typedef	file:
 interrupt_instruction	stm8_interrupt_vector.c	8;"	member	struct:interrupt_vector	file:
 interrupt_vector	stm8_interrupt_vector.c	7;"	struct	file:
-main	main.c	12;"	function
+main	main.c	17;"	function
 nop	..\stm8s103f3_spl-master\inc\stm8s.h	2720;"	macro
 nop	..\stm8s103f3_spl-master\inc\stm8s.h	2729;"	macro
 nop	..\stm8s103f3_spl-master\inc\stm8s.h	2739;"	macro
@@ -3161,11 +3167,14 @@ rim	..\stm8s103f3_spl-master\inc\stm8s.h	2737;"	macro
 s16	..\stm8s103f3_spl-master\inc\stm8s.h	223;"	typedef
 s32	..\stm8s103f3_spl-master\inc\stm8s.h	222;"	typedef
 s8	..\stm8s103f3_spl-master\inc\stm8s.h	224;"	typedef
-setMatrixHighZ	main.c	67;"	function
+setLED	main.c	180;"	function	signature:(bool is_rgb,int led_index,int rgb_index)
+setLED	main.c	8;"	prototype	file:	signature:(bool is_rgb,int led_index,int rgb_index)
+setMatrixHighZ	main.c	167;"	function
 setMatrixHighZ	main.c	7;"	prototype	file:	signature:(void)
-setRGB	main.c	73;"	function	signature:(int led_index,int rgb_index)
-setRGB	main.c	8;"	prototype	file:	signature:(int led_index,int rgb_index)
-setWhite	main.c	130;"	function	signature:(int led_index,bool is_high)
+setRGB	main.c	177;"	function	signature:(int led_index,int rgb_index)
+setRGB	main.c	9;"	prototype	file:	signature:(int led_index,int rgb_index)
+setWhite	main.c	10;"	prototype	file:	signature:(int led_index)
+setWhite	main.c	178;"	function	signature:(int led_index)
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2719;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2728;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2738;"	macro
