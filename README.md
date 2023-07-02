@@ -1,4 +1,4 @@
-# Overview
+95# Overview
 
 This repo contains the project files for multiple variations of Silly Add-On (SAO) Printed Circuit Boards (PCBs) for DEFCON 31.
 
@@ -65,3 +65,24 @@ STM8 preogramming ref: https://hackaday.io/project/161239-stm8s-development-boar
 how to charge
 how to use interface pads
 how menu works
+
+STM8 programmer setup https://circuitdigest.com/microcontroller-projects/getting-started-with-stm8s-using-stvd-and-cosmic-c-compiler
+including Cosmic C licesne request (allow 2 business days to get a key)
+ref. https://github.com/NevynUK/The-Way-of-the-Register
+
+NOte: set ON/OFF switch to "ON" in order to program device
+pulled examples for uart from https://github.com/CircuitDigest/STM8S103F3_SPL/blob/master/stm8s103%20Libraries/stm8s103_Serial.h
+
+diagram showing whcih LED is whicih on schematic
+
+reflow soldering the coin cell holder out myself is prone to unit damage, would strongly prefer fab house do this
+
+observing LED 3 and 19 breifly light dimly red when white LEDs lit in order.  APpears to be a mat0-1 and mat0-5 association.  UNused eletrons get dissipated through red LED.  Maybe floor all matrix pins before flowting them...?  Did not fix issue, live with it?
+
+***v1r1 todo:
+DONE flipped R10 silkscreen
+hide BT1 silk screen?
+swap pin10 and pin 1 to get access to analog read audio
+change discrete jelly bean led
+order BTN1 filled to 250, DNI 50 qty
+add test pads

@@ -1,0 +1,12 @@
+;	STMicroelectronics Workspace file
+
+[Version]
+Keyword=ST7Workspace-V0.7
+
+[Project0]
+Filename=bare_minimim_3.stp
+Dependencies=
+[Options]
+ActiveProject=bare_minimim_3
+ActiveConfig=Debug
+AddSortedElements=1
