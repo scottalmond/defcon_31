@@ -79,6 +79,8 @@ reflow soldering the coin cell holder out myself is prone to unit damage, would 
 
 observing LED 3 and 19 breifly light dimly red when white LEDs lit in order.  APpears to be a mat0-1 and mat0-5 association.  UNused eletrons get dissipated through red LED.  Maybe floor all matrix pins before flowting them...?  Did not fix issue, live with it?
 
+interrupts: https://forum.arduino.cc/t/stm8-simple-timer-4-interrupt/693820
+
 ***v1r1 todo:
 DONE flipped R10 silkscreen
 hide BT1 silk screen?

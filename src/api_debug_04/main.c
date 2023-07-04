@@ -39,11 +39,14 @@ int main()
 		GPIO_WriteLow(GPIOD, GPIO_PIN_5);
 		for(iter=0;iter<30000;iter++){}
 	}*/
-	const int test_mode=2;
+	const int test_mode=4;
+	const uint8_t rms_lookup[16]={9,18,28,38,48,58,69,80,92,105,118,134,151,173,200,241};
 	uint8_t reading,mean,mean_diff;
 	unsigned long old_mean=0,mean_sum=0,mean_low=0,mean_high=0;
 	unsigned sound_level=0;
 	uint8_t mean_threshold=16;
+	uint8_t mean_threshold_8=1;
+	uint16_t mean_threshold_16=0x0100;
 	unsigned int rms=0;
 	const long adc_captures=1<<8;
 	unsigned long iter,rep;
@@ -53,11 +56,15 @@ int main()
 		for(iter=0;iter<10000;iter++){}
   //CLK_PeripheralClockConfig(CLK_PERIPHERAL_UART1, ENABLE); 
 	
-	GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
-	GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
-	UART1_DeInit();
-	UART1_Init(115200, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
-	UART1_Cmd(ENABLE);
+	if(test_mode<=3)
+	{
+		GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
+		GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
+		UART1_DeInit();
+		UART1_Init(115200, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+		//UART1_Init(1000000, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+		UART1_Cmd(ENABLE);
+	}
 	
 	switch(test_mode)
 	{
@@ -213,6 +220,95 @@ int main()
 				debug++;
 				//for(iter=0;iter<10000;iter++){}
 			}
+		}
+		case 3:
+		{
+			ADC1_DeInit();
+			ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
+							 AIN4,
+							 ADC1_PRESSEL_FCPU_D2,//D18 
+							 ADC1_EXTTRIG_TIM, 
+							 DISABLE, 
+							 ADC1_ALIGN_RIGHT, //left to put 8 bits in ADC1->DRH; right for all 10 bits with ADC1_GetConversionValue()
+							 ADC1_SCHMITTTRIG_ALL, 
+							 DISABLE);
+			ADC1_Cmd(ENABLE);
+			while(1)
+			{
+				debug++;
+				rms=0;//8 bit
+				//old_mean=mean;
+				mean_sum=0;//16 bit
+				//mean_low=mean+mean_threshold;
+				//mean_high=mean-mean_threshold;
+				iter=0;
+				do{
+					//rep=ADC_Read(AIN4);
+					ADC1_StartConversion();
+					while(ADC1_GetFlagStatus(ADC1_FLAG_EOC) == FALSE);
+					//rep=ADC1_GetConversionValue();
+					reading=ADC1->DRL;
+					mean_sum += reading;
+					//rms+=reading>mean_low || reading<mean_high;
+					mean_diff=reading>mean?(reading-mean):(mean-reading);
+					rms+=mean_diff>mean_threshold_8;
+					//rms+=(reading-mean)*(reading-mean);
+					ADC1_ClearFlag(ADC1_FLAG_EOC);
+					//my_min=my_min<rep?my_min:rep;
+					//my_max=my_max>rep?my_max:rep;
+					iter++;
+					iter%=256;//8 bit unsigned
+				}while(iter!=0);//run 255 times
+				mean=((uint16_t)mean+mean_sum/256)/2;
+				mean_threshold_16=(mean_threshold_16+(((uint16_t)rms_lookup[rms/16])*mean_threshold_16)/32)/2;
+				mean_threshold_8=mean_threshold_16/256;
+				if(mean_threshold_8==0)
+				{//correct unflow; state machine cannot scale 0 properly
+					mean_threshold_8=1;
+					mean_threshold_16=0x0100;
+				}
+				if(debug%1==0)
+				{
+					//Serial_print_string("mean: ");
+					if(mean==0) Serial_print_string("0");
+					Serial_print_int(mean);
+					//Serial_print_string(", rms: ");
+					Serial_print_string(" ");
+					//if(rms<99) Serial_print_string("0");
+					//if(rms<9) Serial_print_string("0");
+					if(rms==0) Serial_print_string("0");
+					Serial_print_int(rms);
+					//Serial_print_string(", threshold: ");
+					Serial_print_string(" ");
+					if(mean_threshold_8==0) Serial_print_string("0");
+					Serial_print_int(mean_threshold_8);
+					//if(debug%100==0) Serial_print_string("*");
+					Serial_newline();
+				}
+			}
+		}
+		case 4:
+		{
+			GPIO_Init(GPIOD, GPIO_PIN_5,GPIO_MODE_IN_PU_NO_IT);
+			GPIO_Init(GPIOD, GPIO_PIN_6,GPIO_MODE_IN_PU_NO_IT);
+			while(1)
+			{
+			  setMatrixHighZ();
+				if(!GPIO_ReadInputPin(GPIOD, GPIO_PIN_5))
+				{//green on led 22 and 23
+					//6-4, 5-3
+					//
+					GPIO_Init(GPIOC, GPIO_PIN_3,GPIO_MODE_OUT_PP_HIGH_SLOW);
+					GPIO_Init(GPIOC, GPIO_PIN_5,GPIO_MODE_OUT_PP_LOW_SLOW);
+				}else if(!GPIO_ReadInputPin(GPIOD, GPIO_PIN_6)){
+					GPIO_Init(GPIOC, GPIO_PIN_4,GPIO_MODE_OUT_PP_HIGH_SLOW);
+					GPIO_Init(GPIOC, GPIO_PIN_6,GPIO_MODE_OUT_PP_LOW_SLOW);
+				}
+			}
+		}
+		case 5:
+		{
+			
 		}
 		default:{}
 	}

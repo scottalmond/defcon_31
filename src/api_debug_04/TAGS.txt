@@ -1849,17 +1849,17 @@ Serial_begin	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	38;"	function	signat
 Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	20;"	prototype	signature:(void)
 Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	76;"	function	signature:(void)
 Serial_newline	main.c	13;"	prototype	file:	signature:(void)
-Serial_newline	main.c	241;"	function	signature:(void)
+Serial_newline	main.c	363;"	function	signature:(void)
 Serial_print_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	18;"	prototype	signature:(char)
 Serial_print_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	32;"	function	signature:(char value)
 Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	17;"	prototype	signature:(int)
 Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	56;"	function	signature:(int number)
 Serial_print_int	main.c	12;"	prototype	file:	signature:(int number)
-Serial_print_int	main.c	221;"	function	signature:(int number)
+Serial_print_int	main.c	343;"	function	signature:(int number)
 Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	19;"	prototype	signature:(char[])
 Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	82;"	function	signature:(char string[])
 Serial_print_string	main.c	14;"	prototype	file:	signature:(char string[])
-Serial_print_string	main.c	208;"	function	signature:(char string[])
+Serial_print_string	main.c	330;"	function	signature:(char string[])
 Serial_read_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	22;"	prototype	signature:(void)
 Serial_read_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	25;"	function	signature:(void)
 SetBit	..\stm8s103f3_spl-master\inc\stm8s.h	2789;"	macro
@@ -3166,14 +3166,14 @@ rim	..\stm8s103f3_spl-master\inc\stm8s.h	2737;"	macro
 s16	..\stm8s103f3_spl-master\inc\stm8s.h	223;"	typedef
 s32	..\stm8s103f3_spl-master\inc\stm8s.h	222;"	typedef
 s8	..\stm8s103f3_spl-master\inc\stm8s.h	224;"	typedef
-setLED	main.c	260;"	function	signature:(bool is_rgb,int led_index,int rgb_index)
+setLED	main.c	382;"	function	signature:(bool is_rgb,int led_index,int rgb_index)
 setLED	main.c	9;"	prototype	file:	signature:(bool is_rgb,int led_index,int rgb_index)
-setMatrixHighZ	main.c	247;"	function
+setMatrixHighZ	main.c	369;"	function
 setMatrixHighZ	main.c	8;"	prototype	file:	signature:(void)
 setRGB	main.c	10;"	prototype	file:	signature:(int led_index,int rgb_index)
-setRGB	main.c	257;"	function	signature:(int led_index,int rgb_index)
+setRGB	main.c	379;"	function	signature:(int led_index,int rgb_index)
 setWhite	main.c	11;"	prototype	file:	signature:(int led_index)
-setWhite	main.c	258;"	function	signature:(int led_index)
+setWhite	main.c	380;"	function	signature:(int led_index)
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2719;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2728;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2738;"	macro
