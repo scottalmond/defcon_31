@@ -330,10 +330,10 @@ BarID=59647
 MRUWidth=291
 Docking=True
 MRUDockID=59419
-MRUDockLeftPos=8
-MRUDockTopPos=31
-MRUDockRightPos=1928
-MRUDockBottomPos=60
+MRUDockLeftPos=-1
+MRUDockTopPos=-1
+MRUDockRightPos=1919
+MRUDockBottomPos=28
 MRUFloatStyle=8196
 MRUFloatXPos=-1
 MRUFloatYPos=0
@@ -760,10 +760,10 @@ XPos=1
 YPos=5
 Docking=True
 MRUDockID=0
-MRUDockLeftPos=8
-MRUDockTopPos=31
-MRUDockRightPos=1927
-MRUDockBottomPos=181
+MRUDockLeftPos=1
+MRUDockTopPos=5
+MRUDockRightPos=1920
+MRUDockBottomPos=155
 MRUFloatStyle=4
 MRUFloatXPos=-1
 MRUFloatYPos=0
@@ -1241,8 +1241,8 @@ ptn_Child1=MainFrame
 ptn_Child2=ChildFrames
 
 [WorkState_v1_2.Frames.MainFrame]
-WindowPlacement=MCAAAAAACAAAAAAADAAAAAAAPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPIJDAAAAAIPAAAAAAFEHAAAAAHJDAAAAA
-Title=ST Visual Develop - api_debug_04.stw* - [main.c]
+WindowPlacement=MCAAAAAACAAAAAAADAAAAAAAAADIPPPPAADIPPPPPPPPPPPPPPPPPPPPFFEAAAAAIGAAAAAACAIAAAAAHADAAAAA
+Title=ST Visual Develop - api_debug_04.stw - [main.c]
 
 [WorkState_v1_2.Frames.ChildFrames]
 ptn_Child1=Document-0

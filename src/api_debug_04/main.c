@@ -5,6 +5,8 @@
 #include "STM8s.h"
 #include "stm8s103_ADC.h"
 
+unsigned long tms=0;
+
 void setMatrixHighZ(void);
 void setLED(bool is_rgb,int led_index,int rgb_index);
 void setRGB(int led_index,int rgb_index);
@@ -39,7 +41,7 @@ int main()
 		GPIO_WriteLow(GPIOD, GPIO_PIN_5);
 		for(iter=0;iter<30000;iter++){}
 	}*/
-	const int test_mode=4;
+	const int test_mode=5;
 	const uint8_t rms_lookup[16]={9,18,28,38,48,58,69,80,92,105,118,134,151,173,200,241};
 	uint8_t reading,mean,mean_diff;
 	unsigned long old_mean=0,mean_sum=0,mean_low=0,mean_high=0;
@@ -56,7 +58,7 @@ int main()
 		for(iter=0;iter<10000;iter++){}
   //CLK_PeripheralClockConfig(CLK_PERIPHERAL_UART1, ENABLE); 
 	
-	if(test_mode<=3)
+	if(test_mode<=3 || test_mode==5)
 	{
 		GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
 		GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
@@ -288,7 +290,7 @@ int main()
 			}
 		}
 		case 4:
-		{
+		{//button test
 			GPIO_Init(GPIOD, GPIO_PIN_5,GPIO_MODE_IN_PU_NO_IT);
 			GPIO_Init(GPIOD, GPIO_PIN_6,GPIO_MODE_IN_PU_NO_IT);
 			while(1)
@@ -307,11 +309,31 @@ int main()
 			}
 		}
 		case 5:
-		{
-			
+		{//interrupts 1 ms counter
+			Serial_print_string("Mode: ");
+			Serial_print_int(test_mode);
+			Serial_newline();
+			TIM4->PSCR= 7;
+			TIM4->ARR= 256 - (u8)(-128);
+			TIM4->EGR= TIM4_EGR_UG;
+			TIM4->CR1|= TIM4_CR1_ARPE | TIM4_CR1_URS |TIM4_CR1_CEN;
+			TIM4->IER= TIM4_IER_UIE;
+			enableInterrupts();
+			while(1)
+			{
+				for(iter=0;iter<30000;iter++){}
+				Serial_print_string("time: ");
+				Serial_print_int(tms);
+				Serial_newline();
+			}
 		}
 		default:{}
 	}
+}
+
+@far @interrupt void TIM4_UPD_OVF_IRQHandler (void) {
+	TIM4->SR1&=~TIM4_SR1_UIF;
+	tms++;
 }
 
 //https://circuitdigest.com/microcontroller-projects/adc-on-stm8s-using-c-compiler-reading-multiple-adc-values-and-displaying-on-lcd

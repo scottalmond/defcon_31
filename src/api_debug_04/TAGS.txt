@@ -1849,17 +1849,17 @@ Serial_begin	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	38;"	function	signat
 Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	20;"	prototype	signature:(void)
 Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	76;"	function	signature:(void)
 Serial_newline	main.c	13;"	prototype	file:	signature:(void)
-Serial_newline	main.c	363;"	function	signature:(void)
+Serial_newline	main.c	388;"	function	signature:(void)
 Serial_print_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	18;"	prototype	signature:(char)
 Serial_print_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	32;"	function	signature:(char value)
 Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	17;"	prototype	signature:(int)
 Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	56;"	function	signature:(int number)
 Serial_print_int	main.c	12;"	prototype	file:	signature:(int number)
-Serial_print_int	main.c	343;"	function	signature:(int number)
+Serial_print_int	main.c	368;"	function	signature:(int number)
 Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	19;"	prototype	signature:(char[])
 Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	82;"	function	signature:(char string[])
 Serial_print_string	main.c	14;"	prototype	file:	signature:(char string[])
-Serial_print_string	main.c	330;"	function	signature:(char string[])
+Serial_print_string	main.c	355;"	function	signature:(char string[])
 Serial_read_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	22;"	prototype	signature:(void)
 Serial_read_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	25;"	function	signature:(void)
 SetBit	..\stm8s103f3_spl-master\inc\stm8s.h	2789;"	macro
@@ -2615,6 +2615,8 @@ TIM4_PSCR_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	1083;"	macro
 TIM4_SR1_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	1080;"	macro
 TIM4_SR1_UIF	..\stm8s103f3_spl-master\inc\stm8s.h	1102;"	macro
 TIM4_TypeDef	..\stm8s103f3_spl-master\inc\stm8s.h	1072;"	typedef	typeref:struct:TIM4_struct
+TIM4_UPD_OVF_IRQHandler	main.c	329;"	function	signature:(void)
+TIM4_UPD_OVF_IRQHandler	stm8_interrupt_vector.c	23;"	prototype	file:	signature:(void)
 TIM4_struct	..\stm8s103f3_spl-master\inc\stm8s.h	1058;"	struct
 TIM5	..\stm8s103f3_spl-master\inc\stm8s.h	2696;"	macro
 TIM5_ARRH_ARR	..\stm8s103f3_spl-master\inc\stm8s.h	1238;"	macro
@@ -3133,7 +3135,7 @@ __STM8S_TIM2_H	..\stm8s103f3_spl-master\inc\stm8s_tim2.h	30;"	macro
 __STM8S_UART1_H	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	30;"	macro
 __STM8S_WWDG_H	..\stm8s103f3_spl-master\inc\stm8s_wwdg.h	30;"	macro
 _stext	stm8_interrupt_vector.c	20;"	prototype	file:
-_vectab	stm8_interrupt_vector.c	22;"	variable
+_vectab	stm8_interrupt_vector.c	25;"	variable
 assert_failed	..\stm8s103f3_spl-master\inc\stm8s_conf.h	108;"	prototype	signature:(uint8_t* file, uint32_t line)
 assert_param	..\stm8s103f3_spl-master\inc\stm8s_conf.h	106;"	macro
 assert_param	..\stm8s103f3_spl-master\inc\stm8s_conf.h	110;"	macro
@@ -3166,14 +3168,14 @@ rim	..\stm8s103f3_spl-master\inc\stm8s.h	2737;"	macro
 s16	..\stm8s103f3_spl-master\inc\stm8s.h	223;"	typedef
 s32	..\stm8s103f3_spl-master\inc\stm8s.h	222;"	typedef
 s8	..\stm8s103f3_spl-master\inc\stm8s.h	224;"	typedef
-setLED	main.c	382;"	function	signature:(bool is_rgb,int led_index,int rgb_index)
+setLED	main.c	407;"	function	signature:(bool is_rgb,int led_index,int rgb_index)
 setLED	main.c	9;"	prototype	file:	signature:(bool is_rgb,int led_index,int rgb_index)
-setMatrixHighZ	main.c	369;"	function
+setMatrixHighZ	main.c	394;"	function
 setMatrixHighZ	main.c	8;"	prototype	file:	signature:(void)
 setRGB	main.c	10;"	prototype	file:	signature:(int led_index,int rgb_index)
-setRGB	main.c	379;"	function	signature:(int led_index,int rgb_index)
+setRGB	main.c	404;"	function	signature:(int led_index,int rgb_index)
 setWhite	main.c	11;"	prototype	file:	signature:(int led_index)
-setWhite	main.c	380;"	function	signature:(int led_index)
+setWhite	main.c	405;"	function	signature:(int led_index)
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2719;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2728;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2738;"	macro
