@@ -88,3 +88,7 @@ swap pin10 and pin 1 to get access to analog read audio
 change discrete jelly bean led
 order BTN1 filled to 250, DNI 50 qty
 add test pads
+add 20 pF to GND on OSC+ and OSC-
+tie crystal pads 2 and 4 to ground
+change crystal
+add resistor to drop battery voltage provided to processor?
