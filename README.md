@@ -81,10 +81,12 @@ observing LED 3 and 19 breifly light dimly red when white LEDs lit in order.  AP
 
 interrupts: https://forum.arduino.cc/t/stm8-simple-timer-4-interrupt/693820
 
+write-up notes: check purchase quantity, ref lipos x25 of 50
+
 ***v1r1 todo:
 DONE flipped R10 silkscreen
-hide BT1 silk screen?
-swap pin10 and pin 1 to get access to analog read audio
+SKIP hide BT1 silk screen? ref in order for 250x pop and 50x DNI
+DONE swap pin20 and pin 1 to get access to analog read audio (need to route)
 change discrete jelly bean led
 order BTN1 filled to 250, DNI 50 qty
 add test pads
@@ -92,3 +94,5 @@ add 20 pF to GND on OSC+ and OSC-
 tie crystal pads 2 and 4 to ground
 change crystal
 add resistor to drop battery voltage provided to processor?
+add 2*2 SAO header pads
+red LED for 5V input

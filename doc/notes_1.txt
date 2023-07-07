@@ -1,0 +1,42 @@
+void setRGB(u8 led_index,u8 rgb_index,u8 brightness);// led_index[0-9], rgb_index[0-2], brightness[0-255]
+void set_white(u8 led_index,u8 brightness);// led_index[0-11], brightness [0-255]
+void set_led_count(u8 led_count);//led_count [0-41] of non-zero illuminated RGB+White LEDs
+void flush_leds();//pushes the temprory values live to the periphreal
+void reset_leds();//sets all rgb+white LEDs to 0 brightness
+uint8_t get_audio();//sampling at 1-4 kHz, updating a state machine at 256 states (4-16 Hz updates)
+bool get_button(bool is_left)
+long get_time_ms();//returns a long value of the current time stamp (UNIX)
+
+#define RGB_LED_COUNT 9
+#define WHITE_LED_COUNT 11
+
+rules:
+- for digital read/write, must use the methods above
+- in order to use a variable, must declare at the beginning of a method
+- types: int (signaed 16-bit), char/uint8_t unsigned 0-255, long (4-byte), bool
+
+menus
+
+
+sudo sode for audio:
+void submenu_audio()
+{
+	u8 audio_level,led_index;
+	audio_level=get_audio();
+	reset_leds();
+	for(led_index=0;led_index<RGB_LED_COUNT;led_index++)
+	{
+		if(audio_level/4>led_index)
+		{
+			if(led_index<6) set_rgb(led_index,1,255);
+			else if(led_index<6) set_rgb(led_index,1,255);
+			else(led_index<6) set_rgb(led_index,1,255);
+		}
+	}
+	set_led_count(12);//6 greens, 2 yellows (green+red), 2 reds
+	flush_leds();
+}
+
+
+
+//void set_led_count(u8 led_count);//led_count [0-41]
