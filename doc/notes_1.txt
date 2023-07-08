@@ -4,8 +4,10 @@ void set_led_count(u8 led_count);//led_count [0-41] of non-zero illuminated RGB+
 void flush_leds();//pushes the temprory values live to the periphreal
 void reset_leds();//sets all rgb+white LEDs to 0 brightness
 uint8_t get_audio();//sampling at 1-4 kHz, updating a state machine at 256 states (4-16 Hz updates)
-bool get_button(bool is_left)
-long get_time_ms();//returns a long value of the current time stamp (UNIX)
+bool get_button(bool is_left);//return true if button is pressed.  does NOT perform de-bouncing
+long millis();//returns a long value of the current time stamp (UNIX since 1/1/1970)
+bool delay(u16 milliseconds);//milliseconds to wait for.  returns true on success (completed wait operation).  returns false if wait was interrupted (ex. by button push)
+u8 random();//return a random number between 0 and 255
 
 #define RGB_LED_COUNT 9
 #define WHITE_LED_COUNT 11

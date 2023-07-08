@@ -85,7 +85,7 @@ write-up notes: check purchase quantity, ref lipos x25 of 50
 
 ***v1r1 todo:
 DONE flipped R10 silkscreen
-SKIP hide BT1 silk screen? ref in order for 250x pop and 50x DNI
+DONE hide BT1 silk screen? ref in order for 250x pop and 50x DNI - keep as-is
 DONE swap pin20 and pin 1 to get access to analog read audio (need to route)
 change discrete jelly bean led
 order BTN1 filled to 250, DNI 50 qty
@@ -96,3 +96,4 @@ change crystal
 add resistor to drop battery voltage provided to processor?
 add 2*2 SAO header pads
 red LED for 5V input
+VDD cap for processor?
