@@ -61,13 +61,6 @@ void top_menu()
 	}
 }
 
-const u8 morse[36]={0b01110100,0b00110011};
-//numbers 5 did/das
-//number 0-9, 'a' at 10 .. 'z' at 35
-//3 LSB are the number of dah/dits (morse[N] & 0x07 = 3 LSB's: a value between 0 and 5)
-//5 MSB are the dah (1), dit (0)
-//bits 0-2 are the count of dah dits
-//bit 3 is the first dih/dah, bit 7 is the last one
 
 //given millis9), determine what frame content to display (single frame)
 void display_only_morse(bool is_first_call)
@@ -94,39 +87,64 @@ void display_only_morse(bool is_first_call)
 	}
 }
 
-//given a string and a moment in time, determin if the did/dah is ON of silent
-//precon: loser case letters only NO captical letters in string
-//timebase_millis is how many milliseconds
-//precon allowable character: 'a-z', '0-9', ' ' and '\0'
-//returns: 0 is LED OFF, 1 is dit, 2 if dah
-u8 get_morse_state(char array[],u32 millis_elapsed,u16 timebase_millis)
+//numbers 5 did/das
+//number 0-9, 'a' at 10 .. 'z' at 35
+//3 LSB are the number of dah/dits (morse[N] & 0x07 = 3 LSB's: a value between 0 and 5)
+//5 MSB are the dah (1), dit (0)
+//bits 0-2 are the count of dah dits
+//bit 3 is the first dih/dah, bit 7 is the last one
+const u8 morse[36]={0b01110100,0b00110011};
+
+/**
+ * The given code is a function that determines the state of a Morse code LED
+ * based on a string and a specific moment in time.
+ * 
+ * Allowable characters: 'a-z', '0-9', ' ', and '\0'
+ * No capital characters are allowed
+ *
+ * @param array The input string
+ * @param millis_elapsed The time elapsed in milliseconds
+ * @param timebase_millis The base time for each Morse code element
+ * @return 0 if LED is OFF; 1 is a dit, 2 if dah              
+ */
+u8 get_morse_state(char array[], u32 millis_elapsed, u16 timebase_millis)
 {
 	u8 char_index=0;
-	u8 dah_dit_compressed=0;
+	
+	// Stores the compressed representation of the Morse code (3 bits for the 
+	// count and 5 bits for pattern)
+	u8 dah_dit_compressed=0; 
+	
 	u8 dah_dit_count=0;
 	u8 dah_dit_index=0;
 	u32 offset_tms=0;
-	while(array[char_index]!='\0')
+	
+	while(array[char_index] != '\0')
 	{
-		if(array[char_index]!=' ')
+		if(array[char_index] != ' ')
 		{
-			dah_dit_count=morse[array[char_index]<='9'?array[char_index]-'0':(array[char_index]-'a'+10)]&0x07;
-			dah_dit_compressed=morse[array[char_index]<='9'?array[char_index]-'0':(array[char_index]-'a'+10)]>>3;
+		    // Retrieves the compressed Morse code representation for the current character.
+			// The code uses a lookup table called morse to obtain the Morse code pattern.
+			// Manipulation of ASCII values allows the code to convert characters into suitable
+			// indices for retrieving the Morse code count and compressed pattern from the lookup
+			// table.
+			dah_dit_count = morse[array[char_index]<='9'?array[char_index]-'0':(array[char_index]-'a'+10)]&0x07;
+			dah_dit_compressed = morse[array[char_index]<='9'?array[char_index]-'0':(array[char_index]-'a'+10)]>>3;
 		}
-		//terary operatior for number vs character
+		// ternary operatior for number vs character
 		for(dah_dit_index=0;dah_dit_index<dah_dit_count;dah_dit_index++)
 		{
-			offset_tms+=timebase_millis*((dah_dit_compressed&0x01)?3:1);
+			offset_tms += timebase_millis*((dah_dit_compressed&0x01)?3:1);
 			if(offset_tms>millis_elapsed) return 1+(dah_dit_compressed&0x01);
-			offset_tms+=timebase_millis;
+			offset_tms += timebase_millis;
 			if(offset_tms>millis_elapsed) return 0;
-			dah_dit_compressed=dah_dit_compressed>>1;
+			dah_dit_compressed = dah_dit_compressed>>1;
 		}
-		offset_tms+=timebase_millis*2;
+		offset_tms += timebase_millis*2;
 		if(offset_tms>millis_elapsed) return 0;
 		if(array[char_index]==' ')
 		{
-			offset_tms+=timebase_millis*4;
+			offset_tms += timebase_millis*4;
 			if(offset_tms>millis_elapsed) return 0;
 		}
 		char_index++;
