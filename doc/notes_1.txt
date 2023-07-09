@@ -134,6 +134,8 @@ u8 get_morse_state(char array[],u32 millis_elapsed,u16 timebase_millis)
 	return 0;
 }
 
+//period
+
 
 
 
