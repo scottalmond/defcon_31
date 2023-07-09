@@ -5,9 +5,9 @@ void flush_leds();//pushes the temprory values live to the periphreal
 void reset_leds();//sets all rgb+white LEDs to 0 brightness
 uint8_t get_audio();//sampling at 1-4 kHz, updating a state machine at 256 states (4-16 Hz updates)
 bool get_button(bool is_left);//return true if button is pressed.  does NOT perform de-bouncing
-long millis();//returns a long value of the current time stamp (UNIX since 1/1/1970)
+u32 millis();//returns a long value of the current time stamp (UNIX milliseconds since 1/1/1970)
 bool delay(u16 milliseconds);//milliseconds to wait for.  returns true on success (completed wait operation).  returns false if wait was interrupted (ex. by button push)
-u8 random();//return a random number between 0 and 255
+bool is_space_bits();//returns true if the SAO is configered for the Space Bits team, otherwise returns false for the 
 
 #define RGB_LED_COUNT 9
 #define WHITE_LED_COUNT 11
@@ -39,6 +39,110 @@ void submenu_audio()
 	flush_leds();
 }
 
+//PRECON: when entering a submenu, the millis() is recorded in submenu_start_tms
+//u32 submenu_millis();//returns the millisconds since starting this submenu
+
+void top_menu()
+{
+	while(1):
+	{
+		//buttons state stuff...
+		switch(submenu_index)
+		{
+			case  0:
+			{
+				
+			}
+			case 1:
+			{
+				display_only_morse();
+			}
+		}
+	}
+}
+
+const u8 morse[36]={0b01110100,0b00110011};
+//numbers 5 did/das
+//number 0-9, 'a' at 10 .. 'z' at 35
+//3 LSB are the number of dah/dits (morse[N] & 0x07 = 3 LSB's: a value between 0 and 5)
+//5 MSB are the dah (1), dit (0)
+//bits 0-2 are the count of dah dits
+//bit 3 is the first dih/dah, bit 7 is the last one
+
+//given millis9), determine what frame content to display (single frame)
+void display_only_morse(bool is_first_call)
+{
+	u8 is_dit_dah;
+	reset_leds();
+	char str="space bits";//PRECON lower case
+	u32 millis_elapsed=millis()-submenu_start_millis;
+	is_dit_dah=get_morse_state(str,millis_elapsed,300);
+	switch(is_dit_dah)
+	{
+		case 1://display a dit pattern
+			//set leds 5-9 blue
+		{
+			
+		}
+		case 2:
+		{//display a dah pattern
+			//set leds 0-4 green
+		}
+		default:{}//off
+	}else{
+		
+	}
+}
+
+//given a string and a moment in time, determin if the did/dah is ON of silent
+//precon: loser case letters only NO captical letters in string
+//timebase_millis is how many milliseconds
+//precon allowable character: 'a-z', '0-9', ' ' and '\0'
+//returns: 0 is LED OFF, 1 is dit, 2 if dah
+u8 get_morse_state(char array[],u32 millis_elapsed,u16 timebase_millis)
+{
+	u8 char_index=0;
+	u8 dah_dit_compressed=0;
+	u8 dah_dit_count=0;
+	u8 dah_dit_index=0;
+	u32 offset_tms=0;
+	while(array[char_index]!='\0')
+	{
+		if(array[char_index]!=' ')
+		{
+			dah_dit_count=morse[array[char_index]<='9'?array[char_index]-'0':(array[char_index]-'a'+10)]&0x07;
+			dah_dit_compressed=morse[array[char_index]<='9'?array[char_index]-'0':(array[char_index]-'a'+10)]>>3;
+		}
+		//terary operatior for number vs character
+		for(dah_dit_index=0;dah_dit_index<dah_dit_count;dah_dit_index++)
+		{
+			offset_tms+=timebase_millis*((dah_dit_compressed&0x01)?3:1);
+			if(offset_tms>millis_elapsed) return 1+(dah_dit_compressed&0x01);
+			offset_tms+=timebase_millis;
+			if(offset_tms>millis_elapsed) return 0;
+			dah_dit_compressed=dah_dit_compressed>>1;
+		}
+		offset_tms+=timebase_millis*2;
+		if(offset_tms>millis_elapsed) return 0;
+		if(array[char_index]==' ')
+		{
+			offset_tms+=timebase_millis*4;
+			if(offset_tms>millis_elapsed) return 0;
+		}
+		char_index++;
+	}
+	return 0;
+}
+
+
 
 
 //void set_led_count(u8 led_count);//led_count [0-41]
+
+
+
+
+
+
+
+
