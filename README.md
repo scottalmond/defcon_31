@@ -92,8 +92,9 @@ DONE add 20 pF to GND on OSC+ and OSC- (18pF, need to route)
 DONE tie crystal pads 2 and 4 to ground (skip for this crystal model)
 DONE change crystal
 DONE red LED for 5V input (blue for charging)
-add 2*2 SAO header pads
-VDD cap for processor?
-add resistor to drop battery voltage provided to processor?
-add test pads (for which end points?)
+DONE VDD cap for processor? skip if runs w/out it
+DONE add resistor to drop battery voltage provided to processor? [depends on voltage range test results] skip if runs without it
+DONE add 2*2 SAO header pads
+DONE add test pads (for which end points?) audio
+remove top silkscreen art
 order BTN1 filled to 250, DNI 50 qty
