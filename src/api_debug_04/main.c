@@ -41,7 +41,7 @@ int main()
 		GPIO_WriteLow(GPIOD, GPIO_PIN_5);
 		for(iter=0;iter<30000;iter++){}
 	}*/
-	const int test_mode=5;
+	const int test_mode=7;
 	const uint8_t rms_lookup[16]={9,18,28,38,48,58,69,80,92,105,118,134,151,173,200,241};
 	uint8_t reading,mean,mean_diff;
 	unsigned long old_mean=0,mean_sum=0,mean_low=0,mean_high=0;
@@ -397,6 +397,41 @@ int main()
 				Serial_print_string(" ");
 				Serial_print_int((uint16_t)tms);
 				Serial_newline();
+			}
+		}
+		case 7:
+		{//steeple chase pattern, RGB
+			CLK->CKDIVR &= (u8)~(CLK_CKDIVR_HSIDIV);			// fhsi= fhsirc (HSIDIV= 0)
+			
+			GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
+			GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
+			UART1_DeInit();
+			UART1_Init(1000000, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+			//UART1_Init(1000000, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+			UART1_Cmd(ENABLE);
+			
+			Serial_print_string("Mode: ");
+			Serial_print_int(test_mode);
+			Serial_newline();
+			
+			TIM4->PSCR= 7;// init divider register /128	
+			TIM4->ARR= 256 - (u8)(-125);// init auto reload register
+			TIM4->EGR= TIM4_EGR_UG;// update registers
+			TIM4->CR1|= TIM4_CR1_ARPE | TIM4_CR1_URS |TIM4_CR1_CEN;// enable timer
+			TIM4->IER= TIM4_IER_UIE;// enable TIM4 interrupt
+			enableInterrupts();
+			
+			while(1)
+			{
+				//if(tms%100==0 && mean_sum!=tms/100)
+				{
+					setMatrixHighZ();
+					mean_sum=tms/60;
+					mean_low=tms%2;//is high or low charlieplexing
+					mean_high=(mean_sum/2)%5;//which LED, 2x on display lit
+					sound_level=(mean_sum/10)%3;//RGB
+					setRGB(mean_high+(mean_low?5:0),sound_level);
+				}
 			}
 		}
 		default:{}
