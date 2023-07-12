@@ -8,6 +8,40 @@ bool get_button(bool is_left);//return true if button is pressed.  does NOT perf
 u32 millis();//returns a long value of the current time stamp (UNIX milliseconds since 1/1/1970)
 bool delay(u16 milliseconds);//milliseconds to wait for.  returns true on success (completed wait operation).  returns false if wait was interrupted (ex. by button push)
 bool is_space_bits();//returns true if the SAO is configered for the Space Bits team, otherwise returns false for the 
+char readEEPROM(u8 address);//fetch value from EEPROM
+void writeEPROM(u8 address,u8 value);//push value into EEPROM
+
+//UART:
+//t#
+//u#
+//e# # //write to eeprom directly
+//h help (prints epprom status and current time)
+//p ping (echo's UART commands sent to it: between characgter and \n)
+//s system diagnostic (test all peripherals: blink leds, read audio and output to terminal: 1k samples)
+
+//EEPROM:
+//0 DEVELOPMENT
+//1 TEST
+//2 Space Bits (1 for team, 0 for cute sales)
+//3 DEVICE ID
+//4-7 baseline start ms
+//8-11 time base ms
+//12 +/- 1 ms
+
+void t()
+{
+	eeprom.write(4:7,UART.read());
+	tms=0;
+}
+
+void u()
+{
+	u16 diff_residual=tms-UART.read();//how far off time-at-tone was from expectation
+	long diff_baseline=UART.read()-eeprom.write(4:7);
+	diff_baseline/=diff_residual;
+	eepromt.write(8:11,diff_baseline<0?-diff_baseline:diff_baseline);//write positive number to flash
+	eeprom.write(diff_baseline<0?-1:1);
+}
 
 #define RGB_LED_COUNT 9
 #define WHITE_LED_COUNT 11
@@ -158,8 +192,6 @@ u8 get_morse_state(char array[], u32 millis_elapsed, u16 timebase_millis)
 
 
 //void set_led_count(u8 led_count);//led_count [0-41]
-
-
 
 
 
