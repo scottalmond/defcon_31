@@ -14,19 +14,22 @@ void writeEPROM(u8 address,u8 value);//push value into EEPROM
 //UART:
 //t#
 //u#
-//e# # //write to eeprom directly
+//e# # //write to eeprom directly.  numbers are in human-readable DEC (not 0-255 in every char; this avoid issue with 10 being read as '\n')
+//e# //read eeprom char at address
 //h help (prints epprom status and current time)
-//p ping (echo's UART commands sent to it: between characgter and \n)
-//s system diagnostic (test all peripherals: blink leds, read audio and output to terminal: 1k samples)
+//p ping (echo's UART commands sent to it: between 'p' character and \n)
+//s# system diagnostic (test all peripherals: blink leds, read audio and output to terminal: 1k samples).  diagnostic 0 is all leds and mic check.  diagnsotic 1 is current time (millis()/1000): the 10 LSB piped out to RGB LEDs
 
 //EEPROM:
 //0 DEVELOPMENT
-//1 TEST
+//1 TEST (sw revision id)
 //2 Space Bits (1 for team, 0 for cute sales)
 //3 DEVICE ID
 //4-7 baseline start ms
 //8-11 time base ms
 //12 +/- 1 ms
+
+//diagnostic menu: the LSB 10 bits of the current time (millis()/1000) are mapped to the RGB around the periphery.  When time is syncronized, across all badges, they all tick-tock in unison
 
 void t()
 {

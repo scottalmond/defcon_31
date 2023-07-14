@@ -16,6 +16,7 @@ void Serial_newline(void);
 void Serial_print_string(char string[]);
 //int ADC_Read(ADC_CHANNEL_TypeDef ADC_Channel_Number);
 
+//const bool is_rev_1=true;//mat0 placement
 
 int main()
 {
@@ -41,7 +42,7 @@ int main()
 		GPIO_WriteLow(GPIOD, GPIO_PIN_5);
 		for(iter=0;iter<30000;iter++){}
 	}*/
-	const int test_mode=7;
+	const int test_mode=0;
 	const uint8_t rms_lookup[16]={9,18,28,38,48,58,69,80,92,105,118,134,151,173,200,241};
 	uint8_t reading,mean,mean_diff;
 	unsigned long old_mean=0,mean_sum=0,mean_low=0,mean_high=0;
