@@ -2,6 +2,8 @@
 // This code will loopback the UART so that you can connect to another
 // UART device
 // Used this to talk to a STM8 Breakout Board on D5 and D6
+// Note: Need to install version 1.8.1 in Board Manager
+// Board = SeeedStudio XIAO
 void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
