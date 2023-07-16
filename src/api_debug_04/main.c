@@ -42,7 +42,7 @@ int main()
 		GPIO_WriteLow(GPIOD, GPIO_PIN_5);
 		for(iter=0;iter<30000;iter++){}
 	}*/
-	const int test_mode=0;
+	const int test_mode=8;
 	const uint8_t rms_lookup[16]={9,18,28,38,48,58,69,80,92,105,118,134,151,173,200,241};
 	uint8_t reading,mean,mean_diff;
 	unsigned long old_mean=0,mean_sum=0,mean_low=0,mean_high=0;
@@ -435,6 +435,56 @@ int main()
 				}
 			}
 		}
+		case 8:
+		{//RGB curretndraw and voltage test
+			CLK->CKDIVR &= (u8)~(CLK_CKDIVR_HSIDIV);			// fhsi= fhsirc (HSIDIV= 0)
+			
+			TIM4->PSCR= 7;// init divider register /128	
+			TIM4->ARR= 256 - (u8)(-125);// init auto reload register
+			TIM4->EGR= TIM4_EGR_UG;// update registers
+			TIM4->CR1|= TIM4_CR1_ARPE | TIM4_CR1_URS |TIM4_CR1_CEN;// enable timer
+			TIM4->IER= TIM4_IER_UIE;// enable TIM4 interrupt
+			enableInterrupts();
+			while(1)
+			{
+				if(tms%8000==0 && mean_sum!=tms/8000)
+				{
+				  setMatrixHighZ();
+					mean_sum=tms/8000;
+					if(mean_sum%4==3)
+					{
+						setWhite(11);
+					}else{
+						setRGB(4,mean_sum%4);
+					}
+				}
+			}
+		}
+		case 9:
+		{//dimness test with TIM2
+			/*CLK->CKDIVR &= (u8)~(CLK_CKDIVR_HSIDIV);			// fhsi= fhsirc (HSIDIV= 0)
+			
+			TIM2->PSCR= 7;// init divider register /128	
+			TIM2->ARRH= 16000/256;// init auto reload register
+			TIM2->ARRL= 16000%256;// init auto reload register
+			TIM2->EGR= TIM2_EGR_UG;// update registers
+			TIM2->CR1|= TIM2_CR1_ARPE | TIM2_CR1_URS |TIM2_CR1_CEN;// enable timer
+			TIM2->IER= TIM2_IER_UIE;// enable TIM2 interrupt
+			enableInterrupts();
+			while(1)
+			{
+				if(tms%8000==0 && mean_sum!=tms/8000)
+				{
+				  setMatrixHighZ();
+					mean_sum=tms/8000;
+					setRGB(0,mean_sum%4);
+					if(mean_sum%4==3)
+					{
+						setWhite(0);
+					}
+				}
+			}*/
+		}
 		default:{}
 	}
 }
@@ -442,6 +492,16 @@ int main()
 @far @interrupt void TIM4_UPD_OVF_IRQHandler (void) {
 	TIM4->SR1&=~TIM4_SR1_UIF;
 	tms++;
+}
+
+@far @interrupt void TIM2_UPD_OVF_IRQHandler (void) {
+	TIM2->SR1&=~TIM2_SR1_UIF;//reset interrupt
+	
+}
+
+@far @interrupt void TIM2_CapComp_IRQ_Handler (void) {
+	TIM2->SR1&=~TIM2_SR1_CC1IF;//reset interrupt
+	
 }
 
 //https://circuitdigest.com/microcontroller-projects/adc-on-stm8s-using-c-compiler-reading-multiple-adc-values-and-displaying-on-lcd

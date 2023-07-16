@@ -21,6 +21,8 @@ extern void _stext();     /* startup routine */
 //extern @far @interrupt void TIM2_UPD_OVF_IRQHandler (void);
 //extern @far @interrupt void TIM2_CapComp_IRQ_Handler (void);
 extern @far @interrupt void TIM4_UPD_OVF_IRQHandler (void);
+extern @far @interrupt void TIM2_UPD_OVF_IRQHandler (void);
+extern @far @interrupt void TIM2_CapComp_IRQ_Handler (void);
 
 struct interrupt_vector const _vectab[] = {
 	{0x82, (interrupt_handler_t)_stext}, /* reset */
@@ -38,8 +40,8 @@ struct interrupt_vector const _vectab[] = {
 	{0x82, NonHandledInterrupt}, /* irq10 */
 	{0x82, NonHandledInterrupt}, /* irq11 */
 	{0x82, NonHandledInterrupt}, /* irq12 */
-	{0x82, NonHandledInterrupt}, /* irq13 TIM2_UPD_OVF_IRQHandler */
-	{0x82, NonHandledInterrupt}, /* irq14 TIM2_CapComp_IRQ_Handler */
+	{0x82, TIM2_UPD_OVF_IRQHandler}, /* irq13 TIM2_UPD_OVF_IRQHandler */
+	{0x82, TIM2_CapComp_IRQ_Handler}, /* irq14 TIM2_CapComp_IRQ_Handler */
 	{0x82, NonHandledInterrupt}, /* irq15 */
 	{0x82, NonHandledInterrupt}, /* irq16 */
 	{0x82, NonHandledInterrupt}, /* irq17 */

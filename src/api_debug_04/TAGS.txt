@@ -1849,17 +1849,17 @@ Serial_begin	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	38;"	function	signat
 Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	20;"	prototype	signature:(void)
 Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	76;"	function	signature:(void)
 Serial_newline	main.c	15;"	prototype	file:	signature:(void)
-Serial_newline	main.c	403;"	function	signature:(void)
+Serial_newline	main.c	525;"	function	signature:(void)
 Serial_print_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	18;"	prototype	signature:(char)
 Serial_print_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	32;"	function	signature:(char value)
 Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	17;"	prototype	signature:(int)
 Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	56;"	function	signature:(int number)
 Serial_print_int	main.c	14;"	prototype	file:	signature:(int number)
-Serial_print_int	main.c	383;"	function	signature:(int number)
+Serial_print_int	main.c	505;"	function	signature:(int number)
 Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	19;"	prototype	signature:(char[])
 Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	82;"	function	signature:(char string[])
 Serial_print_string	main.c	16;"	prototype	file:	signature:(char string[])
-Serial_print_string	main.c	370;"	function	signature:(char string[])
+Serial_print_string	main.c	492;"	function	signature:(char string[])
 Serial_read_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	22;"	prototype	signature:(void)
 Serial_read_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	25;"	function	signature:(void)
 SetBit	..\stm8s103f3_spl-master\inc\stm8s.h	2789;"	macro
@@ -2615,7 +2615,7 @@ TIM4_PSCR_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	1083;"	macro
 TIM4_SR1_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	1080;"	macro
 TIM4_SR1_UIF	..\stm8s103f3_spl-master\inc\stm8s.h	1102;"	macro
 TIM4_TypeDef	..\stm8s103f3_spl-master\inc\stm8s.h	1072;"	typedef	typeref:struct:TIM4_struct
-TIM4_UPD_OVF_IRQHandler	main.c	344;"	function	signature:(void)
+TIM4_UPD_OVF_IRQHandler	main.c	466;"	function	signature:(void)
 TIM4_UPD_OVF_IRQHandler	stm8_interrupt_vector.c	23;"	prototype	file:	signature:(void)
 TIM4_struct	..\stm8s103f3_spl-master\inc\stm8s.h	1058;"	struct
 TIM5	..\stm8s103f3_spl-master\inc\stm8s.h	2696;"	macro
@@ -3158,7 +3158,7 @@ interrupt_handler	stm8_interrupt_vector.c	9;"	member	struct:interrupt_vector	fil
 interrupt_handler_t	stm8_interrupt_vector.c	5;"	typedef	file:
 interrupt_instruction	stm8_interrupt_vector.c	8;"	member	struct:interrupt_vector	file:
 interrupt_vector	stm8_interrupt_vector.c	7;"	struct	file:
-main	main.c	20;"	function
+main	main.c	21;"	function
 nop	..\stm8s103f3_spl-master\inc\stm8s.h	2720;"	macro
 nop	..\stm8s103f3_spl-master\inc\stm8s.h	2729;"	macro
 nop	..\stm8s103f3_spl-master\inc\stm8s.h	2739;"	macro
@@ -3169,13 +3169,13 @@ s16	..\stm8s103f3_spl-master\inc\stm8s.h	223;"	typedef
 s32	..\stm8s103f3_spl-master\inc\stm8s.h	222;"	typedef
 s8	..\stm8s103f3_spl-master\inc\stm8s.h	224;"	typedef
 setLED	main.c	11;"	prototype	file:	signature:(bool is_rgb,int led_index,int rgb_index)
-setLED	main.c	422;"	function	signature:(bool is_rgb,int led_index,int rgb_index)
+setLED	main.c	544;"	function	signature:(bool is_rgb,int led_index,int rgb_index)
 setMatrixHighZ	main.c	10;"	prototype	file:	signature:(void)
-setMatrixHighZ	main.c	409;"	function
+setMatrixHighZ	main.c	531;"	function
 setRGB	main.c	12;"	prototype	file:	signature:(int led_index,int rgb_index)
-setRGB	main.c	419;"	function	signature:(int led_index,int rgb_index)
+setRGB	main.c	541;"	function	signature:(int led_index,int rgb_index)
 setWhite	main.c	13;"	prototype	file:	signature:(int led_index)
-setWhite	main.c	420;"	function	signature:(int led_index)
+setWhite	main.c	542;"	function	signature:(int led_index)
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2719;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2728;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2738;"	macro

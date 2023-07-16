@@ -6,3 +6,7 @@ Keyword=ST7Workspace-V0.7
 [Project0]
 Filename=api_debug_04.stp
 Dependencies=
+[Options]
+ActiveProject=api_debug_04
+ActiveConfig=Debug
+AddSortedElements=0

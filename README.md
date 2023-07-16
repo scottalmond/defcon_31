@@ -1,14 +1,23 @@
-95# Overview
+# Space Pony Overview
 
-This repo contains the project files for multiple variations of Silly Add-On (SAO) Printed Circuit Boards (PCBs) for DEFCON 31.
+This repo contains the project files for two Silly Add-On (SAO) Printed Circuit Boards (PCBs) for DEFCON 31.
 
 ## Space Bits R Us
 
-This is the team badge for those competing in the Hack-a-Sat competition.
+This is the team badge for those competing in the Hack-a-Sat competition.  These are exclusive badges for the team and not for general sale.
 
 ## Pony Circuit Board
 
-These badges present "My Little Pony Friendship is Magic" characters illuminated with LEDs
+These badges present "My Little Pony Friendship is Magic" characters illuminated with LEDs.  These badges are for sale, MSRP $20 each.  There are over 10 unique designs.  Each "Space Bits R Us" team member (identifiable because they are wearing the "Space Bits" badge described above) will have several units for sale.  Visit the Hack-a-sat competition area immediately before, or immediately after competition each day to acquire one.  Specifically: before 10 AM Friday/Saturday, after 8 PM Friday/Saturday, before Noon Sunday, or after 1:30 PM Sunday.
+
+# Hardware Inputs
+
+PCB fabrication and PCBA through JLCPCB https://jlcpcb.com/
+Acrylic stock, 45% lighting white, 1/8" thick through TAP Plastics https://www.tapplastics.com/
+Acrylic cutting in-house using a LC40 Dremel laser cutter
+Stickers made by Sticker Mule https://www.stickermule.com/
+Through-hole LEDs, batteries, and support hardware (protoboards, pogo pins, etc) through Aliexpress vendors
+Pony artwork by Sugar Morning https://twitter.com/itssugarmorning
 
 # Design Notes
 
@@ -59,7 +68,7 @@ These badges present "My Little Pony Friendship is Magic" characters illuminated
 # Eratta
 
 How to fix git login: https://www.youtube.com/watch?v=EaN7TnD8RvM
-STM8 preogramming ref: https://hackaday.io/project/161239-stm8s-development-board
+STM8 programming ref: https://hackaday.io/project/161239-stm8s-development-board
 
 # TODO
 how to charge
@@ -98,3 +107,5 @@ DONE add 2*2 SAO header pads
 DONE add test pads (for which end points?) audio
 remove top silkscreen art
 order BTN1 filled to 250, DNI 50 qty
+
+history/write-up: start with: these badges were given out at DEFCON 31

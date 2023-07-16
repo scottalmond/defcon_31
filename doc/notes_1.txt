@@ -4,12 +4,16 @@ void set_led_count(u8 led_count);//led_count [0-41] of non-zero illuminated RGB+
 void flush_leds();//pushes the temprory values live to the periphreal
 void reset_leds();//sets all rgb+white LEDs to 0 brightness
 uint8_t get_audio();//sampling at 1-4 kHz, updating a state machine at 256 states (4-16 Hz updates)
-bool get_button(bool is_left);//return true if button is pressed.  does NOT perform de-bouncing
+//bool get_button(bool is_left);//return true if button is pressed.  does NOT perform de-bouncing
 u32 millis();//returns a long value of the current time stamp (UNIX milliseconds since 1/1/1970)
 bool delay(u16 milliseconds);//milliseconds to wait for.  returns true on success (completed wait operation).  returns false if wait was interrupted (ex. by button push)
 bool is_space_bits();//returns true if the SAO is configered for the Space Bits team, otherwise returns false for the 
 char readEEPROM(u8 address);//fetch value from EEPROM
 void writeEPROM(u8 address,u8 value);//push value into EEPROM
+bool is_button_pressed(bool is_left,bool is_short); //isButtonPressed(true,true); returns true if the left button is pressed for 0.05-2 seconds.  (true,false) returns true if left button has been pressed for >2 seconds.  so bool is_right=isButtonPressed(false,true) || isButtonPressed((false,false); is expected here
+void clear_button_pressed(bool is_left,bool is_short); //call this after you consume/use or otherwise respond to a button press event
+bool is_application_valid(); //when you do infinite while(true) loops, use this method for the "true" part.  I'll be polling for console UART content and timeouts here.  When there are external events, this method will return false and the submenu will exit up to the top level menu.
+
 
 //UART:
 //t#
