@@ -200,8 +200,27 @@ u8 get_morse_state(char array[], u32 millis_elapsed, u16 timebase_millis)
 
 //void set_led_count(u8 led_count);//led_count [0-41]
 
+u8 sleep_amount=250;//max sleep duration before wrap-over occurs
+bool buffer_index=pwm_state&0x01;//primary vs rendant side to pull data from
 
+if(pwm_sleep_remaining>0)
+{//if sleep remaining, keep sleeping
 
+}else if(pwm_led_index<pwm_led_count)
+	setMatrixHighZ();
+	setLED(pwm_brightness[pwm_led_index][0][buffer_index]);
+	pwm_sleep_remaining=pwm_brightness[pwm_led_index][1][buffer_index];
+	pwm_led_index++;
+}else{
+	setMatrixHighZ();
+	pwm_led_index=0;
+	pwm_sleep_remaining=pwm_sleep[buffer_index];
+	if(pwm_state&0x02) pwm_state^=0x03;//if flag to swap A/B is set, then clear the flag and swap sides
+}
+sleep_amount=pwm_sleep_remaining<sleep_amount?pwm_sleep_remaining:sleep_amount;
+pwm_sleep_remaining-=sleep_amount;
+
+TIM3->CCR1L = ( (TIM3->CCR1L) + sleep_amount )%250;
 
 
 

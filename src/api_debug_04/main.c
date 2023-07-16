@@ -5,7 +5,19 @@
 #include "STM8s.h"
 #include "stm8s103_ADC.h"
 
+const u8 LED_COUNT=43;//10 RGB (3 LEDs each) + 12 white + 1 debug
 unsigned long tms=0,tms2=0,tms3=0;
+
+//application space settings
+u8 pwm_brightness_buffer[LED_COUNT];
+
+//LED pwm control state machine
+u8 pwm_brightness[LED_COUNT][2][2];//array index, [led index, led pwm], [A vs B side live]
+u16 pwm_sleep[2];//[A vs B side live], how many LED LSBs to wait with LEDs OFF before putting LEDs back ON
+u8 pwm_led_count[2];//how many LEDs to cycle through
+u16 pwm_sleep_remaining=0;
+u8 pwm_led_index=0;
+u8 pwm_state=0;//LSB (bit 0) is index of pwm_brightness to pull pwm info from.  bit 1 is a flag the application layer raises for the API layer to clear requesting a switch
 
 void setMatrixHighZ(void);
 void setLED(bool is_rgb,int led_index,int rgb_index);
@@ -17,6 +29,7 @@ void Serial_print_string(char string[]);
 //int ADC_Read(ADC_CHANNEL_TypeDef ADC_Channel_Number);
 
 //const bool is_rev_1=true;//mat0 placement
+
 
 int main()
 {
@@ -30,7 +43,7 @@ int main()
 	GPIO_WriteHigh(GPIOD, GPIO_PIN_5);	
 	while (1)
 	{
-		unsigned int iter;//16 bit signed
+		unsigned int iter;//16 bit signed
 		GPIO_WriteLow(GPIOD, GPIO_PIN_2);
 		GPIO_WriteHigh(GPIOC, GPIO_PIN_7);
 		GPIO_WriteHigh(GPIOA, GPIO_PIN_3);
@@ -475,7 +488,9 @@ int main()
 			Serial_print_int(test_mode);
 			Serial_newline();
 			
-			TIM2->PSCR= 6;// init divider register 16MHz/2^X
+			//run pwm interrupt at 2.000 kHz period (allow for >40 Hz frames with all LEDs ON)
+			TIM2->CCR1H=0;//this will always be zero based on application architecutre decisions
+			TIM2->PSCR= 5;// init divider register 16MHz/2^X
 			TIM2->ARRH= 0;// init auto reload register
 			TIM2->ARRL= 250;// init auto reload register
 			//TIM2->EGR= TIM2_EGR_UG;// update registers
@@ -484,10 +499,10 @@ int main()
 			enableInterrupts();
 			while(1)
 			{
+				Serial_print_string("tms: ");
+				Serial_print_int(tms/1000);
 				Serial_print_string("tms2: ");
 				Serial_print_int(tms2/1000);
-				Serial_print_string(", tms3: ");
-				Serial_print_int(tms3/1000);
 				Serial_newline();
 				for(iter=0;iter<30000;iter++){}
 			}
@@ -501,14 +516,19 @@ int main()
 	tms++;
 }
 
+//millisecond interrupt
 @far @interrupt void TIM2_UPD_OVF_IRQHandler (void) {
 	TIM2->SR1&=~TIM2_SR1_UIF;//reset interrupt
-	tms2+=2;
+	tms2++;
+	//read buttons, update state
+	//read audio, update state
 }
 
+//LED interrupt
 @far @interrupt void TIM2_CapComp_IRQ_Handler (void) {
 	TIM2->SR1&=~TIM2_SR1_CC1IF;//reset interrupt
-	tms3+=3;
+	setMatrixHighZ();
+	
 }
 
 //https://circuitdigest.com/microcontroller-projects/adc-on-stm8s-using-c-compiler-reading-multiple-adc-values-and-displaying-on-lcd
