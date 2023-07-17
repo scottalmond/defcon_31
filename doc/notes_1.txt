@@ -1,7 +1,8 @@
-void setRGB(u8 led_index,u8 rgb_index,u8 brightness);// led_index[0-9], rgb_index[0-2], brightness[0-255]
+void set_rgb(u8 led_index,u8 rgb_index,u8 brightness);// led_index[0-9], rgb_index[0-2], brightness[0-255]
 void set_white(u8 led_index,u8 brightness);// led_index[0-11], brightness [0-255]
-void set_led_count(u8 led_count);//led_count [0-41] of non-zero illuminated RGB+White LEDs
-void flush_leds();//pushes the temprory values live to the periphreal
+void set_debug(u8 brightness);
+//void set_led_count(u8 led_count);//led_count [0-41] of non-zero illuminated RGB+White LEDs
+void flush_leds(u8 led_count);//pushes the temprory values live to the periphreal
 void reset_leds();//sets all rgb+white LEDs to 0 brightness
 uint8_t get_audio();//sampling at 1-4 kHz, updating a state machine at 256 states (4-16 Hz updates)
 //bool get_button(bool is_left);//return true if button is pressed.  does NOT perform de-bouncing

@@ -1,5 +1,4 @@
 #include "STM8s.h"
-#include "api.h"
 
 const u8 hw_revision=1;
 //1: v1r1 has MAT0 on PD3 and mic on PD4, which precludes audio input (no analog connection) <-- prototype units
@@ -9,7 +8,7 @@ const u8 hw_revision=1;
 u32 api_counter=0;
 
 //application space settings
-#define LED_COUNT 43 //10 RGB (3 LEDs each) + 12 white + 1 debug
+const u8 LED_COUNT=43;//10 RGB (3 LEDs each) + 12 white + 1 debug
 u8 pwm_brightness_buffer[LED_COUNT];//a space for the developer to place the brightness of each LED independent of the pwm volatile display
 
 //LED pwm control state machine
@@ -20,27 +19,6 @@ u8 pwm_led_count[2];//how many LEDs to cycle through
 u16 pwm_sleep_remaining=0;
 u8 pwm_led_index=0;
 u8 pwm_state=0;//LSB (bit 0) is index of pwm_brightness to pull pwm info from.  bit 1 is a flag the application layer raises for the API layer to clear requesting a switch
-
-u16 get_val(u8 index)
-{
-	switch(index)
-	{
-		case 0:{
-			return pwm_state;
-		}
-		case 1:{
-			return pwm_sleep[0];
-		}
-		case 2:{
-			return pwm_sleep[1];
-		}
-		case 3:{
-			return pwm_led_count[1];
-		}
-		default:{}
-	}
-	return 0;
-}
 
 void serial_setup(bool is_enabled,u32 baud_rate)
 {
@@ -105,8 +83,7 @@ u32 millis()
 	if(pwm_sleep_remaining==0)
 	{//if sleep time remaining, then keep sleeping
 		set_matrix_high_z();
-		if(pwm_led_index<pwm_led_count[buffer_index])
-		{
+		if(pwm_led_index<pwm_led_count)
 			set_led(pwm_brightness[pwm_led_index][0][buffer_index]);//turn on the next LED
 			pwm_sleep_remaining=pwm_brightness[pwm_led_index][1][buffer_index];//set how long to sleep in this state
 			pwm_led_index++;//prepare state machine to go to the next led later
@@ -119,30 +96,29 @@ u32 millis()
 	sleep_amount=pwm_sleep_remaining<sleep_amount?pwm_sleep_remaining:sleep_amount;
 	pwm_sleep_remaining-=sleep_amount;
 	
-	TIM2->CCR1L = ( (TIM2->CCR1L) + sleep_amount )%PWM_MAX_PERIOD;//set wakeup alarm relative to current time
+	TIM3->CCR1L = ( (TIM3->CCR1L) + sleep_amount )%PWM_MAX_PERIOD;//set wakeup alarm relative to current time
 }
 
+//PRECON: 0<=count<=LED_COUNT
 void flush_leds(u8 led_count)
 {
 	u8 led_read_index=0,led_write_index=0;
 	bool buffer_index=!(pwm_state&0x01);//write to the buffer index that is NOT being used/volatile
 	while(pwm_state&0x02){}//wait for volatile flag to clear (if still raised from the previous call)
-	pwm_sleep[buffer_index]=led_count*256;//prepare the max value of sleep, and subtract from it for each LED illuminated
+	pwm_led_count[buffer_index]=led_count;//save the led count for the voltaile pwm rutine state machine
+	pwm_sleep[led_read_index]=led_count*256;//prepare the max value of sleep, and subtract from it for each LED illuminated
 	//write application layer data (brightness values) into the pwm volatile memory
-	for(led_read_index=0;led_read_index<PWM_MAX_PERIOD && led_write_index<led_count;led_read_index++)
+	for(led_read_index=0;led_read_index<PWM_MAX_PERIOD && led_write_index<count;led_read_index++)
 	{
 		if(pwm_brightness_buffer[led_read_index]>0)
 		{//if these is an led with a non-zero brightness to be shown, then add it to the relevant list
 			pwm_brightness[led_write_index][0][buffer_index]=led_read_index;
 			pwm_brightness[led_write_index][1][buffer_index]=pwm_brightness_buffer[led_read_index];
 			led_write_index++;
-			pwm_sleep[buffer_index]-=pwm_brightness_buffer[led_read_index];
+			pwm_sleep[led_read_index]-=pwm_brightness_buffer[led_read_index];
 		}
 		pwm_brightness_buffer[led_read_index]=0;//clean up for next use
 	}
-	pwm_led_count[buffer_index]=led_write_index;//save the led count for the volatile pwm rutine state machine.
-	//note: user may ahve requeted more LEDs to be lit then are actually there, so use as-written LED count, led_write_index,
-	//rather than user-specified value: led_count
 	pwm_state|=0x02;//raise flag that data is ready for volatile pwm process to pick up and use
 }
 
@@ -185,12 +161,12 @@ u8 get_audio_sample()
 }
 
 //turn ON the relevant LED
-void set_led(u8 led_index)
+void set_led(u8 index)
 {
 	//0-(10*3-1) is RGB
 	//(10*3) is debug
 	//(10*3+1) to (10*3+1+12) is white LEDs
-	const u8 led_lookup[LED_COUNT][2]={//[0] is HIGH mat, [1] is LOW mat
+	const u8 led_lookup={
 		{0,1},{0,2},{1,2},//LED7  RGB
 		{1,0},{2,0},{2,1},//LED3  RGB
 		{5,0},{5,1},{5,2},//LED1  RGB
@@ -215,11 +191,11 @@ void set_led(u8 led_index)
 		{4,5},//LED13
 		{5,6} //LED11
 	};
-	bool is_high=0;
+	bool is_low=1;
 	do{
 		GPIO_TypeDef* GPIOx;
 		GPIO_Pin_TypeDef PortPin;
-		switch(led_lookup[led_index][!is_high])
+		switch(led_lookup[led_index][is_low]])
 		{
 			case 0:{
 				GPIOx=GPIOD;
@@ -257,7 +233,7 @@ void set_led(u8 led_index)
 				
 			}break;
 		}
-		GPIO_Init(GPIOx, PortPin, is_high?GPIO_MODE_OUT_PP_HIGH_SLOW:GPIO_MODE_OUT_PP_LOW_SLOW);
-		is_high=!is_high;
-	}while(is_high);
+		GPIO_Init(GPIOx, PortPin, is_low?GPIO_MODE_OUT_PP_LOW_SLOW:GPIO_MODE_OUT_PP_HIGH_SLOW);
+		is_low=!is_low;
+	}while(!is_low);
 }
