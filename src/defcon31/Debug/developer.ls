@@ -217,198 +217,248 @@
  584                     ; 100 	 return FALSE;
  586  00fc 4f            	clr	a
  589  00fd 81            	ret
- 649                     	switch	.const
- 650  0005               L62:
- 651  0005 000003e8      	dc.l	1000
- 652  0009               L03:
- 653  0009 00000064      	dc.l	100
- 654  000d               L23:
- 655  000d 0000000a      	dc.l	10
- 656  0011               L43:
- 657  0011 0000012c      	dc.l	300
- 658  0015               L63:
- 659  0015 000001f4      	dc.l	500
- 660                     ; 7 void run_developer()
- 660                     ; 8 {
- 661                     	switch	.text
- 662  00fe               _run_developer:
- 664  00fe 5204          	subw	sp,#4
- 665       00000004      OFST:	set	4
- 668                     ; 10 	u32 old_sec=999;
- 670  0100 ae03e7        	ldw	x,#999
- 671  0103 1f03          	ldw	(OFST-1,sp),x
- 672  0105 ae0000        	ldw	x,#0
- 673  0108 1f01          	ldw	(OFST-3,sp),x
- 675                     ; 11 	serial_setup(1,1000000);
- 677  010a ae4240        	ldw	x,#16960
- 678  010d 89            	pushw	x
- 679  010e ae000f        	ldw	x,#15
- 680  0111 89            	pushw	x
- 681  0112 a601          	ld	a,#1
- 682  0114 cd0000        	call	_serial_setup
- 684  0117 5b04          	addw	sp,#4
- 685                     ; 12 	Serial_print_string("START");
- 687  0119 ae0044        	ldw	x,#L372
- 688  011c ada8          	call	_Serial_print_string
- 690                     ; 13 	Serial_newline();
- 692  011e ad97          	call	_Serial_newline
- 695  0120 ace801e8      	jpf	L772
- 696  0124               L572:
- 697                     ; 16 		if(old_sec!=(millis()/1000))
- 699  0124 cd0000        	call	_millis
- 701  0127 ae0005        	ldw	x,#L62
- 702  012a cd0000        	call	c_ludv
- 704  012d 96            	ldw	x,sp
- 705  012e 1c0001        	addw	x,#OFST-3
- 706  0131 cd0000        	call	c_lcmp
- 708  0134 275e          	jreq	L303
- 709                     ; 18 			old_sec=millis()/1000;
- 711  0136 cd0000        	call	_millis
- 713  0139 ae0005        	ldw	x,#L62
- 714  013c cd0000        	call	c_ludv
- 716  013f 96            	ldw	x,sp
- 717  0140 1c0001        	addw	x,#OFST-3
- 718  0143 cd0000        	call	c_rtol
- 721                     ; 19 			Serial_print_string("sec: ");
- 723  0146 ae003e        	ldw	x,#L503
- 724  0149 cd00c6        	call	_Serial_print_string
- 726                     ; 20 			Serial_print_int(millis()/1000);
- 728  014c cd0000        	call	_millis
- 730  014f ae0005        	ldw	x,#L62
- 731  0152 cd0000        	call	c_ludv
- 733  0155 be02          	ldw	x,c_lreg+2
- 734  0157 cd0054        	call	_Serial_print_int
- 736                     ; 21 			Serial_print_string(", [0]: ");
- 738  015a ae0036        	ldw	x,#L703
- 739  015d cd00c6        	call	_Serial_print_string
- 741                     ; 22 			Serial_print_int(get_val(0));
- 743  0160 4f            	clr	a
- 744  0161 cd0000        	call	_get_val
- 746  0164 cd0054        	call	_Serial_print_int
- 748                     ; 23 			Serial_print_string(", [1]: ");
- 750  0167 ae002e        	ldw	x,#L113
- 751  016a cd00c6        	call	_Serial_print_string
- 753                     ; 24 			Serial_print_int(get_val(1));
- 755  016d a601          	ld	a,#1
- 756  016f cd0000        	call	_get_val
- 758  0172 cd0054        	call	_Serial_print_int
- 760                     ; 25 			Serial_print_string(", [2]: ");
- 762  0175 ae0026        	ldw	x,#L313
- 763  0178 cd00c6        	call	_Serial_print_string
- 765                     ; 26 			Serial_print_int(get_val(2));
- 767  017b a602          	ld	a,#2
- 768  017d cd0000        	call	_get_val
- 770  0180 cd0054        	call	_Serial_print_int
- 772                     ; 27 			Serial_print_string(", [3]: ");
- 774  0183 ae001e        	ldw	x,#L513
- 775  0186 cd00c6        	call	_Serial_print_string
- 777                     ; 28 			Serial_print_int(get_val(3));
- 779  0189 a603          	ld	a,#3
- 780  018b cd0000        	call	_get_val
- 782  018e cd0054        	call	_Serial_print_int
- 784                     ; 29 			Serial_newline();
- 786  0191 cd00b7        	call	_Serial_newline
- 788  0194               L303:
- 789                     ; 47 		set_rgb((millis()/100)%10,0,255);
- 791  0194 4bff          	push	#255
- 792  0196 cd0000        	call	_millis
- 794  0199 ae0009        	ldw	x,#L03
- 795  019c cd0000        	call	c_ludv
- 797  019f ae000d        	ldw	x,#L23
- 798  01a2 cd0000        	call	c_lumd
- 800  01a5 b603          	ld	a,c_lreg+3
- 801  01a7 5f            	clrw	x
- 802  01a8 95            	ld	xh,a
- 803  01a9 cd0000        	call	_set_rgb
- 805  01ac 84            	pop	a
- 806                     ; 48 		set_rgb((millis()/300)%10,1,255);
- 808  01ad 4bff          	push	#255
- 809  01af cd0000        	call	_millis
- 811  01b2 ae0011        	ldw	x,#L43
- 812  01b5 cd0000        	call	c_ludv
- 814  01b8 ae000d        	ldw	x,#L23
- 815  01bb cd0000        	call	c_lumd
- 817  01be b603          	ld	a,c_lreg+3
- 818  01c0 ae0001        	ldw	x,#1
- 819  01c3 95            	ld	xh,a
- 820  01c4 cd0000        	call	_set_rgb
- 822  01c7 84            	pop	a
- 823                     ; 49 		set_rgb((millis()/500)%10,2,255);
- 825  01c8 4bff          	push	#255
- 826  01ca cd0000        	call	_millis
- 828  01cd ae0015        	ldw	x,#L63
- 829  01d0 cd0000        	call	c_ludv
- 831  01d3 ae000d        	ldw	x,#L23
- 832  01d6 cd0000        	call	c_lumd
- 834  01d9 b603          	ld	a,c_lreg+3
- 835  01db ae0002        	ldw	x,#2
- 836  01de 95            	ld	xh,a
- 837  01df cd0000        	call	_set_rgb
- 839  01e2 84            	pop	a
- 840                     ; 50 		flush_leds(3);
- 842  01e3 a603          	ld	a,#3
- 843  01e5 cd0000        	call	_flush_leds
- 845  01e8               L772:
- 846                     ; 14 	while(!is_application_valid())
- 848  01e8 cd0000        	call	_is_application_valid
- 850  01eb 4d            	tnz	a
- 851  01ec 2603          	jrne	L04
- 852  01ee cc0124        	jp	L572
- 853  01f1               L04:
- 854                     ; 52 	Serial_print_string("DONE");
- 856  01f1 ae0019        	ldw	x,#L713
- 857  01f4 cd00c6        	call	_Serial_print_string
- 859                     ; 53 	Serial_newline();
- 861  01f7 cd00b7        	call	_Serial_newline
- 863                     ; 54 }
- 866  01fa 5b04          	addw	sp,#4
- 867  01fc 81            	ret
- 880                     	xdef	_Serial_read_char
- 881                     	xdef	_Serial_available
- 882                     	xdef	_Serial_newline
- 883                     	xdef	_Serial_print_string
- 884                     	xdef	_Serial_print_char
- 885                     	xdef	_Serial_print_int
- 886                     	xdef	_Serial_begin
- 887                     	xdef	_run_developer
- 888                     	xref	_get_val
- 889                     	xref	_flush_leds
- 890                     	xref	_set_rgb
- 891                     	xref	_millis
- 892                     	xref	_is_application_valid
- 893                     	xref	_serial_setup
- 894                     	xref	_UART1_ClearFlag
- 895                     	xref	_UART1_GetFlagStatus
- 896                     	xref	_UART1_SendData8
- 897                     	xref	_UART1_ReceiveData8
- 898                     	xref	_UART1_Cmd
- 899                     	xref	_UART1_Init
- 900                     	xref	_UART1_DeInit
- 901                     	xref	_GPIO_Init
- 902                     	switch	.const
- 903  0019               L713:
- 904  0019 444f4e4500    	dc.b	"DONE",0
- 905  001e               L513:
- 906  001e 2c205b335d3a  	dc.b	", [3]: ",0
- 907  0026               L313:
- 908  0026 2c205b325d3a  	dc.b	", [2]: ",0
- 909  002e               L113:
- 910  002e 2c205b315d3a  	dc.b	", [1]: ",0
- 911  0036               L703:
- 912  0036 2c205b305d3a  	dc.b	", [0]: ",0
- 913  003e               L503:
- 914  003e 7365633a2000  	dc.b	"sec: ",0
- 915  0044               L372:
- 916  0044 535441525400  	dc.b	"START",0
- 917                     	xref.b	c_lreg
- 918                     	xref.b	c_x
- 919                     	xref.b	c_y
- 939                     	xref	c_lumd
- 940                     	xref	c_rtol
- 941                     	xref	c_lcmp
- 942                     	xref	c_ludv
- 943                     	xref	c_sdivx
- 944                     	xref	c_smody
- 945                     	xref	c_smodx
- 946                     	xref	c_xymov
- 947                     	end
+ 658                     	switch	.const
+ 659  0005               L62:
+ 660  0005 00000064      	dc.l	100
+ 661  0009               L03:
+ 662  0009 000003e8      	dc.l	1000
+ 663                     ; 7 void run_developer()
+ 663                     ; 8 {
+ 664                     	switch	.text
+ 665  00fe               _run_developer:
+ 667  00fe 5209          	subw	sp,#9
+ 668       00000009      OFST:	set	9
+ 671                     ; 10 	u8 iter=0;
+ 673                     ; 11 	u32 old_sec=999;
+ 675  0100 ae03e7        	ldw	x,#999
+ 676  0103 1f07          	ldw	(OFST-2,sp),x
+ 677  0105 ae0000        	ldw	x,#0
+ 678  0108 1f05          	ldw	(OFST-4,sp),x
+ 680                     ; 12 	serial_setup(1,1000000);
+ 682  010a ae4240        	ldw	x,#16960
+ 683  010d 89            	pushw	x
+ 684  010e ae000f        	ldw	x,#15
+ 685  0111 89            	pushw	x
+ 686  0112 a601          	ld	a,#1
+ 687  0114 cd0000        	call	_serial_setup
+ 689  0117 5b04          	addw	sp,#4
+ 691  0119 ac310231      	jpf	L103
+ 692  011d               L772:
+ 693                     ; 18 		for(iter=0;iter<10;iter++)
+ 695  011d 0f09          	clr	(OFST+0,sp)
+ 697  011f               L503:
+ 698                     ; 22 			set_hue(iter,(u16)(millis()*16+(0xFFFF/10)*iter),255);
+ 700  011f 4bff          	push	#255
+ 701  0121 7b0a          	ld	a,(OFST+1,sp)
+ 702  0123 5f            	clrw	x
+ 703  0124 97            	ld	xl,a
+ 704  0125 90ae1999      	ldw	y,#6553
+ 705  0129 cd0000        	call	c_imul
+ 707  012c cd0000        	call	c_uitolx
+ 709  012f 96            	ldw	x,sp
+ 710  0130 1c0002        	addw	x,#OFST-7
+ 711  0133 cd0000        	call	c_rtol
+ 714  0136 cd0000        	call	_millis
+ 716  0139 a604          	ld	a,#4
+ 717  013b cd0000        	call	c_llsh
+ 719  013e 96            	ldw	x,sp
+ 720  013f 1c0002        	addw	x,#OFST-7
+ 721  0142 cd0000        	call	c_ladd
+ 723  0145 be02          	ldw	x,c_lreg+2
+ 724  0147 89            	pushw	x
+ 725  0148 7b0c          	ld	a,(OFST+3,sp)
+ 726  014a cd0000        	call	_set_hue
+ 728  014d 5b03          	addw	sp,#3
+ 729                     ; 18 		for(iter=0;iter<10;iter++)
+ 731  014f 0c09          	inc	(OFST+0,sp)
+ 735  0151 7b09          	ld	a,(OFST+0,sp)
+ 736  0153 a10a          	cp	a,#10
+ 737  0155 25c8          	jrult	L503
+ 738                     ; 26 		if(old_sec!=(millis()/100))
+ 740  0157 cd0000        	call	_millis
+ 742  015a ae0005        	ldw	x,#L62
+ 743  015d cd0000        	call	c_ludv
+ 745  0160 96            	ldw	x,sp
+ 746  0161 1c0005        	addw	x,#OFST-4
+ 747  0164 cd0000        	call	c_lcmp
+ 749  0167 2603          	jrne	L23
+ 750  0169 cc022c        	jp	L313
+ 751  016c               L23:
+ 752                     ; 28 			old_sec=millis()/100;
+ 754  016c cd0000        	call	_millis
+ 756  016f ae0005        	ldw	x,#L62
+ 757  0172 cd0000        	call	c_ludv
+ 759  0175 96            	ldw	x,sp
+ 760  0176 1c0005        	addw	x,#OFST-4
+ 761  0179 cd0000        	call	c_rtol
+ 764                     ; 30 			Serial_print_string("sec: ");
+ 766  017c ae006b        	ldw	x,#L513
+ 767  017f cd00c6        	call	_Serial_print_string
+ 769                     ; 31 			Serial_print_int(millis()/1000);
+ 771  0182 cd0000        	call	_millis
+ 773  0185 ae0009        	ldw	x,#L03
+ 774  0188 cd0000        	call	c_ludv
+ 776  018b be02          	ldw	x,c_lreg+2
+ 777  018d cd0054        	call	_Serial_print_int
+ 779                     ; 33 			Serial_print_string(", [0]: ");
+ 781  0190 ae0063        	ldw	x,#L713
+ 782  0193 cd00c6        	call	_Serial_print_string
+ 784                     ; 34 			Serial_print_int(get_val(0));
+ 786  0196 4f            	clr	a
+ 787  0197 cd0000        	call	_get_val
+ 789  019a cd0054        	call	_Serial_print_int
+ 791                     ; 35 			Serial_print_string(", [1]: ");
+ 793  019d ae005b        	ldw	x,#L123
+ 794  01a0 cd00c6        	call	_Serial_print_string
+ 796                     ; 36 			Serial_print_int(get_val(1));
+ 798  01a3 a601          	ld	a,#1
+ 799  01a5 cd0000        	call	_get_val
+ 801  01a8 cd0054        	call	_Serial_print_int
+ 803                     ; 37 			Serial_print_string(", [2]: ");
+ 805  01ab ae0053        	ldw	x,#L323
+ 806  01ae cd00c6        	call	_Serial_print_string
+ 808                     ; 38 			Serial_print_int(get_val(2));
+ 810  01b1 a602          	ld	a,#2
+ 811  01b3 cd0000        	call	_get_val
+ 813  01b6 cd0054        	call	_Serial_print_int
+ 815                     ; 39 			Serial_print_string(", [3]: ");
+ 817  01b9 ae004b        	ldw	x,#L523
+ 818  01bc cd00c6        	call	_Serial_print_string
+ 820                     ; 40 			Serial_print_int(get_val(3));
+ 822  01bf a603          	ld	a,#3
+ 823  01c1 cd0000        	call	_get_val
+ 825  01c4 cd0054        	call	_Serial_print_int
+ 827                     ; 41 			Serial_print_string(", [4]: ");
+ 829  01c7 ae0043        	ldw	x,#L723
+ 830  01ca cd00c6        	call	_Serial_print_string
+ 832                     ; 42 			Serial_print_int(get_val(4));
+ 834  01cd a604          	ld	a,#4
+ 835  01cf cd0000        	call	_get_val
+ 837  01d2 cd0054        	call	_Serial_print_int
+ 839                     ; 43 			Serial_print_string(", [5]: ");
+ 841  01d5 ae003b        	ldw	x,#L133
+ 842  01d8 cd00c6        	call	_Serial_print_string
+ 844                     ; 44 			Serial_print_int(get_val(5));
+ 846  01db a605          	ld	a,#5
+ 847  01dd cd0000        	call	_get_val
+ 849  01e0 cd0054        	call	_Serial_print_int
+ 851                     ; 45 			Serial_print_string(", [6]: ");
+ 853  01e3 ae0033        	ldw	x,#L333
+ 854  01e6 cd00c6        	call	_Serial_print_string
+ 856                     ; 46 			Serial_print_int(get_val(6));
+ 858  01e9 a606          	ld	a,#6
+ 859  01eb cd0000        	call	_get_val
+ 861  01ee cd0054        	call	_Serial_print_int
+ 863                     ; 47 			Serial_print_string(", [7]: ");
+ 865  01f1 ae002b        	ldw	x,#L533
+ 866  01f4 cd00c6        	call	_Serial_print_string
+ 868                     ; 48 			Serial_print_int(get_val(7));
+ 870  01f7 a607          	ld	a,#7
+ 871  01f9 cd0000        	call	_get_val
+ 873  01fc cd0054        	call	_Serial_print_int
+ 875                     ; 49 			Serial_print_string(", [8]: ");
+ 877  01ff ae0023        	ldw	x,#L733
+ 878  0202 cd00c6        	call	_Serial_print_string
+ 880                     ; 50 			Serial_print_int(get_val(8));
+ 882  0205 a608          	ld	a,#8
+ 883  0207 cd0000        	call	_get_val
+ 885  020a cd0054        	call	_Serial_print_int
+ 887                     ; 51 			Serial_print_string(", [9]: ");
+ 889  020d ae001b        	ldw	x,#L143
+ 890  0210 cd00c6        	call	_Serial_print_string
+ 892                     ; 52 			Serial_print_int(get_val(9));
+ 894  0213 a609          	ld	a,#9
+ 895  0215 cd0000        	call	_get_val
+ 897  0218 cd0054        	call	_Serial_print_int
+ 899                     ; 53 			Serial_print_string(", [10]: ");
+ 901  021b ae0012        	ldw	x,#L343
+ 902  021e cd00c6        	call	_Serial_print_string
+ 904                     ; 54 			Serial_print_int(get_val(10));
+ 906  0221 a60a          	ld	a,#10
+ 907  0223 cd0000        	call	_get_val
+ 909  0226 cd0054        	call	_Serial_print_int
+ 911                     ; 55 			Serial_newline();
+ 913  0229 cd00b7        	call	_Serial_newline
+ 915  022c               L313:
+ 916                     ; 74 		flush_leds(20);
+ 918  022c a614          	ld	a,#20
+ 919  022e cd0000        	call	_flush_leds
+ 921  0231               L103:
+ 922                     ; 16 	while(!is_application_valid())
+ 924  0231 cd0000        	call	_is_application_valid
+ 926  0234 4d            	tnz	a
+ 927  0235 2603          	jrne	L43
+ 928  0237 cc011d        	jp	L772
+ 929  023a               L43:
+ 930                     ; 76 	Serial_print_string("DONE");
+ 932  023a ae000d        	ldw	x,#L543
+ 933  023d cd00c6        	call	_Serial_print_string
+ 935                     ; 77 	Serial_newline();
+ 937  0240 cd00b7        	call	_Serial_newline
+ 939                     ; 78 }
+ 942  0243 5b09          	addw	sp,#9
+ 943  0245 81            	ret
+ 956                     	xdef	_Serial_read_char
+ 957                     	xdef	_Serial_available
+ 958                     	xdef	_Serial_newline
+ 959                     	xdef	_Serial_print_string
+ 960                     	xdef	_Serial_print_char
+ 961                     	xdef	_Serial_print_int
+ 962                     	xdef	_Serial_begin
+ 963                     	xdef	_run_developer
+ 964                     	xref	_set_hue
+ 965                     	xref	_get_val
+ 966                     	xref	_flush_leds
+ 967                     	xref	_millis
+ 968                     	xref	_is_application_valid
+ 969                     	xref	_serial_setup
+ 970                     	xref	_UART1_ClearFlag
+ 971                     	xref	_UART1_GetFlagStatus
+ 972                     	xref	_UART1_SendData8
+ 973                     	xref	_UART1_ReceiveData8
+ 974                     	xref	_UART1_Cmd
+ 975                     	xref	_UART1_Init
+ 976                     	xref	_UART1_DeInit
+ 977                     	xref	_GPIO_Init
+ 978                     	switch	.const
+ 979  000d               L543:
+ 980  000d 444f4e4500    	dc.b	"DONE",0
+ 981  0012               L343:
+ 982  0012 2c205b31305d  	dc.b	", [10]: ",0
+ 983  001b               L143:
+ 984  001b 2c205b395d3a  	dc.b	", [9]: ",0
+ 985  0023               L733:
+ 986  0023 2c205b385d3a  	dc.b	", [8]: ",0
+ 987  002b               L533:
+ 988  002b 2c205b375d3a  	dc.b	", [7]: ",0
+ 989  0033               L333:
+ 990  0033 2c205b365d3a  	dc.b	", [6]: ",0
+ 991  003b               L133:
+ 992  003b 2c205b355d3a  	dc.b	", [5]: ",0
+ 993  0043               L723:
+ 994  0043 2c205b345d3a  	dc.b	", [4]: ",0
+ 995  004b               L523:
+ 996  004b 2c205b335d3a  	dc.b	", [3]: ",0
+ 997  0053               L323:
+ 998  0053 2c205b325d3a  	dc.b	", [2]: ",0
+ 999  005b               L123:
+1000  005b 2c205b315d3a  	dc.b	", [1]: ",0
+1001  0063               L713:
+1002  0063 2c205b305d3a  	dc.b	", [0]: ",0
+1003  006b               L513:
+1004  006b 7365633a2000  	dc.b	"sec: ",0
+1005                     	xref.b	c_lreg
+1006                     	xref.b	c_x
+1007                     	xref.b	c_y
+1027                     	xref	c_lcmp
+1028                     	xref	c_ludv
+1029                     	xref	c_ladd
+1030                     	xref	c_rtol
+1031                     	xref	c_uitolx
+1032                     	xref	c_imul
+1033                     	xref	c_llsh
+1034                     	xref	c_sdivx
+1035                     	xref	c_smody
+1036                     	xref	c_smodx
+1037                     	xref	c_xymov
+1038                     	end

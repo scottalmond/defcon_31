@@ -11,3 +11,4 @@ u8 get_audio_sample(void);
 void set_led(u8 index);
 void flush_leds(u8 led_count);
 u16 get_val(u8 index);
+void set_hue(u8 index,u16 color,u8 brightness);
