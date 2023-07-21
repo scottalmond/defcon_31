@@ -7,8 +7,9 @@ const int TARGET_LED = 3;
 // Variables
 uint32_t start_ms = 0;                 // Start time of the current level
 uint8_t current_led = 0;              // Currently cycling LED
-uint32_t speed = 100;        // Speed of light movement (in milliseconds)
+uint32_t speed = 1000;        // Speed of light movement (in milliseconds)
 uint16_t initial_speed = 1000; // Initial speed of light movement
+uint32_t delay_ms = 0;
 
 void flush_leds(uint8_t led_count) {
   // pushes the temporary values live to the periphreal
@@ -61,46 +62,57 @@ void runCyclone()
   uint32_t current_ms = millis();
   int32_t delta_time = current_ms - start_ms;
 
-  Serial_print_s("delta_time = ");
-  Serial_print_u(delta_time);
-  Serial_print_s(" speed = ");
-  Serial_print_u(speed);
-  Serial_println();
+  if (current_ms - delay_ms >= speed) {
+     delay_ms = current_ms;
+       
   
-  // Compute position of the moving light
-  uint8_t position = (delta_time / speed) % NUM_LEDS;
-
-  Serial_print_s("curr pos = ");
-  Serial_print_u(position);
+  //if (current_ms - start_ms >= speed) {
+     Serial_print_s("delta_time = ");
+     Serial_print_u(delta_time);
+     Serial_print_s(" current_ms = ");
+     Serial_print_u(current_ms);
+     Serial_print_s(" start_ms = ");
+     Serial_print_u(start_ms);
+     Serial_print_s(" speed = ");
+     Serial_print_u(speed);
+     Serial_println();
   
-  // Update current LED
-  uint8_t current_led = position;
-  uint8_t prev = position-1;
+     // Compute position of the moving light
+     uint8_t position = (delta_time / speed) % NUM_LEDS;
+
+     Serial_print_s("curr pos = ");
+     Serial_print_u(position);
   
-  // overflow
-  if(prev > 9) prev = 0;
+     // Update current LED
+     uint8_t current_led = position;
+     uint8_t prev = position-1;
+  
+     // overflow
+     if(prev > 9) prev = 0;
 
-  Serial_print_s(" prev pos = ");
-  Serial_print_u(prev);
-  Serial_println();
+     Serial_print_s(" prev pos = ");
+     Serial_print_u(prev);
+     Serial_println();
 
-  if (prev != TARGET_LED) {
-     // turn off previous
-     set_rgb(prev, 0, 0);
-     set_rgb(prev, 0, 0);
-     set_rgb(prev, 0, 0);
+     if (prev != TARGET_LED) {
+        // turn off previous
+        set_rgb(prev, 0, 0);
+        set_rgb(prev, 0, 0);
+        set_rgb(prev, 0, 0);
+     }
+
+     // turn on current
+     set_rgb(current_led, 13, 255);
+     set_rgb(current_led, 191, 255);
+     set_rgb(current_led, 28, 255);
+  
+     // Red is 255,0,0
+     set_rgb(TARGET_LED, 255, 255);
+     set_rgb(TARGET_LED, 0, 255);
+     set_rgb(TARGET_LED, 0, 255);
+     flush_leds(NUM_LEDS);
   }
-
-  // turn on current
-  set_rgb(current_led, 13, 255);
-  set_rgb(current_led, 191, 255);
-  set_rgb(current_led, 28, 255);
-  
-  // Red is 255,0,0
-  set_rgb(TARGET_LED, 255, 255);
-  set_rgb(TARGET_LED, 0, 255);
-  set_rgb(TARGET_LED, 0, 255);
-  flush_leds(NUM_LEDS);
+  //}
 }
 
 void setup() {
@@ -112,9 +124,10 @@ void setup() {
   
   // Set initial start time
   start_ms = millis();
-
+  delay_ms = millis();
+  
   // Store the initial speed in a separate variable
-  initial_speed = 10000;
+  initial_speed = 1000;
   // put your setup code here, to run once:
   Serial_begin(9600);
 }

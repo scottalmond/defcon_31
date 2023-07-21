@@ -44,10 +44,10 @@ for line in lines:
          chunk += "00"
       
       # Determine if the chunk is the first or last element in the array
-      if i in {0, len(chunkedList)-1}:
-         uintstr += "0b" + chunk + "};"
-      else:
-         uintstr += "0b" + chunk + ","
+      #if i in {0, len(chunkedList)-1}:
+      #   uintstr += "0b" + chunk + "};"
+      #else:
+      uintstr += "0b" + chunk + ","
    
 # Print the number of line breaks in the array
 print("int linebreakinterval = " + str(linebreakinterval))
