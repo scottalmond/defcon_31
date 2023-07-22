@@ -12,7 +12,7 @@ These badges present "My Little Pony Friendship is Magic" characters illuminated
 
 # Hardware Inputs
 
-PCB fabrication and PCBA through JLCPCB https://jlcpcb.com/
+PCB design in EasyEDA; PCB/PCBA fabrication through JLCPCB https://jlcpcb.com/
 Acrylic stock, 45% lighting white, 1/8" thick through TAP Plastics https://www.tapplastics.com/
 Acrylic cutting in-house using a LC40 Dremel laser cutter
 Stickers made by Sticker Mule https://www.stickermule.com/

@@ -1,0 +1,315 @@
+{
+  "uuid": "1ae03abcde831749a40aabcdeb8599ce",
+  "path": "Offline/Space_Pony_Prototype_3",
+  "name": "Space_Pony_Prototype_3",
+  "content": "",
+  "created_at": "2023-07-07 09:10:56",
+  "updated_at": "2023-07-18 07:37:20",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "e7cd0a7f548dcc59fecca07b4e3f8110",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "d9650e27833145c18689b791b39cc10b": 11,
+        "053d8b72433c457eb016c0d91f44c6f1": 1,
+        "fc164ed58cd2435cb11cfb75ff19c940": 2,
+        "9259675d89bd4eccad8940c5466c35a9": 12,
+        "513414fb290b4eacaf3586a7eea1ce9d": 1,
+        "28cddfc27fa54e3c8832f7764ccfa926": 14,
+        "9fcf1d8d3b9d4f20a17b58303bcd58e5": 1,
+        "b86af8b8df4047fab6c5baa5bb9b66c4": 3,
+        "d0b36b03ce2744988ecaf7fbfcf494bf": 1,
+        "d83b255206434f21847fa1083864c49e": 1,
+        "5cf49437eeab41b19ec9c601053b87f3": 1,
+        "7128bc57c20e4729bf449316fcca5095": 1,
+        "5676554bd4914d0989291bb3d92a3b97": 1,
+        "1182b551181a4188b89e6d394ec869de": 1,
+        "4aebd54e4b3c47a3b8b1a36bf284d814": 1,
+        "275c4e8438534c60b0b370d1dfbb6b53": 1,
+        "a3cb60862d514b449c3a5d848cb99ac8": 1,
+        "50e8a40b07a5475184b2b6d44c53833e": 2,
+        "e7007e9b4546429ca10eace8df14fa66": 1,
+        "1a6d339ed868485d90b894fff1367292": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "BS-08-B2AA020",
+          1,
+          "BAT-SMD_BS-08-B2AA016",
+          "BT1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C964786",
+            "BOM_Manufacturer": "MYOUNG(美阳)",
+            "BOM_Manufacturer Part": "BS-08-B2AA020",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "8174a08d22674e7cbf545518dd8d5887",
+            "uuid": "513414fb290b4eacaf3586a7eea1ce9d"
+          }
+        ],
+        [
+          "10uF",
+          1,
+          "C0402",
+          "C1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C723895",
+            "BOM_Manufacturer": "muRata(村田)",
+            "BOM_Manufacturer Part": "GRM155R60J106ME05D",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "0821ed6ea50c44f4909e4be7610e4198",
+            "uuid": "d83b255206434f21847fa1083864c49e"
+          }
+        ],
+        [
+          "1uF",
+          1,
+          "C0402",
+          "C2",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C307427",
+            "BOM_Manufacturer": "SAMSUNG(三星)",
+            "BOM_Manufacturer Part": "CL05B105KQ5NQNC",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "0821ed6ea50c44f4909e4be7610e4198",
+            "uuid": "7128bc57c20e4729bf449316fcca5095"
+          }
+        ],
+        [
+          "18pF",
+          2,
+          "C0402",
+          "C3,C4",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C363512",
+            "BOM_Manufacturer": "PSA(信昌电陶)",
+            "BOM_Manufacturer Part": "FN15N180J500PNG",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "0821ed6ea50c44f4909e4be7610e4198",
+            "uuid": "50e8a40b07a5475184b2b6d44c53833e"
+          }
+        ],
+        [
+          "TJ-S3806SW1TGLC6FRGB-A5",
+          11,
+          "LED-SMD_6P-L4.5-W1.0_TJ-S3806SW1TGLC6F",
+          "LED1,LED2,LED3,LED7,LED18,LED19,LED20,LED21,LED22,LED23,LED25",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C601694",
+            "BOM_Manufacturer": "TOGIALED(统佳)",
+            "BOM_Manufacturer Part": "TJ-S3806SW1TGLC6FRGB-A5",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "c9518c999e08431eb071af7e8e7f369a",
+            "uuid": "d9650e27833145c18689b791b39cc10b"
+          }
+        ],
+        [
+          "B4013AM423-098",
+          1,
+          "MIC-SMD_BD4.0_B4013AM423-098_WIDER_TRACE_CLEARANCE",
+          "MIC1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C2835889",
+            "BOM_Manufacturer": "Goertek(歌尔)",
+            "BOM_Manufacturer Part": "B4013AM423-098",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "c0866072a08e4cb8819db38edf2561fc",
+            "uuid": "1182b551181a4188b89e6d394ec869de"
+          }
+        ],
+        [
+          "59Ω",
+          14,
+          "R0402",
+          "R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R12,R14,R15,R16",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "RALEC(旺诠)",
+            "BOM_Manufacturer Part": "RTT0259R0FTH",
+            "BOM_Supplier Part": "C159005",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "fafd024f554e426eb74cf4a204aa88b0",
+            "uuid": "28cddfc27fa54e3c8832f7764ccfa926"
+          }
+        ],
+        [
+          "2.21kΩ",
+          1,
+          "R0402",
+          "R11",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "LIZ(丽智电子)",
+            "BOM_Manufacturer Part": "CR0402FF2211G",
+            "BOM_Supplier Part": "C100313",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "fafd024f554e426eb74cf4a204aa88b0",
+            "uuid": "d0b36b03ce2744988ecaf7fbfcf494bf"
+          }
+        ],
+        [
+          "5.36kΩ",
+          1,
+          "R0402",
+          "R13",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "LIZ(丽智电子)",
+            "BOM_Manufacturer Part": "CR0402FF5361G",
+            "BOM_Supplier Part": "C100471",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "fafd024f554e426eb74cf4a204aa88b0",
+            "uuid": "4aebd54e4b3c47a3b8b1a36bf284d814"
+          }
+        ],
+        [
+          "TS-FS66T-B-I",
+          2,
+          "KEY-SMD_4P-L6.1-W6.1-P4.50-LS9.0",
+          "SW1,SW2",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C500114",
+            "BOM_Manufacturer": "XKB Connectivity(中国星坤)",
+            "BOM_Manufacturer Part": "TS-FS66T-B-I",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "f7fa702ab8a54416b30d407c8d150777",
+            "uuid": "fc164ed58cd2435cb11cfb75ff19c940"
+          }
+        ],
+        [
+          "SS-3390S-L1",
+          1,
+          "SW-SMD_6P-P2.50_L3.5-W7.2",
+          "SW3",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C318998",
+            "BOM_Manufacturer": "XKB Connectivity(中国星坤)",
+            "BOM_Manufacturer Part": "SS-3390S-L1",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "357dfc44461a4835aef2d0a2331bfe7e",
+            "uuid": "9fcf1d8d3b9d4f20a17b58303bcd58e5"
+          }
+        ],
+        [
+          "STM8S003F3P6TR",
+          1,
+          "TSSOP-20_L6.5-W4.4-P0.65-LS6.4-BL",
+          "U1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ST(意法半导体)",
+            "BOM_Manufacturer Part": "STM8S003F3P6TR",
+            "BOM_Supplier Part": "C52717",
+            "BOM_JLCPCB Part Class": "Basic Part",
+            "puuid": "1586800a83194e228c6527ad76c86945",
+            "uuid": "053d8b72433c457eb016c0d91f44c6f1"
+          }
+        ],
+        [
+          "MCP73831T-2ACI/OT",
+          1,
+          "SOT-23-5_L3.0-W1.7-P0.95-LS2.8-BL",
+          "U2",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C424093",
+            "BOM_Manufacturer": "MICROCHIP(美国微芯)",
+            "BOM_Manufacturer Part": "MCP73831T-2ACI/OT",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "a801549ddf8f431796761cd071417387",
+            "uuid": "5676554bd4914d0989291bb3d92a3b97"
+          }
+        ],
+        [
+          "51.1kΩ",
+          1,
+          "R0402",
+          "U3",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C509676",
+            "BOM_Manufacturer": "ROHM(罗姆)",
+            "BOM_Manufacturer Part": "MCR01MZPF5112",
+            "puuid": "fafd024f554e426eb74cf4a204aa88b0",
+            "uuid": "275c4e8438534c60b0b370d1dfbb6b53"
+          }
+        ],
+        [
+          "16MHz",
+          1,
+          "OSC-SMD_4P-L3.2-W2.5-BL",
+          "X1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C331581",
+            "BOM_Manufacturer": "TXC Corp",
+            "BOM_Manufacturer Part": "7V16000001",
+            "puuid": "fde525906f004b04890fe3f9fe02cca8",
+            "uuid": "e7007e9b4546429ca10eace8df14fa66"
+          }
+        ]
+      ],
+      "updateTime": 1689690960,
+      "createTime": 1686413480,
+      "histories": [],
+      "created_at": "2023-06-10 09:11:20",
+      "updated_at": "2023-07-18 07:36:00"
+    },
+    {
+      "uuid": "6a7037b1bd1e988e11b4455723d906b0",
+      "title": "PCB_Space_Pony_Prototype_1",
+      "filename": "PCB_Space_Pony_Prototype_1.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "fafd024f554e426eb74cf4a204aa88b0": 17,
+        "a76d1be027ff4e9aa42bace7960f06f6": 1,
+        "c0866072a08e4cb8819db38edf2561fc": 1,
+        "a801549ddf8f431796761cd071417387": 1,
+        "c9518c999e08431eb071af7e8e7f369a": 11,
+        "1586800a83194e228c6527ad76c86945": 1,
+        "f7fa702ab8a54416b30d407c8d150777": 2,
+        "8174a08d22674e7cbf545518dd8d5887": 1,
+        "357dfc44461a4835aef2d0a2331bfe7e": 1,
+        "7ee0c7a42e8540069b9f3d412ae5a274": 3,
+        "0821ed6ea50c44f4909e4be7610e4198": 4,
+        "ee248c54d26c4037ab967726d194d8a6": 1,
+        "6fcfbac188f74163b11b2a29dea718fc": 1,
+        "fde525906f004b04890fe3f9fe02cca8": 1,
+        "decfec2626e4487da74ef1f5c736724e": 12
+      },
+      "BOM": [],
+      "updateTime": 1689691040,
+      "createTime": 1686419836,
+      "histories": [],
+      "created_at": "2023-06-10 10:57:16",
+      "updated_at": "2023-07-18 07:37:20"
+    }
+  ],
+  "sort": [],
+  "title": "Space_Pony_Prototype_3",
+  "foldername": "Space_Pony_Prototype_3",
+  "schfilename": "Space_Pony_Prototype_3.json",
+  "schfilemtime": 1689690960720
+}

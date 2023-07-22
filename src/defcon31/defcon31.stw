@@ -6,3 +6,7 @@ Keyword=ST7Workspace-V0.7
 [Project0]
 Filename=defcon31.stp
 Dependencies=
+[Options]
+ActiveProject=defcon31
+ActiveConfig=Debug
+AddSortedElements=0
