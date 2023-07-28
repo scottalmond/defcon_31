@@ -12,3 +12,5 @@ void run_application()
 		
 	}
 }
+
+//setup GPIO right/left button

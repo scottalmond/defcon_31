@@ -36,7 +36,7 @@ These badges present "My Little Pony Friendship is Magic" characters surrounded 
 	- ST SWIM Interface
 	- 1 MBaud UART
 	- I2C
-- SAO 4-pin header
+- SAO 4-pin header pads
 	- Under BT1 (Pony SAO)
 	- Under Acrylic (Space Bits R Us SAO)
 - 10x RGB LEDs
@@ -52,7 +52,7 @@ These badges present "My Little Pony Friendship is Magic" characters surrounded 
 
 # Schematic
 
-![DefCon31 v1r2](\pcb\fab\v1r2\schematic.png)
+![DefCon31 v1r2](/pcb/fab/v1r2/schematic.png)
 
 # User Guide
 
@@ -64,6 +64,9 @@ These badges present "My Little Pony Friendship is Magic" characters surrounded 
 	- OFF
 	- External Power
 - Terminal Access
+	- Ground the SWIM pin to enable the terminal
+		- DO NOT press the buttons while the SWIM pin is grounded.  This will short the RX/TX pins.
+	- Connection of TxD to Rx, RxD to Tx (crossover)
 	- Recognized commands
 - Developer header pinout
 - STM8 setup

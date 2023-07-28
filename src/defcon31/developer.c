@@ -4,6 +4,8 @@
 #include "stm8s103_serial.h"
 
 
+//setup Tx/Rx
+
 void run_developer()
 {
 	//setup(false);

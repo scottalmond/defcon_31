@@ -108,6 +108,8 @@ void setup()
 {
 	CLK->CKDIVR &= (u8)~(CLK_CKDIVR_HSIDIV);			// fhsi= fhsirc (HSIDIV= 0), run at 16 MHz
 	
+	GPIO_Init(GPIOD, GPIO_PIN_1, GPIO_MODE_IN_PU_NO_IT);//SWIM input to choose between appkication and developer modes
+		
 	//run pwm interrupt at 2.000 kHz period (to allow for >40 Hz frames with all LEDs ON)
 	TIM2->CCR1H=0;//this will always be zero based on application architecutre
 	TIM2->PSCR= 6;// init divider register 16MHz/2^X
@@ -151,9 +153,9 @@ bool is_button_down(u8 index)
 {
 	swich(index)
 	{
-		case 0:{ return !(); }
-		case 1:{ return !(); }
-		case 2:{ return !(); }
+		case 0:{ return !(GPIO_ReadInputPin(GPIOD, GPIO_PIN_5)); }
+		case 1:{ return !(GPIO_ReadInputPin(GPIOD, GPIO_PIN_6)); }
+		case 2:{ return !(GPIO_ReadInputPin(GPIOD, GPIO_PIN_1)); }
 	}
 	return 0;
 }
