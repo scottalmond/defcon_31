@@ -25,6 +25,21 @@ u16 pwm_sleep_remaining=0;
 u8 pwm_led_index=0;
 u8 pwm_state=0;//LSB (bit 0) is index of pwm_brightness to pull pwm info from.  bit 1 is a flag the application layer raises for the API layer to clear requesting a switch
 
+//buttons
+#define BUTTON_COUNT 2
+u32 button_start_ms[BUTTON_COUNT];//if 0, then button is unpressed.  if >0 then button si pressed and is waiting for release
+u32 button_pressed_ms[BUTTON_COUNT][2];//timestamp of when a button press event was recorded
+const u16 BUTTON_LONG_PRESS_MS=512;//number of millisconds to consititue a long press rather than a short press
+const u8 BUTTON_MINIMUM_PRESS=50;//minimum time a button needs to be pressed down to be registered as a complete button press
+
+//audio input mic
+u8 audio_measurement_count=0;//state machine, triggers re-computation of mean and "standard deviation" every roll over
+u8 audio_mean;//the mean computed over the PREVIOUS 256 samples
+u8 audio_std;//the "standard deviation" computed during the PREVIOUS 256 samples
+u16 audio_running_sum;//the running sum of the mean CURRENTLY being computed
+u16 audio_running_std;//the running sum of the std CURRENTLY being computed
+
+//temporary debugging
 u16 get_val(u8 index)
 {
 	switch(index)
@@ -104,6 +119,16 @@ void setup()
 	
 	//TODO analog input for audio setup here...
 	
+	/*ADC1_DeInit();
+	ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
+					 AIN4,
+					 ADC1_PRESSEL_FCPU_D18,//D18 
+					 ADC1_EXTTRIG_TIM, 
+					 DISABLE, 
+					 ADC1_ALIGN_RIGHT, //left to put 8 bits in ADC1->DRH; right for all 10 bits with ADC1_GetConversionValue()
+					 ADC1_SCHMITTTRIG_ALL, 
+					 DISABLE);
+	ADC1_Cmd(ENABLE);*/
 }
 
 u32 millis()
@@ -111,11 +136,53 @@ u32 millis()
 	return api_counter;
 }
 
+void update_buttons()
+{
+	u8 button_index;
+	u32 elapsed_pressed_ms;
+	for(int button_index=0;button_index<BUTTON_COUNT;button_index++)
+	{
+		elapsed_pressed_ms=millis()-button_pressed_ms[button_index];
+		if(is_button_down(
+	}
+}
+
+bool is_button_down(u8 index)
+{
+	swich(index)
+	{
+		case 0:{ return !(); }
+		case 1:{ return !(); }
+		case 2:{ return !(); }
+	}
+	return 0;
+}
+
+void update_audio()
+{
+	u8 reading,reading_residual;
+	reading=ADC1->DRL;
+	ADC1_ClearFlag(ADC1_FLAG_EOC);
+	audio_measurement_count++;
+	audio_running_mean+=reading;
+	reading_residual=reading>audio_mean?reading-audio_mean:audio_mean-reading;
+	audio_running_std+=reading_residual;
+	if(!audio_measurement_count)
+	{
+		audio_mean=audio_running_sum>>8;
+		audio_running_sum=0;
+		audio_std=audio_running_std>>8;
+		audio_running_std=0;
+	}
+	ADC1_StartConversion();
+}
+
 //millisecond interrupt
 @far @interrupt void TIM2_UPD_OVF_IRQHandler (void) {
 	TIM2->SR1&=~TIM2_SR1_UIF;//reset interrupt
 	api_counter++;
 	//read buttons (if in application mode), update state
+	
 	//read audio, update state
 }
 
@@ -226,6 +293,7 @@ void set_white(u8 index,u8 brightness)
 	pwm_brightness_buffer[31+index]=brightness;
 }
 
+//debug led status
 void set_debug(u8 brightness)
 {
 	pwm_brightness_buffer[30]=brightness;
