@@ -6,7 +6,7 @@ const u8 hw_revision=1;
 //2: v1r2 moved MAT0 to PD4, and audio input to PD3 <-- defcon31 as-built/delivered version
 
 //time state
-u32 api_counter=0;
+u32 api_counter=0;//increments roughly every millisecond, give-or-take a factor of 2 based on clock divider settings, this is the basis of millis()
 
 //application space settings
 #define LED_COUNT 43 //10 RGB (3 LEDs each) + 12 white + 1 debug
@@ -27,69 +27,35 @@ u8 pwm_state=0;//LSB (bit 0) is index of pwm_brightness to pull pwm info from.  
 
 //buttons
 #define BUTTON_COUNT 2
-u32 button_start_ms[BUTTON_COUNT];//if 0, then button is unpressed.  if >0 then button si pressed and is waiting for release
-u32 button_pressed_ms[BUTTON_COUNT][2];//timestamp of when a button press event was recorded
-const u16 BUTTON_LONG_PRESS_MS=512;//number of millisconds to consititue a long press rather than a short press
-const u8 BUTTON_MINIMUM_PRESS=50;//minimum time a button needs to be pressed down to be registered as a complete button press
+u32 button_start_ms;//if 0, then button is unpressed.  if >0 then button si pressed and is waiting for release
+bool button_pressed_event[BUTTON_COUNT][2];//event flag registering a button push
+#define BUTTON_LONG_PRESS_MS 512 //number of millisconds to consititue a long press rather than a short press
+#define BUTTON_MINIMUM_PRESS_MS 50 //minimum time a button needs to be pressed down to be registered as a complete button press
 
 //audio input mic
 u8 audio_measurement_count=0;//state machine, triggers re-computation of mean and "standard deviation" every roll over
 u8 audio_mean;//the mean computed over the PREVIOUS 256 samples
 u8 audio_std;//the "standard deviation" computed during the PREVIOUS 256 samples
-u16 audio_running_sum;//the running sum of the mean CURRENTLY being computed
+u16 audio_running_mean;//the running sum of the mean CURRENTLY being computed
 u16 audio_running_std;//the running sum of the std CURRENTLY being computed
 
-//temporary debugging
-u16 get_val(u8 index)
+//return a pseudo-random number based on the input seed (ex. millis())
+u16 get_random(u16 x)
 {
-	switch(index)
-	{
-		case 0:{
-			return pwm_state;//2-3
-		}
-		case 1:{
-			return pwm_led_count[pwm_state&0x01];//4?
-		}
-		case 2:{
-			return pwm_sleep[pwm_state&0x01];
-		}
-		case 3:{
-			return pwm_brightness[0][0][pwm_state&0x01];
-		}
-		case 4:{
-			return pwm_brightness[1][0][pwm_state&0x01];
-		}
-		case 5:{
-			return pwm_brightness[2][0][pwm_state&0x01];
-		}
-		case 6:{
-			return pwm_brightness[3][0][pwm_state&0x01];
-		}
-		case 7:{
-			return pwm_brightness[0][1][pwm_state&0x01];
-		}
-		case 8:{
-			return pwm_brightness[1][1][pwm_state&0x01];
-		}
-		case 9:{
-			return pwm_brightness[2][1][pwm_state&0x01];
-		}
-		case 10:{
-			return pwm_brightness[3][1][pwm_state&0x01];
-		}
-		default:{}
-	}
-	return 0;
+	u16 a=1664525;
+	u16 c=1013904223;
+	return a * x + c;
 }
 
-void serial_setup(bool is_enabled,u32 baud_rate)
+void setup_serial(bool is_enabled,bool is_fast_baud_rate)
 {
 	if(is_enabled)
 	{
+		UART1_Cmd(DISABLE);
 		GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
 		GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
 		UART1_DeInit();
-		UART1_Init(baud_rate, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+		UART1_Init(is_fast_baud_rate?9600:1000000, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
 		UART1_Cmd(ENABLE);
 	}else{
 		UART1_Cmd(DISABLE);
@@ -99,16 +65,29 @@ void serial_setup(bool is_enabled,u32 baud_rate)
 	}
 }
 
+//leave application mode if SWIM pin floats high or sleep mode is activated (long press on left button)
 bool is_application_valid()
 {
-	return 0;
+	return !is_button_down(2) && !get_button_event(0,1);
 }
 
-void setup()
+//exit developer mode if SWIM pin floats high
+bool is_developer_valid()
+{
+	return is_button_down(2) && !get_button_event(0,1);
+}
+
+//exit sleep mode if any button is pushed
+bool is_sleep_valid()
+{
+	return !(get_button_event(0,0) || get_button_event(1,0) || get_button_event(0,1) || get_button_event(1,1));
+}
+
+void setup_main()
 {
 	CLK->CKDIVR &= (u8)~(CLK_CKDIVR_HSIDIV);			// fhsi= fhsirc (HSIDIV= 0), run at 16 MHz
 	
-	GPIO_Init(GPIOD, GPIO_PIN_1, GPIO_MODE_IN_PU_NO_IT);//SWIM input to choose between appkication and developer modes
+	GPIO_Init(GPIOD, GPIO_PIN_1, GPIO_MODE_IN_PU_NO_IT);//SWIM input to choose between application and developer modes
 		
 	//run pwm interrupt at 2.000 kHz period (to allow for >40 Hz frames with all LEDs ON)
 	TIM2->CCR1H=0;//this will always be zero based on application architecutre
@@ -138,24 +117,65 @@ u32 millis()
 	return api_counter;
 }
 
+void set_millis(u32 new_time)
+{
+	api_counter=new_time;
+}
+
+//log short or long rpess button events for applicatio layer to use as user input
+//PRECON: don't press buttons at the same time (state machine gets confused).  Leveraging just one u32 to store timestamp of button press start to conserve memory
+//PRECON: assuming button is pressed less than 1 minute (otherwise state machine gets confused)
 void update_buttons()
 {
+	bool is_any_down=0;
 	u8 button_index;
-	u32 elapsed_pressed_ms;
-	for(int button_index=0;button_index<BUTTON_COUNT;button_index++)
+	u16 elapsed_pressed_ms=millis()-button_start_ms;
+	for(button_index=0;button_index<BUTTON_COUNT;button_index++)
 	{
-		elapsed_pressed_ms=millis()-button_pressed_ms[button_index];
-		if(is_button_down(
+		if(is_button_down(button_index))
+		{
+			if(!button_start_ms) button_start_ms=millis();//if button is down and haven't started a button press event, start it
+			set_debug(255);//only need to enable this when true.  Is automatically cleared every frame
+			is_any_down=1;
+		}else{
+			if(elapsed_pressed_ms>BUTTON_LONG_PRESS_MS) button_pressed_event[button_index][1]=1;
+			else if(elapsed_pressed_ms>BUTTON_MINIMUM_PRESS_MS) button_pressed_event[button_index][0]=1;
+			//else ignore button press
+		}
+	}
+	if(!is_any_down) button_start_ms=0;
+}
+
+//returns true if the API has registered the requested type of event
+bool get_button_event(u8 button_index,bool is_long)
+{ return button_pressed_event[button_index][is_long]; }
+
+//clears the specified type of event from the event queue
+bool clear_button_event(u8 button_index,bool is_long)
+{
+	bool out=button_pressed_event[button_index][is_long];
+	button_pressed_event[button_index][is_long]=0;
+	return out;
+}
+
+void clear_button_events()
+{
+	u8 iter;
+	for(iter=0;iter<BUTTON_COUNT;iter++)
+	{
+		clear_button_event(iter,0);
+		clear_button_event(iter,1);
 	}
 }
 
+//instantaneous check to see if button is pressed (grounded)
 bool is_button_down(u8 index)
 {
-	swich(index)
+	switch(index)
 	{
-		case 0:{ return !(GPIO_ReadInputPin(GPIOD, GPIO_PIN_5)); }
-		case 1:{ return !(GPIO_ReadInputPin(GPIOD, GPIO_PIN_6)); }
-		case 2:{ return !(GPIO_ReadInputPin(GPIOD, GPIO_PIN_1)); }
+		case 0:{ return !GPIO_ReadInputPin(GPIOD, GPIO_PIN_5); break; }//left button
+		case 1:{ return !GPIO_ReadInputPin(GPIOD, GPIO_PIN_6); break; }//right button
+		case 2:{ return !GPIO_ReadInputPin(GPIOD, GPIO_PIN_1); break; }//SWIM IO input
 	}
 	return 0;
 }
@@ -163,21 +183,24 @@ bool is_button_down(u8 index)
 void update_audio()
 {
 	u8 reading,reading_residual;
-	reading=ADC1->DRL;
+	reading=ADC1->DRL;//only get 8 least significant bits of the 10 available, assuming reading is not changing fast enough or near enough the 1/4-full-scale point to matter
 	ADC1_ClearFlag(ADC1_FLAG_EOC);
 	audio_measurement_count++;
 	audio_running_mean+=reading;
 	reading_residual=reading>audio_mean?reading-audio_mean:audio_mean-reading;
 	audio_running_std+=reading_residual;
-	if(!audio_measurement_count)
+	if(!audio_measurement_count)//every 256 measurements, average them (/256) and store them
 	{
-		audio_mean=audio_running_sum>>8;
-		audio_running_sum=0;
+		audio_mean=audio_running_mean>>8;
+		audio_running_mean=0;
 		audio_std=audio_running_std>>8;
 		audio_running_std=0;
 	}
 	ADC1_StartConversion();
 }
+
+u8 get_audio_level()
+{ return audio_std; }
 
 //millisecond interrupt
 @far @interrupt void TIM2_UPD_OVF_IRQHandler (void) {
@@ -244,7 +267,7 @@ void flush_leds(u8 led_count)
 void set_hue(u8 index,u16 color,u8 brightness)
 {
 	u8 red=0,green=0,blue=0;
-	u32 residual=color%(0x2AAB);
+	u16 residual=color%(0x2AAB);
 	residual=(u8)(residual*brightness/0x2AAB);
 	switch(color/(0x2AAB))//0xFFFF/6
 	{
@@ -287,7 +310,8 @@ void set_hue(u8 index,u16 color,u8 brightness)
 
 void set_rgb(u8 index,u8 color,u8 brightness)
 {
-	pwm_brightness_buffer[index*3+color]=brightness;
+	pwm_brightness_buffer[index+color*RGB_LED_COUNT]=brightness;
+	//update occurs in order 0-to-29.  update all red first, then all green, then all blue.  this helps to avoid gaps where led is fully off and appears flickering
 }
 
 void set_white(u8 index,u8 brightness)
@@ -314,15 +338,16 @@ void set_matrix_high_z()
 }
 
 //PRECON: this method assumes a fixed-rate sampling so that "ADC1_GetFlagStatus(ADC1_FLAG_EOC) == FALSE" does not need to be queried
-u8 get_audio_sample()
+/*u8 get_audio_sample()
 {
+	return 
 	if(hw_revision==2)
 	{
 		//return reading here, queue up next reading
 		
 	}
 	return 0;//revision 1 hw misrouted this connection, made it un-readable
-}
+}*/
 
 //turn ON the relevant LED
 void set_led(u8 led_index)
@@ -400,4 +425,15 @@ void set_led(u8 led_index)
 		GPIO_Init(GPIOx, PortPin, is_high?GPIO_MODE_OUT_PP_HIGH_SLOW:GPIO_MODE_OUT_PP_LOW_SLOW);
 		is_high=!is_high;
 	}while(is_high);
+}
+
+//true for Space Bits R Us SAOs, false for Pony SAOs
+bool is_space_sao()
+{
+	return 1;//TODO: implement EEPROM read
+}
+
+u8 get_eeprom_byte(u16 eeprom_address)
+{
+	return (*(PointerAttr uint8_t *) (0x4000+eeprom_address));
 }

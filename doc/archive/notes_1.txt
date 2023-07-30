@@ -17,13 +17,16 @@ bool is_application_valid(); //when you do infinite while(true) loops, use this 
 
 
 //UART:
-//t#
-//u#
-//e# # //write to eeprom directly.  numbers are in human-readable DEC (not 0-255 in every char; this avoid issue with 10 being read as '\n')
-//e# //read eeprom char at address
+//t # //get time with no parameters, set time with one decimal number.
+//  u# //DEPRECITED, was going to used to correct sub-second clock drivt residual; assumed to be negliable and low-priority
+//e # # //write to eeprom directly.  numbers are in human-readable DEC (not 0-255 in every char; this avoid issue with 10 being read as '\n')
+//e # //read eeprom char at address
 //h help (prints epprom status and current time)
 //p ping (echo's UART commands sent to it: between 'p' character and \n)
-//s# system diagnostic (test all peripherals: blink leds, read audio and output to terminal: 1k samples).  diagnostic 0 is all leds and mic check.  diagnsotic 1 is current time (millis()/1000): the 10 LSB piped out to RGB LEDs
+//  s# system diagnostic (test all peripherals: blink leds, read audio and output to terminal: 1k samples).  diagnostic 0 is all leds and mic check.  diagnsotic 1 is current time (millis()/1000): the 10 LSB piped out to RGB LEDs
+//l # # # //light up the given RGB led at the given brightness (0-9, 0-2, 0-255)
+//w # # //light up the given white led at the given brightness (applicable to Space SAO only, others will have current leakage on red+green LEDs over non-populated part)
+//a //prints the audio level continuosuly until a new line character is detected
 
 //EEPROM:
 //0 DEVELOPMENT

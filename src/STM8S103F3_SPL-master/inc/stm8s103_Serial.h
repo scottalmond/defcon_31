@@ -20,7 +20,7 @@
  void Serial_newline(void); //move to next line
  bool Serial_available(void); //check if input serial data available return 1 is yes 
  char Serial_read_char(void); //read the incoming char byte and return it 
- 
+ void Serial_print_u32(u32);
 
  char Serial_read_char(void)
  {
@@ -51,6 +51,20 @@
                 UART1_MODE_TXRX_ENABLE); //(BaudRate, Wordlegth, StopBits, Parity, SyncMode, Mode)
                 
 		UART1_Cmd(ENABLE);
+ }
+ 
+ void Serial_print_u32(u32 number)
+ {
+	 u8 iter;
+	 u8 digit;
+	 Serial_print_string("0x");
+	 for(iter=28;iter<32;iter-=4)
+	 {
+		 digit=number>>iter;
+		 if(digit>9) Serial_print_char('A'+(digit-10));
+		 else Serial_print_char('0'+digit);
+		 if(iter==16) Serial_print_char('_');
+	 }
  }
  
  void Serial_print_int (int number) //Funtion to print int value to serial monitor 

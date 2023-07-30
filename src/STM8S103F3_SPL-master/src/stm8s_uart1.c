@@ -52,19 +52,19 @@
 	*/
 void UART1_DeInit(void)
 {
-  /* Clear the Idle Line Detected bit in the status register by a read
-  to the UART1_SR register followed by a Read to the UART1_DR register */
+  // Clear the Idle Line Detected bit in the status register by a read
+  //to the UART1_SR register followed by a Read to the UART1_DR register 
   (void)UART1->SR;
   (void)UART1->DR;
   
-  UART1->BRR2 = UART1_BRR2_RESET_VALUE;  /* Set UART1_BRR2 to reset value 0x00 */
-  UART1->BRR1 = UART1_BRR1_RESET_VALUE;  /* Set UART1_BRR1 to reset value 0x00 */
+  UART1->BRR2 = UART1_BRR2_RESET_VALUE;  // Set UART1_BRR2 to reset value 0x00 
+  UART1->BRR1 = UART1_BRR1_RESET_VALUE;  // Set UART1_BRR1 to reset value 0x00 
   
-  UART1->CR1 = UART1_CR1_RESET_VALUE;  /* Set UART1_CR1 to reset value 0x00 */
-  UART1->CR2 = UART1_CR2_RESET_VALUE;  /* Set UART1_CR2 to reset value 0x00 */
-  UART1->CR3 = UART1_CR3_RESET_VALUE;  /* Set UART1_CR3 to reset value 0x00 */
-  UART1->CR4 = UART1_CR4_RESET_VALUE;  /* Set UART1_CR4 to reset value 0x00 */
-  UART1->CR5 = UART1_CR5_RESET_VALUE;  /* Set UART1_CR5 to reset value 0x00 */
+  UART1->CR1 = UART1_CR1_RESET_VALUE;  // Set UART1_CR1 to reset value 0x00 
+  UART1->CR2 = UART1_CR2_RESET_VALUE;  // Set UART1_CR2 to reset value 0x00 
+  UART1->CR3 = UART1_CR3_RESET_VALUE;  // Set UART1_CR3 to reset value 0x00 
+  UART1->CR4 = UART1_CR4_RESET_VALUE;  // Set UART1_CR4 to reset value 0x00 
+  UART1->CR5 = UART1_CR5_RESET_VALUE;  // Set UART1_CR5 to reset value 0x00 
   
   UART1->GTR = UART1_GTR_RESET_VALUE;
   UART1->PSCR = UART1_PSCR_RESET_VALUE;
@@ -185,12 +185,12 @@ void UART1_Cmd(FunctionalState NewState)
 {
   if (NewState != DISABLE)
   {
-    /* UART1 Enable */
+    // UART1 Enable 
     UART1->CR1 &= (uint8_t)(~UART1_CR1_UARTD); 
   }
   else
   {
-    /* UART Disable */
+    // UART Disable 
     UART1->CR1 |= UART1_CR1_UARTD;  
   }
 }
@@ -208,22 +208,22 @@ void UART1_Cmd(FunctionalState NewState)
   *         This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
-void UART1_ITConfig(UART1_IT_TypeDef UART1_IT, FunctionalState NewState)
+/*void UART1_ITConfig(UART1_IT_TypeDef UART1_IT, FunctionalState NewState)
 {
   uint8_t uartreg = 0, itpos = 0x00;
   
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_UART1_CONFIG_IT_OK(UART1_IT));
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
-  /* Get the UART1 register index */
+  // Get the UART1 register index 
   uartreg = (uint8_t)((uint16_t)UART1_IT >> 0x08);
-  /* Get the UART1 IT index */
+  // Get the UART1 IT index 
   itpos = (uint8_t)((uint8_t)1 << (uint8_t)((uint8_t)UART1_IT & (uint8_t)0x0F));
   
   if (NewState != DISABLE)
   {
-    /**< Enable the Interrupt bits according to UART1_IT mask */
+    //< Enable the Interrupt bits according to UART1_IT mask 
     if (uartreg == 0x01)
     {
       UART1->CR1 |= itpos;
@@ -239,7 +239,7 @@ void UART1_ITConfig(UART1_IT_TypeDef UART1_IT, FunctionalState NewState)
   }
   else
   {
-    /**< Disable the interrupt bits according to UART1_IT mask */
+    //< Disable the interrupt bits according to UART1_IT mask 
     if (uartreg == 0x01)
     {
       UART1->CR1 &= (uint8_t)(~itpos);
@@ -254,7 +254,7 @@ void UART1_ITConfig(UART1_IT_TypeDef UART1_IT, FunctionalState NewState)
     }
   }
   
-}
+}*/
 
 /**
   * @brief  Enables or disables the UART’s Half Duplex communication.
@@ -262,19 +262,19 @@ void UART1_ITConfig(UART1_IT_TypeDef UART1_IT, FunctionalState NewState)
   *         This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
-void UART1_HalfDuplexCmd(FunctionalState NewState)
+/*void UART1_HalfDuplexCmd(FunctionalState NewState)
 {
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
   if (NewState != DISABLE)
   {
-    UART1->CR5 |= UART1_CR5_HDSEL;  /**< UART1 Half Duplex Enable  */
+    UART1->CR5 |= UART1_CR5_HDSEL;  //< UART1 Half Duplex Enable  
   }
   else
   {
-    UART1->CR5 &= (uint8_t)~UART1_CR5_HDSEL; /**< UART1 Half Duplex Disable */
+    UART1->CR5 &= (uint8_t)~UART1_CR5_HDSEL; //< UART1 Half Duplex Disable 
   }
-}
+}*/
 
 /**
   * @brief  Configures the UART’s IrDA interface.
@@ -282,7 +282,7 @@ void UART1_HalfDuplexCmd(FunctionalState NewState)
   *         This parameter can be any of the @ref UART1_IrDAMode_TypeDef values.
   * @retval None
   */
-void UART1_IrDAConfig(UART1_IrDAMode_TypeDef UART1_IrDAMode)
+/*void UART1_IrDAConfig(UART1_IrDAMode_TypeDef UART1_IrDAMode)
 {
   assert_param(IS_UART1_IRDAMODE_OK(UART1_IrDAMode));
   
@@ -294,7 +294,7 @@ void UART1_IrDAConfig(UART1_IrDAMode_TypeDef UART1_IrDAMode)
   {
     UART1->CR5 &= ((uint8_t)~UART1_CR5_IRLP);
   }
-}
+}*/
 
 /**
   * @brief  Enables or disables the UART’s IrDA interface.
@@ -302,22 +302,22 @@ void UART1_IrDAConfig(UART1_IrDAMode_TypeDef UART1_IrDAMode)
   *         This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
-void UART1_IrDACmd(FunctionalState NewState)
+/*void UART1_IrDACmd(FunctionalState NewState)
 {
-  /* Check parameters */
+  // Check parameters 
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
   if (NewState != DISABLE)
   {
-    /* Enable the IrDA mode by setting the IREN bit in the CR3 register */
+    // Enable the IrDA mode by setting the IREN bit in the CR3 register 
     UART1->CR5 |= UART1_CR5_IREN;
   }
   else
   {
-    /* Disable the IrDA mode by clearing the IREN bit in the CR3 register */
+    // Disable the IrDA mode by clearing the IREN bit in the CR3 register 
     UART1->CR5 &= ((uint8_t)~UART1_CR5_IREN);
   }
-}
+}*/
 
 /**
   * @brief  Sets the UART1 LIN Break detection length.
@@ -326,7 +326,7 @@ void UART1_IrDACmd(FunctionalState NewState)
   *         @ref UART1_LINBreakDetectionLength_TypeDef values.
   * @retval None
   */
-void UART1_LINBreakDetectionConfig(UART1_LINBreakDetectionLength_TypeDef UART1_LINBreakDetectionLength)
+/*void UART1_LINBreakDetectionConfig(UART1_LINBreakDetectionLength_TypeDef UART1_LINBreakDetectionLength)
 {
   assert_param(IS_UART1_LINBREAKDETECTIONLENGTH_OK(UART1_LINBreakDetectionLength));
   
@@ -338,7 +338,7 @@ void UART1_LINBreakDetectionConfig(UART1_LINBreakDetectionLength_TypeDef UART1_L
   {
     UART1->CR4 &= ((uint8_t)~UART1_CR4_LBDL);
   }
-}
+}*/
 
 /**
   * @brief  Enables or disables the UART1’s LIN mode.
@@ -346,21 +346,21 @@ void UART1_LINBreakDetectionConfig(UART1_LINBreakDetectionLength_TypeDef UART1_L
   *         This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
-void UART1_LINCmd(FunctionalState NewState)
+/*void UART1_LINCmd(FunctionalState NewState)
 {
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
   if (NewState != DISABLE)
   {
-    /* Enable the LIN mode by setting the LINE bit in the CR2 register */
+    // Enable the LIN mode by setting the LINE bit in the CR2 register 
     UART1->CR3 |= UART1_CR3_LINEN;
   }
   else
   {
-    /* Disable the LIN mode by clearing the LINE bit in the CR2 register */
+    // Disable the LIN mode by clearing the LINE bit in the CR2 register 
     UART1->CR3 &= ((uint8_t)~UART1_CR3_LINEN);
   }
-}
+}*/
 
 /**
   * @brief  Enables or disables the UART1 Smart Card mode.
@@ -368,21 +368,21 @@ void UART1_LINCmd(FunctionalState NewState)
   * This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
-void UART1_SmartCardCmd(FunctionalState NewState)
+/*void UART1_SmartCardCmd(FunctionalState NewState)
 {
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
   if (NewState != DISABLE)
   {
-    /* Enable the SC mode by setting the SCEN bit in the CR5 register */
+    // Enable the SC mode by setting the SCEN bit in the CR5 register
     UART1->CR5 |= UART1_CR5_SCEN;
   }
   else
   {
-    /* Disable the SC mode by clearing the SCEN bit in the CR5 register */
+    // Disable the SC mode by clearing the SCEN bit in the CR5 register
     UART1->CR5 &= ((uint8_t)(~UART1_CR5_SCEN));
   }
-}
+}*/
 
 /**
   * @brief  Enables or disables NACK transmission.
@@ -391,21 +391,21 @@ void UART1_SmartCardCmd(FunctionalState NewState)
   *         This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
-void UART1_SmartCardNACKCmd(FunctionalState NewState)
+/*void UART1_SmartCardNACKCmd(FunctionalState NewState)
 {
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
   if (NewState != DISABLE)
   {
-    /* Enable the NACK transmission by setting the NACK bit in the CR5 register */
+    // Enable the NACK transmission by setting the NACK bit in the CR5 register 
     UART1->CR5 |= UART1_CR5_NACK;
   }
   else
   {
-    /* Disable the NACK transmission by clearing the NACK bit in the CR5 register */
+    // Disable the NACK transmission by clearing the NACK bit in the CR5 register 
     UART1->CR5 &= ((uint8_t)~(UART1_CR5_NACK));
   }
-}
+}*/
 
 /**
   * @brief  Selects the UART1 WakeUp method.
@@ -413,13 +413,13 @@ void UART1_SmartCardNACKCmd(FunctionalState NewState)
   *         This parameter can be any of the @ref UART1_WakeUp_TypeDef values.
   * @retval None
   */
-void UART1_WakeUpConfig(UART1_WakeUp_TypeDef UART1_WakeUp)
+/*void UART1_WakeUpConfig(UART1_WakeUp_TypeDef UART1_WakeUp)
 {
   assert_param(IS_UART1_WAKEUP_OK(UART1_WakeUp));
   
   UART1->CR1 &= ((uint8_t)~UART1_CR1_WAKE);
   UART1->CR1 |= (uint8_t)UART1_WakeUp;
-}
+}*/
 
 /**
   * @brief  Determines if the UART1 is in mute mode or not.
@@ -427,21 +427,21 @@ void UART1_WakeUpConfig(UART1_WakeUp_TypeDef UART1_WakeUp)
   *         This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
-void UART1_ReceiverWakeUpCmd(FunctionalState NewState)
+/*void UART1_ReceiverWakeUpCmd(FunctionalState NewState)
 {
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
   if (NewState != DISABLE)
   {
-    /* Enable the mute mode UART1 by setting the RWU bit in the CR2 register */
+    // Enable the mute mode UART1 by setting the RWU bit in the CR2 register 
     UART1->CR2 |= UART1_CR2_RWU;
   }
   else
   {
-    /* Disable the mute mode UART1 by clearing the RWU bit in the CR1 register */
+    // Disable the mute mode UART1 by clearing the RWU bit in the CR1 register 
     UART1->CR2 &= ((uint8_t)~UART1_CR2_RWU);
   }
-}
+}*/
 
 /**
   * @brief  Returns the most recent received data by the UART1 peripheral.
@@ -525,11 +525,11 @@ void UART1_SetAddress(uint8_t UART1_Address)
   * @param  UART1_GuardTime: specifies the guard time.
   * @retval None
   */
-void UART1_SetGuardTime(uint8_t UART1_GuardTime)
+/*void UART1_SetGuardTime(uint8_t UART1_GuardTime)
 {
-  /* Set the UART1 guard time */
+  // Set the UART1 guard time
   UART1->GTR = UART1_GuardTime;
-}
+}*/
 
 /**
   * @brief  Sets the system clock prescaler.
@@ -672,7 +672,7 @@ void UART1_ClearFlag(UART1_Flag_TypeDef UART1_FLAG)
   *         - UART1_IT_PE:   Parity Error interrupt
   * @retval The new state of UART1_IT (SET or RESET).
   */
-ITStatus UART1_GetITStatus(UART1_IT_TypeDef UART1_IT)
+/*ITStatus UART1_GetITStatus(UART1_IT_TypeDef UART1_IT)
 {
   ITStatus pendingbitstatus = RESET;
   uint8_t itpos = 0;
@@ -680,72 +680,72 @@ ITStatus UART1_GetITStatus(UART1_IT_TypeDef UART1_IT)
   uint8_t itmask2 = 0;
   uint8_t enablestatus = 0;
   
-  /* Check parameters */
+  // Check parameters 
   assert_param(IS_UART1_GET_IT_OK(UART1_IT));
   
-  /* Get the UART1 IT index */
+  // Get the UART1 IT index 
   itpos = (uint8_t)((uint8_t)1 << (uint8_t)((uint8_t)UART1_IT & (uint8_t)0x0F));
-  /* Get the UART1 IT index */
+  // Get the UART1 IT index 
   itmask1 = (uint8_t)((uint8_t)UART1_IT >> (uint8_t)4);
-  /* Set the IT mask*/
+  // Set the IT mask
   itmask2 = (uint8_t)((uint8_t)1 << itmask1);
   
   
-  /* Check the status of the specified UART1 pending bit*/
+  // Check the status of the specified UART1 pending bit
   if (UART1_IT == UART1_IT_PE)
   {
-    /* Get the UART1_IT enable bit status*/
+    // Get the UART1_IT enable bit status
     enablestatus = (uint8_t)((uint8_t)UART1->CR1 & itmask2);
-    /* Check the status of the specified UART1 interrupt*/
+    // Check the status of the specified UART1 interrupt
     
     if (((UART1->SR & itpos) != (uint8_t)0x00) && enablestatus)
     {
-      /* Interrupt occurred*/
+      // Interrupt occurred
       pendingbitstatus = SET;
     }
     else
     {
-      /* Interrupt not occurred*/
+      // Interrupt not occurred
       pendingbitstatus = RESET;
     }
   }
   
   else if (UART1_IT == UART1_IT_LBDF)
   {
-    /* Get the UART1_IT enable bit status*/
+    // Get the UART1_IT enable bit status
     enablestatus = (uint8_t)((uint8_t)UART1->CR4 & itmask2);
-    /* Check the status of the specified UART1 interrupt*/
+    // Check the status of the specified UART1 interrupt
     if (((UART1->CR4 & itpos) != (uint8_t)0x00) && enablestatus)
     {
-      /* Interrupt occurred*/
+      // Interrupt occurred
       pendingbitstatus = SET;
     }
     else
     {
-      /* Interrupt not occurred*/
+      // Interrupt not occurred
       pendingbitstatus = RESET;
     }
   }
   else
   {
-    /* Get the UART1_IT enable bit status*/
+    // Get the UART1_IT enable bit status
     enablestatus = (uint8_t)((uint8_t)UART1->CR2 & itmask2);
-    /* Check the status of the specified UART1 interrupt*/
+    // Check the status of the specified UART1 interrupt
     if (((UART1->SR & itpos) != (uint8_t)0x00) && enablestatus)
     {
-      /* Interrupt occurred*/
+      // Interrupt occurred
       pendingbitstatus = SET;
     }
     else
     {
-      /* Interrupt not occurred*/
+      // Interrupt not occurred
       pendingbitstatus = RESET;
     }
   }
   
-  /* Return the UART1_IT status*/
+  // Return the UART1_IT status
   return  pendingbitstatus;
-}
+}*/
 
 /**
   * @brief  Clears the UART1 pending flags.
@@ -788,13 +788,6 @@ void UART1_ClearITPendingBit(UART1_IT_TypeDef UART1_IT)
   }
 }
 
-/**
-  * @}
-  */
-  
-/**
-  * @}
-  */
   
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

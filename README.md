@@ -2,18 +2,26 @@
 
 This repo contains the project files for two Silly Add-On (SAO) Printed Circuit Boards (PCBs) for DEFCON 31.
 
+TODO: Example Image
+
 TODO: User Guide Video Here
 
 ## Space Bits R Us
 
 This is the team badge for those competing in the Hack-a-Sat competition.  These are exclusive badges for the team and not for general sale.
 
+TODO: Example Image
+
 ## Pony Circuit Board
 
-These badges present "My Little Pony Friendship is Magic" characters surrounded by LEDs.  These badges are for sale, MSRP $20 each.  There are over 10 unique designs.  Each "Space Bits R Us" team member (identifiable because they are wearing the "Space Bits" badge described above) will have several units for sale.  Visit the Hack-a-sat competition area immediately before, or immediately after competition each day to acquire one.  Specifically: before 10 AM Friday/Saturday, after 8 PM Friday/Saturday, before Noon Sunday, or after 1:30 PM Sunday.
+- These badges present "My Little Pony Friendship is Magic" characters surrounded by LEDs.
+- These badges are for sale, MSRP $20 each.  There are over 10 unique designs.
+- Each "Space Bits R Us" team member (identifiable because they are wearing the "Space Bits" badge described above) will have several units for sale.
+- Visit the Hack-a-sat competition area immediately before, or immediately after competition each day to acquire one.
+	- Specifically: before 10 AM Friday/Saturday, after 8 PM Friday/Saturday, before Noon Sunday, or after 1:30 PM Sunday.
 
 [![Bumper reel and general information]
-(https://img.youtube.com/vi/0cRPfB8QzD0/maxresdefault.jpg)]
+(https://img.youtube.com/vi/0cRPfB8QzD0/0.jpg)]
 (https://www.youtube.com/watch?v=0cRPfB8QzD0)
 
 # Features
@@ -70,6 +78,7 @@ These badges present "My Little Pony Friendship is Magic" characters surrounded 
 	- Recognized commands
 - Developer header pinout
 - STM8 setup
+- LED matrix pinout/numbering
 
 # Menus
 
@@ -96,4 +105,4 @@ Through-hole LEDs, batteries, and support hardware (protoboards, pogo pins, etc)
 How to fix git login: https://www.youtube.com/watch?v=EaN7TnD8RvM
 STM8 programming ref: https://hackaday.io/project/161239-stm8s-development-board
 STM8 programmer setup: https://circuitdigest.com/microcontroller-projects/getting-started-with-stm8s-using-stvd-and-cosmic-c-compiler
-including Cosmic C licesne request (allow 2 business days to get a key) ref. https://github.com/NevynUK/The-Way-of-the-Register
+including Cosmic C license request (allow 2 business days to get a key) ref. https://github.com/NevynUK/The-Way-of-the-Register

@@ -4,35 +4,19 @@
  */
 
 #include "STM8s.h"
-//#include "stm8s103_ADC.h"
 #include "api.h"
 #include "application.h"
 #include "developer.h"
-
-//void setup(bool is_application);
+#include "sleep.h"
 
 int main()
 {
-	setup();
+	setup_main();
 	while(1)
 	{
-		if(is_application_valid())
-		{
-			run_application();
-		}else{
-			run_developer();
-		}
+		if(is_application_valid()) run_application();
+		if(is_developer_valid()) run_developer();
+		if(get_button_event(0,1)) run_sleep();//if long press on left button, enter sleep mode
 	}
 	return 0;
 }
-
-
-
-/*void setup(bool is_application)
-{
-	serial_setup(!is_application,115200);
-	if(!is_application)
-	{
-		//print terminal welcome message here
-	}
-}*/
