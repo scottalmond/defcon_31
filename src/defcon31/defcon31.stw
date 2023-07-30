@@ -8,5 +8,5 @@ Filename=defcon31.stp
 Dependencies=
 [Options]
 ActiveProject=defcon31
-ActiveConfig=Debug
+ActiveConfig=Release
 AddSortedElements=0

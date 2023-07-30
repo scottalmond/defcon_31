@@ -163,20 +163,20 @@ void ADC1_ScanModeCmd(FunctionalState NewState)
   * @param   NewState: specifies the selected mode enabled or disabled state.
   * @retval None
   */
-void ADC1_DataBufferCmd(FunctionalState NewState)
+/*void ADC1_DataBufferCmd(FunctionalState NewState)
 {
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
   if (NewState != DISABLE)
   {
     ADC1->CR3 |= ADC1_CR3_DBUF;
   }
-  else /* NewState == DISABLE */
+  else // NewState == DISABLE 
   {
     ADC1->CR3 &= (uint8_t)(~ADC1_CR3_DBUF);
   }
-}
+}*/
 
 /**
   * @brief  Enables or disables the ADC1 interrupt.
@@ -187,23 +187,23 @@ void ADC1_DataBufferCmd(FunctionalState NewState)
   * @param   NewState specifies the state of the interrupt to apply.
   * @retval None
   */
-void ADC1_ITConfig(ADC1_IT_TypeDef ADC1_IT, FunctionalState NewState)
+/*void ADC1_ITConfig(ADC1_IT_TypeDef ADC1_IT, FunctionalState NewState)
 {
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_ADC1_IT_OK(ADC1_IT));
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
   if (NewState != DISABLE)
   {
-    /* Enable the ADC1 interrupts */
+    // Enable the ADC1 interrupts 
     ADC1->CSR |= (uint8_t)ADC1_IT;
   }
-  else  /* NewState == DISABLE */
+  else  // NewState == DISABLE 
   {
-    /* Disable the ADC1 interrupts */
+    // Disable the ADC1 interrupts 
     ADC1->CSR &= (uint8_t)((uint16_t)~(uint16_t)ADC1_IT);
   }
-}
+}*/
 
 /**
   * @brief  Configure the ADC1 prescaler division factor.
@@ -213,12 +213,12 @@ void ADC1_ITConfig(ADC1_IT_TypeDef ADC1_IT, FunctionalState NewState)
   */
 void ADC1_PrescalerConfig(ADC1_PresSel_TypeDef ADC1_Prescaler)
 {
-  /* Check the parameter */
+  // Check the parameter 
   assert_param(IS_ADC1_PRESSEL_OK(ADC1_Prescaler));
   
-  /* Clear the SPSEL bits */
+  // Clear the SPSEL bits 
   ADC1->CR1 &= (uint8_t)(~ADC1_CR1_SPSEL);
-  /* Select the prescaler division factor according to ADC1_PrescalerSelection values */
+  // Select the prescaler division factor according to ADC1_PrescalerSelection values 
   ADC1->CR1 |= (uint8_t)(ADC1_Prescaler);
 }
 
@@ -232,7 +232,7 @@ void ADC1_PrescalerConfig(ADC1_PresSel_TypeDef ADC1_Prescaler)
   */
 void ADC1_SchmittTriggerConfig(ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState NewState)
 {
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_ADC1_SCHMITTTRIG_OK(ADC1_SchmittTriggerChannel));
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
@@ -243,7 +243,7 @@ void ADC1_SchmittTriggerConfig(ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChan
       ADC1->TDRL &= (uint8_t)0x0;
       ADC1->TDRH &= (uint8_t)0x0;
     }
-    else /* NewState == DISABLE */
+    else // NewState == DISABLE 
     {
       ADC1->TDRL |= (uint8_t)0xFF;
       ADC1->TDRH |= (uint8_t)0xFF;
@@ -255,18 +255,18 @@ void ADC1_SchmittTriggerConfig(ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChan
     {
       ADC1->TDRL &= (uint8_t)(~(uint8_t)((uint8_t)0x01 << (uint8_t)ADC1_SchmittTriggerChannel));
     }
-    else /* NewState == DISABLE */
+    else // NewState == DISABLE 
     {
       ADC1->TDRL |= (uint8_t)((uint8_t)0x01 << (uint8_t)ADC1_SchmittTriggerChannel);
     }
   }
-  else /* ADC1_SchmittTriggerChannel >= ADC1_SCHMITTTRIG_CHANNEL8 */
+  else // ADC1_SchmittTriggerChannel >= ADC1_SCHMITTTRIG_CHANNEL8 
   {
     if (NewState != DISABLE)
     {
       ADC1->TDRH &= (uint8_t)(~(uint8_t)((uint8_t)0x01 << ((uint8_t)ADC1_SchmittTriggerChannel - (uint8_t)8)));
     }
-    else /* NewState == DISABLE */
+    else // NewState == DISABLE 
     {
       ADC1->TDRH |= (uint8_t)((uint8_t)0x01 << ((uint8_t)ADC1_SchmittTriggerChannel - (uint8_t)8));
     }
@@ -285,30 +285,30 @@ void ADC1_SchmittTriggerConfig(ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChan
   */
 void ADC1_ConversionConfig(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_Align_TypeDef ADC1_Align)
 {
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_ADC1_CONVERSIONMODE_OK(ADC1_ConversionMode));
   assert_param(IS_ADC1_CHANNEL_OK(ADC1_Channel));
   assert_param(IS_ADC1_ALIGN_OK(ADC1_Align));
   
-  /* Clear the align bit */
+  // Clear the align bit 
   ADC1->CR2 &= (uint8_t)(~ADC1_CR2_ALIGN);
-  /* Configure the data alignment */
+  // Configure the data alignment 
   ADC1->CR2 |= (uint8_t)(ADC1_Align);
   
   if (ADC1_ConversionMode == ADC1_CONVERSIONMODE_CONTINUOUS)
   {
-    /* Set the continuous conversion mode */
+    // Set the continuous conversion mode 
     ADC1->CR1 |= ADC1_CR1_CONT;
   }
-  else /* ADC1_ConversionMode == ADC1_CONVERSIONMODE_SINGLE */
+  else // ADC1_ConversionMode == ADC1_CONVERSIONMODE_SINGLE 
   {
-    /* Set the single conversion mode */
+    // Set the single conversion mode 
     ADC1->CR1 &= (uint8_t)(~ADC1_CR1_CONT);
   }
   
-  /* Clear the ADC1 channels */
+  // Clear the ADC1 channels 
   ADC1->CSR &= (uint8_t)(~ADC1_CSR_CH);
-  /* Select the ADC1 channel */
+  // Select the ADC1 channel 
   ADC1->CSR |= (uint8_t)(ADC1_Channel);
 }
 
@@ -324,25 +324,25 @@ void ADC1_ConversionConfig(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Chann
   */
 void ADC1_ExternalTriggerConfig(ADC1_ExtTrig_TypeDef ADC1_ExtTrigger, FunctionalState NewState)
 {
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_ADC1_EXTTRIG_OK(ADC1_ExtTrigger));
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
-  /* Clear the external trigger selection bits */
+  // Clear the external trigger selection bits 
   ADC1->CR2 &= (uint8_t)(~ADC1_CR2_EXTSEL);
   
   if (NewState != DISABLE)
   {
-    /* Enable the selected external Trigger */
+    // Enable the selected external Trigger 
     ADC1->CR2 |= (uint8_t)(ADC1_CR2_EXTTRIG);
   }
-  else /* NewState == DISABLE */
+  else // NewState == DISABLE 
   {
-    /* Disable the selected external trigger */
+    // Disable the selected external trigger 
     ADC1->CR2 &= (uint8_t)(~ADC1_CR2_EXTTRIG);
   }
   
-  /* Set the selected external trigger */
+  // Set the selected external trigger 
   ADC1->CR2 |= (uint8_t)(ADC1_ExtTrigger);
 }
 
@@ -367,32 +367,32 @@ void ADC1_StartConversion(void)
   * @par Required preconditions:
   * ADC1 conversion finished.
   */
-uint16_t ADC1_GetConversionValue(void)
+/*uint16_t ADC1_GetConversionValue(void)
 {
   uint16_t temph = 0;
   uint8_t templ = 0;
   
-  if ((ADC1->CR2 & ADC1_CR2_ALIGN) != 0) /* Right alignment */
+  if ((ADC1->CR2 & ADC1_CR2_ALIGN) != 0) // Right alignment 
   {
-    /* Read LSB first */
+    // Read LSB first 
     templ = ADC1->DRL;
-    /* Then read MSB */
+    // Then read MSB 
     temph = ADC1->DRH;
     
     temph = (uint16_t)(templ | (uint16_t)(temph << (uint8_t)8));
   }
-  else /* Left alignment */
+  else // Left alignment 
   {
-    /* Read MSB first*/
+    // Read MSB first
     temph = ADC1->DRH;
-    /* Then read LSB */
+    // Then read LSB 
     templ = ADC1->DRL;
     
     temph = (uint16_t)((uint16_t)((uint16_t)templ << 6) | (uint16_t)((uint16_t)temph << 8));
   }
   
   return ((uint16_t)temph);
-}
+}*/
 
 /**
   * @brief  Enables or disables the analog watchdog for the given channel.
@@ -402,9 +402,9 @@ uint16_t ADC1_GetConversionValue(void)
   * can have one of the values of @ref FunctionalState.
   * @retval None
   */
-void ADC1_AWDChannelConfig(ADC1_Channel_TypeDef Channel, FunctionalState NewState)
+/*void ADC1_AWDChannelConfig(ADC1_Channel_TypeDef Channel, FunctionalState NewState)
 {
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   assert_param(IS_ADC1_CHANNEL_OK(Channel));
   
@@ -414,7 +414,7 @@ void ADC1_AWDChannelConfig(ADC1_Channel_TypeDef Channel, FunctionalState NewStat
     {
       ADC1->AWCRL |= (uint8_t)((uint8_t)1 << Channel);
     }
-    else /* NewState == DISABLE */
+    else // NewState == DISABLE 
     {
       ADC1->AWCRL &= (uint8_t)~(uint8_t)((uint8_t)1 << Channel);
     }
@@ -425,12 +425,12 @@ void ADC1_AWDChannelConfig(ADC1_Channel_TypeDef Channel, FunctionalState NewStat
     {
       ADC1->AWCRH |= (uint8_t)((uint8_t)1 << (Channel - (uint8_t)8));
     }
-    else /* NewState == DISABLE */
+    else // NewState == DISABLE 
     {
       ADC1->AWCRH &= (uint8_t)~(uint8_t)((uint8_t)1 << (uint8_t)(Channel - (uint8_t)8));
     }
   }
-}
+}*/
 
 /**
   * @brief  Sets the high threshold of the analog watchdog.
@@ -438,11 +438,11 @@ void ADC1_AWDChannelConfig(ADC1_Channel_TypeDef Channel, FunctionalState NewStat
   * this value depends on the reference voltage range.
   * @retval None
   */
-void ADC1_SetHighThreshold(uint16_t Threshold)
+/*void ADC1_SetHighThreshold(uint16_t Threshold)
 {
   ADC1->HTRH = (uint8_t)(Threshold >> (uint8_t)2);
   ADC1->HTRL = (uint8_t)Threshold;
-}
+}*/
 
 /**
   * @brief  Sets the low threshold of the analog watchdog.
@@ -450,11 +450,11 @@ void ADC1_SetHighThreshold(uint16_t Threshold)
   * this value depends on the reference voltage range.
   * @retval None
   */
-void ADC1_SetLowThreshold(uint16_t Threshold)
+/*void ADC1_SetLowThreshold(uint16_t Threshold)
 {
   ADC1->LTRL = (uint8_t)Threshold;
   ADC1->LTRH = (uint8_t)(Threshold >> (uint8_t)2);
-}
+}*/
 
 /**
   * @brief  Get one sample of measured signal.
@@ -463,35 +463,35 @@ void ADC1_SetLowThreshold(uint16_t Threshold)
   * @par Required preconditions:
   * ADC1 conversion finished.
   */
-uint16_t ADC1_GetBufferValue(uint8_t Buffer)
+/*uint16_t ADC1_GetBufferValue(uint8_t Buffer)
 {
   uint16_t temph = 0;
   uint8_t templ = 0;
   
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_ADC1_BUFFER_OK(Buffer));
   
-  if ((ADC1->CR2 & ADC1_CR2_ALIGN) != 0) /* Right alignment */
+  if ((ADC1->CR2 & ADC1_CR2_ALIGN) != 0) // Right alignment 
   {
-    /* Read LSB first */
+    // Read LSB first 
     templ = *(uint8_t*)(uint16_t)((uint16_t)ADC1_BaseAddress + (uint8_t)(Buffer << 1) + 1);
-    /* Then read MSB */
+    // Then read MSB 
     temph = *(uint8_t*)(uint16_t)((uint16_t)ADC1_BaseAddress + (uint8_t)(Buffer << 1));
     
     temph = (uint16_t)(templ | (uint16_t)(temph << (uint8_t)8));
   }
-  else /* Left alignment */
+  else // Left alignment 
   {
-    /* Read MSB first*/
+    // Read MSB first
     temph = *(uint8_t*)(uint16_t)((uint16_t)ADC1_BaseAddress + (uint8_t)(Buffer << 1));
-    /* Then read LSB */
+    // Then read LSB 
     templ = *(uint8_t*)(uint16_t)((uint16_t)ADC1_BaseAddress + (uint8_t)(Buffer << 1) + 1);
     
     temph = (uint16_t)((uint16_t)((uint16_t)templ << 6) | (uint16_t)(temph << 8));
   }
   
   return ((uint16_t)temph);
-}
+}*/
 
 /**
   * @brief  Checks the specified analog watchdog channel status.
