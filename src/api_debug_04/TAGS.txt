@@ -10,7 +10,6 @@ ADC1_ALIGN_RIGHT	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	71;"	enumerator	enum:
 ADC1_AWCRH_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	353;"	macro
 ADC1_AWCRL_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	354;"	macro
 ADC1_AWDChannelConfig	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	320;"	prototype	signature:(ADC1_Channel_TypeDef Channel, FunctionalState NewState)
-ADC1_AWDChannelConfig	..\stm8s103f3_spl-master\src\stm8s_adc1.c	405;"	function	signature:(ADC1_Channel_TypeDef Channel, FunctionalState NewState)
 ADC1_Align_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	72;"	typedef	typeref:enum:__anon17
 ADC1_BaseAddress	..\stm8s103f3_spl-master\inc\stm8s.h	2586;"	macro
 ADC1_CHANNEL_0	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	157;"	enumerator	enum:__anon22
@@ -55,7 +54,6 @@ ADC1_ConvMode_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	149;"	typedef	ty
 ADC1_ConversionConfig	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	316;"	prototype	signature:(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_Align_TypeDef ADC1_Align)
 ADC1_ConversionConfig	..\stm8s103f3_spl-master\src\stm8s_adc1.c	286;"	function	signature:(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_Align_TypeDef ADC1_Align)
 ADC1_DataBufferCmd	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	311;"	prototype	signature:(FunctionalState NewState)
-ADC1_DataBufferCmd	..\stm8s103f3_spl-master\src\stm8s_adc1.c	166;"	function	signature:(FunctionalState NewState)
 ADC1_DeInit	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	301;"	prototype	signature:(void)
 ADC1_DeInit	..\stm8s103f3_spl-master\src\stm8s_adc1.c	52;"	function	signature:(void)
 ADC1_EXTTRIG_GPIO	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	62;"	enumerator	enum:__anon16
@@ -81,7 +79,6 @@ ADC1_Flag_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	118;"	typedef	typere
 ADC1_GetAWDChannelStatus	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	326;"	prototype	signature:(ADC1_Channel_TypeDef Channel)
 ADC1_GetAWDChannelStatus	..\stm8s103f3_spl-master\src\stm8s_adc1.c	502;"	function	signature:(ADC1_Channel_TypeDef Channel)
 ADC1_GetBufferValue	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	325;"	prototype	signature:(uint8_t Buffer)
-ADC1_GetBufferValue	..\stm8s103f3_spl-master\src\stm8s_adc1.c	466;"	function	signature:(uint8_t Buffer)
 ADC1_GetConversionValue	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	322;"	prototype	signature:(void)
 ADC1_GetConversionValue	..\stm8s103f3_spl-master\src\stm8s_adc1.c	370;"	function	signature:(void)
 ADC1_GetFlagStatus	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	327;"	prototype	signature:(ADC1_Flag_TypeDef Flag)
@@ -91,7 +88,6 @@ ADC1_GetITStatus	..\stm8s103f3_spl-master\src\stm8s_adc1.c	616;"	function	signat
 ADC1_HTRH_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	350;"	macro
 ADC1_HTRL_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	349;"	macro
 ADC1_ITConfig	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	312;"	prototype	signature:(ADC1_IT_TypeDef ADC1_IT, FunctionalState NewState)
-ADC1_ITConfig	..\stm8s103f3_spl-master\src\stm8s_adc1.c	190;"	function	signature:(ADC1_IT_TypeDef ADC1_IT, FunctionalState NewState)
 ADC1_IT_AWD	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	81;"	enumerator	enum:__anon18
 ADC1_IT_AWDIE	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	79;"	enumerator	enum:__anon18
 ADC1_IT_AWS0	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	82;"	enumerator	enum:__anon18
@@ -141,9 +137,7 @@ ADC1_SchmittTrigg_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	139;"	typede
 ADC1_SchmittTriggerConfig	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	314;"	prototype	signature:(ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState NewState)
 ADC1_SchmittTriggerConfig	..\stm8s103f3_spl-master\src\stm8s_adc1.c	233;"	function	signature:(ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState NewState)
 ADC1_SetHighThreshold	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	323;"	prototype	signature:(uint16_t Threshold)
-ADC1_SetHighThreshold	..\stm8s103f3_spl-master\src\stm8s_adc1.c	441;"	function	signature:(uint16_t Threshold)
 ADC1_SetLowThreshold	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	324;"	prototype	signature:(uint16_t Threshold)
-ADC1_SetLowThreshold	..\stm8s103f3_spl-master\src\stm8s_adc1.c	453;"	function	signature:(uint16_t Threshold)
 ADC1_StartConversion	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	321;"	prototype	signature:(void)
 ADC1_StartConversion	..\stm8s103f3_spl-master\src\stm8s_adc1.c	358;"	function	signature:(void)
 ADC1_TDRH_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	348;"	macro
@@ -471,12 +465,9 @@ CKDIVR	..\stm8s103f3_spl-master\inc\stm8s.h	516;"	member	struct:CLK_struct
 CLK	..\stm8s103f3_spl-master\inc\stm8s.h	2619;"	macro
 CLKPrescTable	..\stm8s103f3_spl-master\src\stm8s_clk.c	49;"	variable
 CLK_AdjustHSICalibrationValue	..\stm8s103f3_spl-master\inc\stm8s_clk.h	369;"	prototype	signature:(CLK_HSITrimValue_TypeDef CLK_HSICalibrationValue)
-CLK_AdjustHSICalibrationValue	..\stm8s103f3_spl-master\src\stm8s_clk.c	604;"	function	signature:(CLK_HSITrimValue_TypeDef CLK_HSICalibrationValue)
 CLK_BaseAddress	..\stm8s103f3_spl-master\inc\stm8s.h	2569;"	macro
 CLK_CCOCmd	..\stm8s103f3_spl-master\inc\stm8s_clk.h	356;"	prototype	signature:(FunctionalState NewState)
-CLK_CCOCmd	..\stm8s103f3_spl-master\src\stm8s_clk.c	189;"	function	signature:(FunctionalState NewState)
 CLK_CCOConfig	..\stm8s103f3_spl-master\inc\stm8s_clk.h	363;"	prototype	signature:(CLK_Output_TypeDef CLK_CCO)
-CLK_CCOConfig	..\stm8s103f3_spl-master\src\stm8s_clk.c	436;"	function	signature:(CLK_Output_TypeDef CLK_CCO)
 CLK_CCOR_CCOBSY	..\stm8s103f3_spl-master\inc\stm8s.h	594;"	macro
 CLK_CCOR_CCOEN	..\stm8s103f3_spl-master\inc\stm8s.h	597;"	macro
 CLK_CCOR_CCORDY	..\stm8s103f3_spl-master\inc\stm8s.h	595;"	macro
@@ -499,13 +490,9 @@ CLK_CSSR_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	539;"	macro
 CLK_CURRENTCLOCKSTATE_DISABLE	..\stm8s103f3_spl-master\inc\stm8s_clk.h	54;"	enumerator	enum:__anon26
 CLK_CURRENTCLOCKSTATE_ENABLE	..\stm8s103f3_spl-master\inc\stm8s_clk.h	55;"	enumerator	enum:__anon26
 CLK_ClearITPendingBit	..\stm8s103f3_spl-master\inc\stm8s_clk.h	374;"	prototype	signature:(CLK_IT_TypeDef CLK_IT)
-CLK_ClearITPendingBit	..\stm8s103f3_spl-master\src\stm8s_clk.c	729;"	function	signature:(CLK_IT_TypeDef CLK_IT)
 CLK_ClockSecuritySystemEnable	..\stm8s103f3_spl-master\inc\stm8s_clk.h	367;"	prototype	signature:(void)
-CLK_ClockSecuritySystemEnable	..\stm8s103f3_spl-master\src\stm8s_clk.c	547;"	function	signature:(void)
 CLK_ClockSwitchCmd	..\stm8s103f3_spl-master\inc\stm8s_clk.h	357;"	prototype	signature:(FunctionalState NewState)
-CLK_ClockSwitchCmd	..\stm8s103f3_spl-master\src\stm8s_clk.c	213;"	function	signature:(FunctionalState NewState)
 CLK_ClockSwitchConfig	..\stm8s103f3_spl-master\inc\stm8s_clk.h	361;"	prototype	signature:(CLK_SwitchMode_TypeDef CLK_SwitchMode, CLK_Source_TypeDef CLK_NewClock, FunctionalState ITState, CLK_CurrentClockState_TypeDef CLK_CurrentClockState)
-CLK_ClockSwitchConfig	..\stm8s103f3_spl-master\src\stm8s_clk.c	309;"	function	signature:(CLK_SwitchMode_TypeDef CLK_SwitchMode, CLK_Source_TypeDef CLK_NewClock, FunctionalState ITState, CLK_CurrentClockState_TypeDef CLK_CurrentClockState)
 CLK_CurrentClockState_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_clk.h	56;"	typedef	typeref:enum:__anon26
 CLK_DeInit	..\stm8s103f3_spl-master\inc\stm8s_clk.h	352;"	prototype	signature:(void)
 CLK_DeInit	..\stm8s103f3_spl-master\src\stm8s_clk.c	72;"	function	signature:(void)
@@ -522,22 +509,15 @@ CLK_FLAG_LSIRDY	..\stm8s103f3_spl-master\inc\stm8s_clk.h	152;"	enumerator	enum:_
 CLK_FLAG_SWBSY	..\stm8s103f3_spl-master\inc\stm8s_clk.h	156;"	enumerator	enum:__anon32
 CLK_FLAG_SWIF	..\stm8s103f3_spl-master\inc\stm8s_clk.h	155;"	enumerator	enum:__anon32
 CLK_FastHaltWakeUpCmd	..\stm8s103f3_spl-master\inc\stm8s_clk.h	358;"	prototype	signature:(FunctionalState NewState)
-CLK_FastHaltWakeUpCmd	..\stm8s103f3_spl-master\src\stm8s_clk.c	99;"	function	signature:(FunctionalState NewState)
 CLK_Flag_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_clk.h	161;"	typedef	typeref:enum:__anon32
 CLK_GetClockFreq	..\stm8s103f3_spl-master\inc\stm8s_clk.h	370;"	prototype	signature:(void)
 CLK_GetClockFreq	..\stm8s103f3_spl-master\src\stm8s_clk.c	569;"	function	signature:(void)
 CLK_GetFlagStatus	..\stm8s103f3_spl-master\inc\stm8s_clk.h	372;"	prototype	signature:(CLK_Flag_TypeDef CLK_FLAG)
-CLK_GetFlagStatus	..\stm8s103f3_spl-master\src\stm8s_clk.c	634;"	function	signature:(CLK_Flag_TypeDef CLK_FLAG)
 CLK_GetITStatus	..\stm8s103f3_spl-master\inc\stm8s_clk.h	373;"	prototype	signature:(CLK_IT_TypeDef CLK_IT)
-CLK_GetITStatus	..\stm8s103f3_spl-master\src\stm8s_clk.c	687;"	function	signature:(CLK_IT_TypeDef CLK_IT)
 CLK_GetSYSCLKSource	..\stm8s103f3_spl-master\inc\stm8s_clk.h	371;"	prototype	signature:(void)
-CLK_GetSYSCLKSource	..\stm8s103f3_spl-master\src\stm8s_clk.c	559;"	function	signature:(void)
 CLK_HSECmd	..\stm8s103f3_spl-master\inc\stm8s_clk.h	353;"	prototype	signature:(FunctionalState NewState)
-CLK_HSECmd	..\stm8s103f3_spl-master\src\stm8s_clk.c	121;"	function	signature:(FunctionalState NewState)
 CLK_HSICmd	..\stm8s103f3_spl-master\inc\stm8s_clk.h	354;"	prototype	signature:(FunctionalState NewState)
-CLK_HSICmd	..\stm8s103f3_spl-master\src\stm8s_clk.c	143;"	function	signature:(FunctionalState NewState)
 CLK_HSIPrescalerConfig	..\stm8s103f3_spl-master\inc\stm8s_clk.h	362;"	prototype	signature:(CLK_Prescaler_TypeDef HSIPrescaler)
-CLK_HSIPrescalerConfig	..\stm8s103f3_spl-master\src\stm8s_clk.c	415;"	function	signature:(CLK_Prescaler_TypeDef HSIPrescaler)
 CLK_HSITRIMR_HSITRIM	..\stm8s103f3_spl-master\inc\stm8s.h	599;"	macro
 CLK_HSITRIMR_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	541;"	macro
 CLK_HSITRIMVALUE_0	..\stm8s103f3_spl-master\inc\stm8s_clk.h	80;"	enumerator	enum:__anon29
@@ -557,12 +537,10 @@ CLK_ICKR_LSIRDY	..\stm8s103f3_spl-master\inc\stm8s.h	552;"	macro
 CLK_ICKR_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	531;"	macro
 CLK_ICKR_SWUAH	..\stm8s103f3_spl-master\inc\stm8s.h	551;"	macro
 CLK_ITConfig	..\stm8s103f3_spl-master\inc\stm8s_clk.h	364;"	prototype	signature:(CLK_IT_TypeDef CLK_IT, FunctionalState NewState)
-CLK_ITConfig	..\stm8s103f3_spl-master\src\stm8s_clk.c	459;"	function	signature:(CLK_IT_TypeDef CLK_IT, FunctionalState NewState)
 CLK_IT_CSSD	..\stm8s103f3_spl-master\inc\stm8s_clk.h	167;"	enumerator	enum:__anon33
 CLK_IT_SWIF	..\stm8s103f3_spl-master\inc\stm8s_clk.h	168;"	enumerator	enum:__anon33
 CLK_IT_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_clk.h	169;"	typedef	typeref:enum:__anon33
 CLK_LSICmd	..\stm8s103f3_spl-master\inc\stm8s_clk.h	355;"	prototype	signature:(FunctionalState NewState)
-CLK_LSICmd	..\stm8s103f3_spl-master\src\stm8s_clk.c	166;"	function	signature:(FunctionalState NewState)
 CLK_OUTPUT_CPU	..\stm8s103f3_spl-master\inc\stm8s_clk.h	97;"	enumerator	enum:__anon30
 CLK_OUTPUT_CPUDIV16	..\stm8s103f3_spl-master\inc\stm8s_clk.h	101;"	enumerator	enum:__anon30
 CLK_OUTPUT_CPUDIV2	..\stm8s103f3_spl-master\inc\stm8s_clk.h	98;"	enumerator	enum:__anon30
@@ -620,7 +598,6 @@ CLK_PRESCALER_HSIDIV2	..\stm8s103f3_spl-master\inc\stm8s_clk.h	182;"	enumerator	
 CLK_PRESCALER_HSIDIV4	..\stm8s103f3_spl-master\inc\stm8s_clk.h	183;"	enumerator	enum:__anon34
 CLK_PRESCALER_HSIDIV8	..\stm8s103f3_spl-master\inc\stm8s_clk.h	184;"	enumerator	enum:__anon34
 CLK_PeripheralClockConfig	..\stm8s103f3_spl-master\inc\stm8s_clk.h	360;"	prototype	signature:(CLK_Peripheral_TypeDef CLK_Peripheral, FunctionalState NewState)
-CLK_PeripheralClockConfig	..\stm8s103f3_spl-master\src\stm8s_clk.c	263;"	function	signature:(CLK_Peripheral_TypeDef CLK_Peripheral, FunctionalState NewState)
 CLK_Peripheral_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_clk.h	137;"	typedef	typeref:enum:__anon31
 CLK_Prescaler_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_clk.h	193;"	typedef	typeref:enum:__anon34
 CLK_SOURCE_HSE	..\stm8s103f3_spl-master\inc\stm8s_clk.h	73;"	enumerator	enum:__anon28
@@ -634,7 +611,6 @@ CLK_SWCR_SWIF	..\stm8s103f3_spl-master\inc\stm8s.h	565;"	macro
 CLK_SWIMCCR_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	542;"	macro
 CLK_SWIMCCR_SWIMDIV	..\stm8s103f3_spl-master\inc\stm8s.h	601;"	macro
 CLK_SWIMConfig	..\stm8s103f3_spl-master\inc\stm8s_clk.h	366;"	prototype	signature:(CLK_SWIMDivider_TypeDef CLK_SWIMDivider)
-CLK_SWIMConfig	..\stm8s103f3_spl-master\src\stm8s_clk.c	523;"	function	signature:(CLK_SWIMDivider_TypeDef CLK_SWIMDivider)
 CLK_SWIMDIVIDER_2	..\stm8s103f3_spl-master\inc\stm8s_clk.h	199;"	enumerator	enum:__anon35
 CLK_SWIMDIVIDER_OTHER	..\stm8s103f3_spl-master\inc\stm8s_clk.h	200;"	enumerator	enum:__anon35
 CLK_SWIMDivider_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_clk.h	201;"	typedef	typeref:enum:__anon35
@@ -643,11 +619,8 @@ CLK_SWITCHMODE_MANUAL	..\stm8s103f3_spl-master\inc\stm8s_clk.h	46;"	enumerator	e
 CLK_SWR_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	534;"	macro
 CLK_SWR_SWI	..\stm8s103f3_spl-master\inc\stm8s.h	563;"	macro
 CLK_SYSCLKConfig	..\stm8s103f3_spl-master\inc\stm8s_clk.h	365;"	prototype	signature:(CLK_Prescaler_TypeDef CLK_Prescaler)
-CLK_SYSCLKConfig	..\stm8s103f3_spl-master\src\stm8s_clk.c	500;"	function	signature:(CLK_Prescaler_TypeDef CLK_Prescaler)
 CLK_SYSCLKEmergencyClear	..\stm8s103f3_spl-master\inc\stm8s_clk.h	368;"	prototype	signature:(void)
-CLK_SYSCLKEmergencyClear	..\stm8s103f3_spl-master\src\stm8s_clk.c	622;"	function	signature:(void)
 CLK_SlowActiveHaltWakeUpCmd	..\stm8s103f3_spl-master\inc\stm8s_clk.h	359;"	prototype	signature:(FunctionalState NewState)
-CLK_SlowActiveHaltWakeUpCmd	..\stm8s103f3_spl-master\src\stm8s_clk.c	238;"	function	signature:(FunctionalState NewState)
 CLK_Source_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_clk.h	74;"	typedef	typeref:enum:__anon28
 CLK_SwitchMode_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_clk.h	48;"	typedef	typeref:enum:__anon25
 CLK_TIMEOUT	..\stm8s103f3_spl-master\inc\stm8s_clk.h	212;"	macro
@@ -1531,7 +1504,7 @@ IWDG_WriteAccess_Enable	..\stm8s103f3_spl-master\inc\stm8s_iwdg.h	90;"	enumerato
 IWDG_WriteAccess_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_iwdg.h	92;"	typedef	typeref:enum:__anon57
 IWDG_struct	..\stm8s103f3_spl-master\inc\stm8s.h	1609;"	struct
 KR	..\stm8s103f3_spl-master\inc\stm8s.h	1611;"	member	struct:IWDG_struct
-LED_COUNT	main.c	8;"	variable
+LED_COUNT	main.c	8;"	macro	file:
 LSI_FREQUENCY_MAX	..\stm8s103f3_spl-master\inc\stm8s_awu.h	77;"	macro
 LSI_FREQUENCY_MAX	..\stm8s103f3_spl-master\inc\stm8s_beep.h	64;"	macro
 LSI_FREQUENCY_MIN	..\stm8s103f3_spl-master\inc\stm8s_awu.h	76;"	macro
@@ -1843,24 +1816,26 @@ SUCCESS	..\stm8s103f3_spl-master\inc\stm8s.h	238;"	enumerator	enum:__anon4
 SWCR	..\stm8s103f3_spl-master\inc\stm8s.h	515;"	member	struct:CLK_struct
 SWIMCCR	..\stm8s103f3_spl-master\inc\stm8s.h	523;"	member	struct:CLK_struct
 SWR	..\stm8s103f3_spl-master\inc\stm8s.h	514;"	member	struct:CLK_struct
+Serial_available	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	109;"	function	signature:()
 Serial_available	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	21;"	prototype	signature:(void)
-Serial_available	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	95;"	function	signature:()
 Serial_begin	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	16;"	prototype	signature:(uint32_t)
 Serial_begin	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	38;"	function	signature:(uint32_t baud_rate)
 Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	20;"	prototype	signature:(void)
-Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	76;"	function	signature:(void)
+Serial_newline	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	90;"	function	signature:(void)
 Serial_newline	main.c	27;"	prototype	file:	signature:(void)
-Serial_newline	main.c	588;"	function	signature:(void)
+Serial_newline	main.c	590;"	function	signature:(void)
 Serial_print_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	18;"	prototype	signature:(char)
 Serial_print_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	32;"	function	signature:(char value)
 Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	17;"	prototype	signature:(int)
-Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	56;"	function	signature:(int number)
+Serial_print_int	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	70;"	function	signature:(int number)
 Serial_print_int	main.c	26;"	prototype	file:	signature:(int number)
-Serial_print_int	main.c	568;"	function	signature:(int number)
+Serial_print_int	main.c	570;"	function	signature:(int number)
 Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	19;"	prototype	signature:(char[])
-Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	82;"	function	signature:(char string[])
+Serial_print_string	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	96;"	function	signature:(char string[])
 Serial_print_string	main.c	28;"	prototype	file:	signature:(char string[])
-Serial_print_string	main.c	555;"	function	signature:(char string[])
+Serial_print_string	main.c	557;"	function	signature:(char string[])
+Serial_print_u32	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	23;"	prototype	signature:(u32)
+Serial_print_u32	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	56;"	function	signature:(u32 number)
 Serial_read_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	22;"	prototype	signature:(void)
 Serial_read_char	..\stm8s103f3_spl-master\inc\stm8s103_serial.h	25;"	function	signature:(void)
 SetBit	..\stm8s103f3_spl-master\inc\stm8s.h	2789;"	macro
@@ -2361,7 +2336,7 @@ TIM2_CR1_OPM	..\stm8s103f3_spl-master\inc\stm8s.h	889;"	macro
 TIM2_CR1_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	858;"	macro
 TIM2_CR1_UDIS	..\stm8s103f3_spl-master\inc\stm8s.h	891;"	macro
 TIM2_CR1_URS	..\stm8s103f3_spl-master\inc\stm8s.h	890;"	macro
-TIM2_CapComp_IRQ_Handler	main.c	528;"	function	signature:(void)
+TIM2_CapComp_IRQ_Handler	main.c	530;"	function	signature:(void)
 TIM2_CapComp_IRQ_Handler	stm8_interrupt_vector.c	25;"	prototype	file:	signature:(void)
 TIM2_Channel_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_tim2.h	133;"	typedef	typeref:enum:__anon106
 TIM2_ClearFlag	..\stm8s103f3_spl-master\inc\stm8s_tim2.h	327;"	prototype	signature:(TIM2_FLAG_TypeDef TIM2_FLAG)
@@ -2536,7 +2511,7 @@ TIM2_TimeBaseInit	..\stm8s103f3_spl-master\src\stm8s_tim2.c	89;"	function	signat
 TIM2_TypeDef	..\stm8s103f3_spl-master\inc\stm8s.h	852;"	typedef	typeref:struct:TIM2_struct
 TIM2_UPDATESOURCE_GLOBAL	..\stm8s103f3_spl-master\inc\stm8s_tim2.h	244;"	enumerator	enum:__anon115
 TIM2_UPDATESOURCE_REGULAR	..\stm8s103f3_spl-master\inc\stm8s_tim2.h	245;"	enumerator	enum:__anon115
-TIM2_UPD_OVF_IRQHandler	main.c	520;"	function	signature:(void)
+TIM2_UPD_OVF_IRQHandler	main.c	522;"	function	signature:(void)
 TIM2_UPD_OVF_IRQHandler	stm8_interrupt_vector.c	24;"	prototype	file:	signature:(void)
 TIM2_UpdateDisableConfig	..\stm8s103f3_spl-master\inc\stm8s_tim2.h	295;"	prototype	signature:(FunctionalState NewState)
 TIM2_UpdateDisableConfig	..\stm8s103f3_spl-master\src\stm8s_tim2.c	392;"	function	signature:(FunctionalState NewState)
@@ -2620,7 +2595,7 @@ TIM4_PSCR_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	1083;"	macro
 TIM4_SR1_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	1080;"	macro
 TIM4_SR1_UIF	..\stm8s103f3_spl-master\inc\stm8s.h	1102;"	macro
 TIM4_TypeDef	..\stm8s103f3_spl-master\inc\stm8s.h	1072;"	typedef	typeref:struct:TIM4_struct
-TIM4_UPD_OVF_IRQHandler	main.c	514;"	function	signature:(void)
+TIM4_UPD_OVF_IRQHandler	main.c	516;"	function	signature:(void)
 TIM4_UPD_OVF_IRQHandler	stm8_interrupt_vector.c	23;"	prototype	file:	signature:(void)
 TIM4_struct	..\stm8s103f3_spl-master\inc\stm8s.h	1058;"	struct
 TIM5	..\stm8s103f3_spl-master\inc\stm8s.h	2696;"	macro
@@ -2811,13 +2786,10 @@ UART1_GTR_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	1795;"	macro
 UART1_GetFlagStatus	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	368;"	prototype	signature:(UART1_Flag_TypeDef UART1_FLAG)
 UART1_GetFlagStatus	..\stm8s103f3_spl-master\src\stm8s_uart1.c	568;"	function	signature:(UART1_Flag_TypeDef UART1_FLAG)
 UART1_GetITStatus	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	370;"	prototype	signature:(UART1_IT_TypeDef UART1_IT)
-UART1_GetITStatus	..\stm8s103f3_spl-master\src\stm8s_uart1.c	675;"	function	signature:(UART1_IT_TypeDef UART1_IT)
 UART1_HalfDuplexCmd	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	351;"	prototype	signature:(FunctionalState NewState)
-UART1_HalfDuplexCmd	..\stm8s103f3_spl-master\src\stm8s_uart1.c	265;"	function	signature:(FunctionalState NewState)
 UART1_IRDAMODE_LOWPOWER	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	51;"	enumerator	enum:__anon117
 UART1_IRDAMODE_NORMAL	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	50;"	enumerator	enum:__anon117
 UART1_ITConfig	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	350;"	prototype	signature:(UART1_IT_TypeDef UART1_IT, FunctionalState NewState)
-UART1_ITConfig	..\stm8s103f3_spl-master\src\stm8s_uart1.c	211;"	function	signature:(UART1_IT_TypeDef UART1_IT, FunctionalState NewState)
 UART1_IT_IDLE	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	161;"	enumerator	enum:__anon126
 UART1_IT_LBDF	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	164;"	enumerator	enum:__anon126
 UART1_IT_OR	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	162;"	enumerator	enum:__anon126
@@ -2830,17 +2802,13 @@ UART1_IT_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	166;"	typedef	typere
 UART1_Init	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	346;"	prototype	signature:(uint32_t BaudRate, UART1_WordLength_TypeDef WordLength, UART1_StopBits_TypeDef StopBits, UART1_Parity_TypeDef Parity, UART1_SyncMode_TypeDef SyncMode, UART1_Mode_TypeDef Mode)
 UART1_Init	..\stm8s103f3_spl-master\src\stm8s_uart1.c	90;"	function	signature:(uint32_t BaudRate, UART1_WordLength_TypeDef WordLength, UART1_StopBits_TypeDef StopBits, UART1_Parity_TypeDef Parity, UART1_SyncMode_TypeDef SyncMode, UART1_Mode_TypeDef Mode)
 UART1_IrDACmd	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	353;"	prototype	signature:(FunctionalState NewState)
-UART1_IrDACmd	..\stm8s103f3_spl-master\src\stm8s_uart1.c	305;"	function	signature:(FunctionalState NewState)
 UART1_IrDAConfig	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	352;"	prototype	signature:(UART1_IrDAMode_TypeDef UART1_IrDAMode)
-UART1_IrDAConfig	..\stm8s103f3_spl-master\src\stm8s_uart1.c	285;"	function	signature:(UART1_IrDAMode_TypeDef UART1_IrDAMode)
 UART1_IrDAMode_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	52;"	typedef	typeref:enum:__anon117
 UART1_LINBREAKDETECTIONLENGTH_10BITS	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	64;"	enumerator	enum:__anon119
 UART1_LINBREAKDETECTIONLENGTH_11BITS	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	65;"	enumerator	enum:__anon119
 UART1_LINBreakDetectionConfig	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	354;"	prototype	signature:(UART1_LINBreakDetectionLength_TypeDef UART1_LINBreakDetectionLength)
-UART1_LINBreakDetectionConfig	..\stm8s103f3_spl-master\src\stm8s_uart1.c	329;"	function	signature:(UART1_LINBreakDetectionLength_TypeDef UART1_LINBreakDetectionLength)
 UART1_LINBreakDetectionLength_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	66;"	typedef	typeref:enum:__anon119
 UART1_LINCmd	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	355;"	prototype	signature:(FunctionalState NewState)
-UART1_LINCmd	..\stm8s103f3_spl-master\src\stm8s_uart1.c	349;"	function	signature:(FunctionalState NewState)
 UART1_MODE_RX_DISABLE	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	112;"	enumerator	enum:__anon124
 UART1_MODE_RX_ENABLE	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	109;"	enumerator	enum:__anon124
 UART1_MODE_TXRX_ENABLE	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	113;"	enumerator	enum:__anon124
@@ -2857,7 +2825,6 @@ UART1_ReceiveData8	..\stm8s103f3_spl-master\src\stm8s_uart1.c	451;"	function	sig
 UART1_ReceiveData9	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	361;"	prototype	signature:(void)
 UART1_ReceiveData9	..\stm8s103f3_spl-master\src\stm8s_uart1.c	461;"	function	signature:(void)
 UART1_ReceiverWakeUpCmd	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	359;"	prototype	signature:(FunctionalState NewState)
-UART1_ReceiverWakeUpCmd	..\stm8s103f3_spl-master\src\stm8s_uart1.c	430;"	function	signature:(FunctionalState NewState)
 UART1_SR_FE	..\stm8s103f3_spl-master\inc\stm8s.h	1812;"	macro
 UART1_SR_IDLE	..\stm8s103f3_spl-master\inc\stm8s.h	1809;"	macro
 UART1_SR_NF	..\stm8s103f3_spl-master\inc\stm8s.h	1811;"	macro
@@ -2888,13 +2855,10 @@ UART1_SendData9	..\stm8s103f3_spl-master\src\stm8s_uart1.c	486;"	function	signat
 UART1_SetAddress	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	365;"	prototype	signature:(uint8_t UART1_Address)
 UART1_SetAddress	..\stm8s103f3_spl-master\src\stm8s_uart1.c	511;"	function	signature:(uint8_t UART1_Address)
 UART1_SetGuardTime	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	366;"	prototype	signature:(uint8_t UART1_GuardTime)
-UART1_SetGuardTime	..\stm8s103f3_spl-master\src\stm8s_uart1.c	528;"	function	signature:(uint8_t UART1_GuardTime)
 UART1_SetPrescaler	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	367;"	prototype	signature:(uint8_t UART1_Prescaler)
 UART1_SetPrescaler	..\stm8s103f3_spl-master\src\stm8s_uart1.c	556;"	function	signature:(uint8_t UART1_Prescaler)
 UART1_SmartCardCmd	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	356;"	prototype	signature:(FunctionalState NewState)
-UART1_SmartCardCmd	..\stm8s103f3_spl-master\src\stm8s_uart1.c	371;"	function	signature:(FunctionalState NewState)
 UART1_SmartCardNACKCmd	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	357;"	prototype	signature:(FunctionalState NewState)
-UART1_SmartCardNACKCmd	..\stm8s103f3_spl-master\src\stm8s_uart1.c	394;"	function	signature:(FunctionalState NewState)
 UART1_StopBits_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	76;"	typedef	typeref:enum:__anon120
 UART1_SyncMode_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	97;"	typedef	typeref:enum:__anon122
 UART1_TypeDef	..\stm8s103f3_spl-master\inc\stm8s.h	1781;"	typedef	typeref:struct:UART1_struct
@@ -2903,7 +2867,6 @@ UART1_WAKEUP_IDLELINE	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	57;"	enumerator
 UART1_WORDLENGTH_8D	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	102;"	enumerator	enum:__anon123
 UART1_WORDLENGTH_9D	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	103;"	enumerator	enum:__anon123
 UART1_WakeUpConfig	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	358;"	prototype	signature:(UART1_WakeUp_TypeDef UART1_WakeUp)
-UART1_WakeUpConfig	..\stm8s103f3_spl-master\src\stm8s_uart1.c	416;"	function	signature:(UART1_WakeUp_TypeDef UART1_WakeUp)
 UART1_WakeUp_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	59;"	typedef	typeref:enum:__anon118
 UART1_WordLength_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	104;"	typedef	typeref:enum:__anon123
 UART1_struct	..\stm8s103f3_spl-master\inc\stm8s.h	1767;"	struct
@@ -3181,13 +3144,13 @@ s16	..\stm8s103f3_spl-master\inc\stm8s.h	223;"	typedef
 s32	..\stm8s103f3_spl-master\inc\stm8s.h	222;"	typedef
 s8	..\stm8s103f3_spl-master\inc\stm8s.h	224;"	typedef
 setLED	main.c	23;"	prototype	file:	signature:(bool is_rgb,int led_index,int rgb_index)
-setLED	main.c	607;"	function	signature:(bool is_rgb,int led_index,int rgb_index)
+setLED	main.c	609;"	function	signature:(bool is_rgb,int led_index,int rgb_index)
 setMatrixHighZ	main.c	22;"	prototype	file:	signature:(void)
-setMatrixHighZ	main.c	594;"	function
+setMatrixHighZ	main.c	596;"	function
 setRGB	main.c	24;"	prototype	file:	signature:(int led_index,int rgb_index)
-setRGB	main.c	604;"	function	signature:(int led_index,int rgb_index)
+setRGB	main.c	606;"	function	signature:(int led_index,int rgb_index)
 setWhite	main.c	25;"	prototype	file:	signature:(int led_index)
-setWhite	main.c	605;"	function	signature:(int led_index)
+setWhite	main.c	607;"	function	signature:(int led_index)
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2719;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2728;"	macro
 sim	..\stm8s103f3_spl-master\inc\stm8s.h	2738;"	macro

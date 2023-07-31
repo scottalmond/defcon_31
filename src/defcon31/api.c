@@ -51,11 +51,10 @@ void setup_serial(bool is_enabled,bool is_fast_baud_rate)
 {
 	if(is_enabled)
 	{
-		UART1_Cmd(DISABLE);
 		GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
 		GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
 		UART1_DeInit();
-		UART1_Init(is_fast_baud_rate?9600:1000000, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+		UART1_Init(is_fast_baud_rate?115200:9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
 		UART1_Cmd(ENABLE);
 	}else{
 		UART1_Cmd(DISABLE);
@@ -356,7 +355,7 @@ void set_led(u8 led_index)
 	//(10*3) is debug
 	//(10*3+1) to (10*3+1+12) is white LEDs
 	const u8 led_lookup[LED_COUNT][2]={//[0] is HIGH mat, [1] is LOW mat
-		{0,1},{0,2},{1,2},//LED7  RGB
+		/*{0,1},{0,2},{1,2},//LED7  RGB
 		{1,0},{2,0},{2,1},//LED3  RGB
 		{5,0},{5,1},{5,2},//LED1  RGB
 		{6,0},{6,1},{6,2},//LED20 RGB
@@ -365,7 +364,11 @@ void set_led(u8 led_index)
 		{3,4},{3,5},{3,6},//LED21 RGB
 		{0,5},{0,6},{1,6},//LED19 RGB
 		{0,4},{1,4},{2,4},//LED18 RGB
-		{0,3},{1,3},{2,3},//LED2  RGB
+		{0,3},{1,3},{2,3},*///LED2  RGB
+		
+		{0,1},{1,0},{5,0},{6,0},{6,5},{4,3},{3,4},{0,5},{0,4},{0,3},//reds
+		{0,2},{2,0},{5,1},{6,1},{6,4},{5,3},{3,5},{0,6},{1,4},{1,3},//greens
+		{1,2},{2,1},{5,2},{6,2},{5,4},{6,3},{3,6},{1,6},{2,4},{2,3},//blues
 		{7,7},//debug; GND is tied low, no charlieplexing involved
 		{3,0},//LED6
 		{3,1},//LED4

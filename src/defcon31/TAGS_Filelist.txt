@@ -2,8 +2,6 @@ stm8s103_serial.c
 sleep.c
 ..\stm8s103f3_spl-master\src\stm8s_adc1.c
 ..\stm8s103f3_spl-master\src\stm8s_clk.c
-..\stm8s103f3_spl-master\src\stm8s_exti.c
-..\stm8s103f3_spl-master\src\stm8s_flash.c
 ..\stm8s103f3_spl-master\src\stm8s_gpio.c
 ..\stm8s103f3_spl-master\src\stm8s_uart1.c
 api.c
@@ -18,8 +16,6 @@ sleep.h
 ..\stm8s103f3_spl-master\inc\stm8s_adc1.h
 ..\stm8s103f3_spl-master\inc\stm8s_clk.h
 ..\stm8s103f3_spl-master\inc\stm8s_conf.h
-..\stm8s103f3_spl-master\inc\stm8s_exti.h
-..\stm8s103f3_spl-master\inc\stm8s_flash.h
 ..\stm8s103f3_spl-master\inc\stm8s_gpio.h
 ..\stm8s103f3_spl-master\inc\stm8s_uart1.h
 api.h
@@ -27,6 +23,8 @@ application.h
 developer.h
 ..\stm8s103f3_spl-master\inc\stm8s_awu.h
 ..\stm8s103f3_spl-master\inc\stm8s_beep.h
+..\stm8s103f3_spl-master\inc\stm8s_exti.h
+..\stm8s103f3_spl-master\inc\stm8s_flash.h
 ..\stm8s103f3_spl-master\inc\stm8s_i2c.h
 ..\stm8s103f3_spl-master\inc\stm8s_itc.h
 ..\stm8s103f3_spl-master\inc\stm8s_iwdg.h

@@ -12,10 +12,11 @@
 
 //Funtion Declarations 
  void Serial_begin(uint32_t); //pass baud rate and start serial communiaction 
- //void Serial_print_int (int); //pass integer value to print it on screen
+ void Serial_print_int (int); //pass integer value to print it on screen
  void Serial_print_char (char); //pass char value to print it on screen 
  void Serial_print_string (char[]); //pass string value to print it 
  void Serial_newline(void); //move to next line
  bool Serial_available(void); //check if input serial data available return 1 is yes 
- char Serial_read_char(void); //read the incoming char byte and return it 
+ char Serial_read_char(bool is_blocking); //read the incoming char byte and return it 
+ char Serial_read_char_now(void); //read the incoming char byte and return it 
  void Serial_print_u32(u32);

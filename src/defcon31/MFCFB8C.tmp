@@ -91,7 +91,7 @@ void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETER
 	{//for fast/lossless execution, first step is to jest store the user input
 		if(Serial_available())
 		{
-			input_char=Serial_read_char(0);
+			input_char=Serial_read_char();
 			if(str_index==0)
 			{
 				str[0]=input_char;
@@ -121,11 +121,11 @@ void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETER
 			}
 		}
 	}
-	/*Serial_print_string("Input (");
+	Serial_print_string("Input (");
 	Serial_print_u32(str_index);
 	Serial_print_string("): ");
 	Serial_print_string(str);
-	Serial_newline();*/
+	Serial_newline();
 	*command=str[0];
 	str[0]=0;
 	*parameter_count=0;
@@ -141,7 +141,7 @@ void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETER
 		{
 			(*parameters)[new_input_index]=(((*parameters)[new_input_index])<<3)+(((*parameters)[new_input_index])<<1)+str[iter]-'0';
 		}
-		//str[iter]=0;
+		str[iter]=0;
 	}
 	/*while(is_developer_valid() && !is_new_line)
 	{
@@ -279,18 +279,11 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 
 void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETERS],u8 *parameter_count)
 {
-	s8 row,col;
-	u8 mine_count=0,hidden_count=0;
-	bool valid_input,is_lose=0;
 	u8 mine_locations[MINESWEEPER_ROWS];
 	u8 revealed_cells[MINESWEEPER_ROWS];
-	u8 marked_cells[MINESWEEPER_ROWS];
-	for(row=0;row<MINESWEEPER_ROWS;row++)
-	{
-		mine_locations[row]=0;
-		revealed_cells[row]=0;
-		marked_cells[row]=0;
-	}
+	s8 row,col;
+	u8 mine_count=0,hidden_count=0;
+	bool valid_input,is_lose;
 	while(mine_count<10)
 	{
 		row=(get_random(millis())>>3)%MINESWEEPER_ROWS;
@@ -304,36 +297,32 @@ void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETER
 	while(is_developer_valid())
 	{
 		valid_input=1;
-		hidden_count=print_minesweeper(&mine_locations,&revealed_cells,&marked_cells,is_lose);
+		hidden_count=print_minesweeper(&mine_locations,&revealed_cells,is_lose);
 		if(hidden_count<=mine_count || is_lose) break;//won game
-		Serial_print_string("Move (m row col), Mark (? row col), or quit: ");
+		Serial_print_string("Guess (row col), or quit: ");
 		//*command=0;//prepare for nested method calls to get_terminal_command() to get use input
 		//*parameter_count=0;
 		get_terminal_command(command,parameters,parameter_count);
 		if(*command=='q') return;
-		if(*command!='m' && *command!='?') valid_input=0;
-		else if(*parameter_count!=2) valid_input=0;
-		else if((*parameters)[0]>=9) valid_input=0;
-		else if((*parameters)[1]>=8) valid_input=0;
+		if(*command<'0' || *command>='9') valid_input=0;
+		else if(*parameter_count!=1) valid_input=0;
+		else if((*parameters)[0]>=8) valid_input=0;
 		if(valid_input)
 		{
-			row=(*parameters)[0];
-			col=(*parameters)[1];
-			if(*command=='?') marked_cells[row]|=0x01<<col;
-			else is_lose=make_guess(row,col,&mine_locations,&revealed_cells);
+			is_lose=make_guess(*command-'0',(*parameters)[0],&mine_locations,&revealed_cells);
 		}else Serial_print_string("Invalid\n");
 	}
 	if(!is_developer_valid()) return;//prevent displaying winner message because user left the menu manually
-if(is_lose){ Serial_print_string("Game Over\n"); is_lose=0; }
+	if(is_lose) Serial_print_string("Game Over\n");
 	else Serial_print_string("Winner\n");
 }
 
 //return number of cells still hiden from user (game is won when hidden_count==mine_count)
-u8 print_minesweeper(u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_mines)[MINESWEEPER_ROWS],u8 (*marked_cells)[MINESWEEPER_ROWS],bool is_lose)
+u8 print_minesweeper(u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_mines)[MINESWEEPER_ROWS],bool is_lose)
 {
 	u8 row,col,hidden_count=0;
 	bool is_mine;
-	Serial_print_string("\n    0  1  2  3  4  5  6  7\n");
+	Serial_print_string("    0  1  2  3  4  5  6  7\n");
 	Serial_print_string("  +------------------------\n");
 	for(row=0;row<MINESWEEPER_ROWS;row++)
 	{
@@ -347,7 +336,7 @@ u8 print_minesweeper(u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_mines)
 				if(is_mine_at(row,col,revealed_mines)) Serial_print_char('0'+get_nearby_count(row,col,mine_locations));
 				else
 				{
-					Serial_print_char(is_mine_at(row,col,marked_cells)?'?':'.');
+					Serial_print_char('.');
 					hidden_count++;
 				}
 			}

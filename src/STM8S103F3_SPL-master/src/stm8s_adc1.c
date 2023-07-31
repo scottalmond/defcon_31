@@ -367,7 +367,7 @@ void ADC1_StartConversion(void)
   * @par Required preconditions:
   * ADC1 conversion finished.
   */
-/*uint16_t ADC1_GetConversionValue(void)
+uint16_t ADC1_GetConversionValue(void)
 {
   uint16_t temph = 0;
   uint8_t templ = 0;
@@ -392,7 +392,7 @@ void ADC1_StartConversion(void)
   }
   
   return ((uint16_t)temph);
-}*/
+}
 
 /**
   * @brief  Enables or disables the analog watchdog for the given channel.

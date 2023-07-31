@@ -307,16 +307,6 @@ Next=Root.Source Files...\stm8s103f3_spl-master\src\stm8s_clk.c
 [Root.Source Files...\stm8s103f3_spl-master\src\stm8s_clk.c]
 ElemType=File
 PathName=..\stm8s103f3_spl-master\src\stm8s_clk.c
-Next=Root.Source Files...\stm8s103f3_spl-master\src\stm8s_exti.c
-
-[Root.Source Files...\stm8s103f3_spl-master\src\stm8s_exti.c]
-ElemType=File
-PathName=..\stm8s103f3_spl-master\src\stm8s_exti.c
-Next=Root.Source Files...\stm8s103f3_spl-master\src\stm8s_flash.c
-
-[Root.Source Files...\stm8s103f3_spl-master\src\stm8s_flash.c]
-ElemType=File
-PathName=..\stm8s103f3_spl-master\src\stm8s_flash.c
 Next=Root.Source Files...\stm8s103f3_spl-master\src\stm8s_gpio.c
 
 [Root.Source Files...\stm8s103f3_spl-master\src\stm8s_gpio.c]
@@ -459,16 +449,6 @@ Next=Root.Include Files...\stm8s103f3_spl-master\inc\stm8s_conf.h
 [Root.Include Files...\stm8s103f3_spl-master\inc\stm8s_conf.h]
 ElemType=File
 PathName=..\stm8s103f3_spl-master\inc\stm8s_conf.h
-Next=Root.Include Files...\stm8s103f3_spl-master\inc\stm8s_exti.h
-
-[Root.Include Files...\stm8s103f3_spl-master\inc\stm8s_exti.h]
-ElemType=File
-PathName=..\stm8s103f3_spl-master\inc\stm8s_exti.h
-Next=Root.Include Files...\stm8s103f3_spl-master\inc\stm8s_flash.h
-
-[Root.Include Files...\stm8s103f3_spl-master\inc\stm8s_flash.h]
-ElemType=File
-PathName=..\stm8s103f3_spl-master\inc\stm8s_flash.h
 Next=Root.Include Files...\stm8s103f3_spl-master\inc\stm8s_gpio.h
 
 [Root.Include Files...\stm8s103f3_spl-master\inc\stm8s_gpio.h]
