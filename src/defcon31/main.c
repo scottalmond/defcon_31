@@ -49,9 +49,9 @@ int main()
 	}*/
 	while(1)
 	{
-		//if(is_application_valid()) run_application();
+		if(is_application_valid()) run_application();
 		if(is_developer_valid()) run_developer();
-		//if(get_button_event(0,1)) run_sleep();//if long press on left button, enter sleep mode
+		if(get_button_event(0,1)) run_sleep();//if long press on left button, enter sleep mode
 	}
 	return 0;
 }

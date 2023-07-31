@@ -12,4 +12,5 @@ void run_sleep()
 {
 	setup_sleep();
 	while(is_sleep_valid()) flush_leds(1);//have red status LED shine when pushing a button, but before release, as feedback to user
+	clear_button_events();
 }

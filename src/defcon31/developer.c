@@ -16,7 +16,7 @@ void setup_developer()
 	set_rgb(0,0,255);
 	flush_leds(1);
 	//print_welcome();
-	Serial_print_string("setup_developer()\n");
+	Serial_print_string("Entering Terminal\n");
 	//while(Serial_available()) Serial_read_char();//flush any outstanding serial input content, isn't helping with trash buffer problem
 }
 
@@ -34,7 +34,9 @@ void run_developer()
 		set_rgb(0,0,255);
 		execute_terminal_command(&command,&parameters,&parameter_count);
 	}
-	
+	Serial_print_string("Exiting Terminal\n");
+	flush_leds(0);//turn off debug led
+	flush_leds(1);//turn off debug led
 	//Serial_print_string("DONE");
 	//Serial_newline();
 }
@@ -62,11 +64,11 @@ void print_welcome()
 											0b01000000,0b01000001,0b01000001,0b01000011,0b01000001,0b0001000,
 											0b01111110,0b01111111,0b01000000,0b00111110,0b01111111,0b01000001,
 											0b00111110,0b0111110 };
-	u8 length = sizeof(is_space_sao()?space_bits:defcon31);
+	u8 length = is_space_sao()?sizeof(space_bits):sizeof(defcon31);
 	u8 lineBreakInterval = is_space_sao()?10:8;
 	u8 i,j;
 	for (i = 0; i < length; i++) {
-			for (j = 7; j >= 0; j--) {
+			for (j = 7; j !=0xFF; j--) {
 				 // Extract the jth bit from the current byte and print '#' if it's 1, or ' ' if it's 0
 				 Serial_print_char((((is_space_sao()?space_bits[i]:defcon31[i]) >> j) & 0x01) ? '#' : ' ');
 				 //sprintf(buffer, "%c", (compressed[i] >> j) & 0x01 ? '#' : ' ');
@@ -112,7 +114,7 @@ void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETER
 						str[str_index]='\0';
 						break;
 					}
-					if(str[str_index]!=' ')
+					if(str[str_index-1]!=' ')
 					{
 						str[str_index]=' ';
 						str_index++;
@@ -121,11 +123,11 @@ void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETER
 			}
 		}
 	}
-	/*Serial_print_string("Input (");
+	Serial_print_string("Input (");
 	Serial_print_u32(str_index);
 	Serial_print_string("): ");
 	Serial_print_string(str);
-	Serial_newline();*/
+	Serial_newline();
 	*command=str[0];
 	str[0]=0;
 	*parameter_count=0;
@@ -141,7 +143,7 @@ void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETER
 		{
 			(*parameters)[new_input_index]=(((*parameters)[new_input_index])<<3)+(((*parameters)[new_input_index])<<1)+str[iter]-'0';
 		}
-		//str[iter]=0;
+		str[iter]=0;
 	}
 	/*while(is_developer_valid() && !is_new_line)
 	{
@@ -192,7 +194,7 @@ void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETER
 void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETERS],u8 *parameter_count)
 {
 	u8 iter;
-	bool is_valid=0;
+	bool is_valid=0,is_command_exist=1;
 	switch(*command)
 	{
 		case 'p':{ //simple ping/echo
@@ -204,25 +206,25 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 			}
 			is_valid=1;
 		}break;
-		case 'b':{ //increase baud rate to 1 MBaud
+		/*case 'b':{ //increase baud rate to 1 MBaud
 			setup_serial(1,1);
-		}break;
+		}break;*/
 		case 't':{ //if parameters>=1, then set time, else print time
 			if(*parameter_count) set_millis((*parameters)[0]);
 			else Serial_print_u32(millis());
 			is_valid=1;
 		}break;
 		case 'h':{ //help dialog
-			print_welcome();
+			//print_welcome();
 			Serial_print_string("GitHub.com/ScottAlmond/DefCon_31");
 			is_valid=1;
 		}break;
 		case 'e':{ //eeprom interface
-			if(*parameter_count==1)
-			{//read, 0-127
-				if((*parameters)[0]<128)
-					//Serial_print_u32(FLASH_ReadByte(eeprom_address));
-					Serial_print_u32(get_eeprom_byte((*parameters)[0]));
+			if(*parameter_count==1 &&(*parameters)[0]<128)
+			{
+				//Serial_print_u32(FLASH_ReadByte(eeprom_address));
+				Serial_print_u32(get_eeprom_byte((*parameters)[0]));
+				is_valid=1;
 			}/*else if(parameter_count==2)
 			{//write
 				if((*parameters)[1]<256)
@@ -237,14 +239,15 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 		}break;
 		case 'l':{ //l as in lower case 'L' from 'LED'
 			is_valid=1;
-			if(*parameter_count<3) is_valid=0;
+			if((*parameter_count)!=3) is_valid=0;
 			if((*parameters)[0]>=RGB_LED_COUNT) is_valid=0;
 			if((*parameters)[1]>=3) is_valid=0;
-			if((*parameters)[2]>=255) is_valid=0;
+			if((*parameters)[2]>255) is_valid=0;
 			if(is_valid)
 			{
 				set_rgb((*parameters)[0],(*parameters)[1],(*parameters)[2]);
 				flush_leds(2);//1 RGB led element and 1 for status led
+				Serial_print_string("LED Set");
 			}
 		}break;
 		case 'w':{ //set white led (only populated on space SAOs
@@ -266,11 +269,17 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 			play_terminal_game(command,parameters,parameter_count);
 			is_valid=1;
 		}break;
+		default:{ is_command_exist=0; } break;
 	}
-	if(!is_valid)
+	if(!is_command_exist)
 	{
-		Serial_print_string("Invalid: ");
+		Serial_print_string("No such cmd: ");
 		Serial_print_char(*command);
+	}
+	else if(!is_valid)
+	{
+		
+		Serial_print_string("Invalid cmd params");
 		//Serial_print_string(", ");
 		//Serial_print_int(*command);
 	}
@@ -279,7 +288,7 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 
 void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETERS],u8 *parameter_count)
 {
-	s8 row,col;
+	u8 row,col;
 	u8 mine_count=0,hidden_count=0;
 	bool valid_input,is_lose=0;
 	u8 mine_locations[MINESWEEPER_ROWS];
@@ -359,28 +368,28 @@ u8 print_minesweeper(u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_mines)
 }
 
 //return 0 if guess is valid; return 1 if landed on a mine
-bool make_guess(s8 row,s8 col,u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_cells)[MINESWEEPER_ROWS])
+bool make_guess(u8 row,u8 col,u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_cells)[MINESWEEPER_ROWS])
 {
-	s8 row_diff,col_diff;
-	if(row<0 || col <0 || row>=MINESWEEPER_ROWS || col>=8) return 0;//if out of bounds, skip it
+	u8 row_diff,col_diff;
+	if(row>=MINESWEEPER_ROWS || col>=8) return 0;//if out of bounds, skip it
 	if(((*revealed_cells)[row]>>col) & 0x01) return 0;//if already revealed, skip it
 	(*revealed_cells)[row]|=0x01<<col;//reveal guess
 	if(get_nearby_count(row,col,mine_locations)==0)
 	{//clear out nearby squares if current guess is 0
-		for(row_diff=-1;row_diff<=1;row_diff++)
-			for(col_diff=-1;col_diff<=1;col_diff++)
+		for(row_diff=0xFF;row_diff<=1 || row_diff==0xFF;row_diff++)
+			for(col_diff=0xFF;col_diff<=1 || col_diff==0xFF;col_diff++)
 				make_guess(row+row_diff,col+col_diff,mine_locations,revealed_cells);
 	}
 	return is_mine_at(row,col,mine_locations);
 }
 
-u8 get_nearby_count(s8 row,s8 col,u8 (*mine_locations)[MINESWEEPER_ROWS])
+u8 get_nearby_count(u8 row,u8 col,u8 (*mine_locations)[MINESWEEPER_ROWS])
 {
-	s8 row_diff,col_diff;
+	u8 row_diff,col_diff;
 	u8 sum=0;
-	for(row_diff=-1;row_diff<=1;row_diff++)
+	for(row_diff=0xFF;row_diff<=1 || row_diff==0xFF;row_diff++)
 	{
-		for(col_diff=-1;col_diff<=1;col_diff++)
+		for(col_diff=0xFF;col_diff<=1 || col_diff==0xFF;col_diff++)
 		{
 			if(row_diff==0 && col_diff==0)
 			{
@@ -393,8 +402,8 @@ u8 get_nearby_count(s8 row,s8 col,u8 (*mine_locations)[MINESWEEPER_ROWS])
 	return sum;
 }
 
-bool is_mine_at(s8 row,s8 col,u8 (*mine_locations)[MINESWEEPER_ROWS])
+bool is_mine_at(u8 row,u8 col,u8 (*mine_locations)[MINESWEEPER_ROWS])
 {
-	if(row<0 || col<0 || row>=MINESWEEPER_ROWS || col>=8) return 0;
+	if(row>=MINESWEEPER_ROWS || col>=8) return 0;
 	return ((*mine_locations)[row]>>col)&0x01;
 }

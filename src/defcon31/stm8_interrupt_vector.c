@@ -1,6 +1,8 @@
 /*	BASIC INTERRUPT VECTOR TABLE FOR STM8 devices
  *	Copyright (c) 2007 STMicroelectronics
  */
+//#include "stm8s.h"
+//#include "api.h"
 
 typedef void @far (*interrupt_handler_t)(void);
 

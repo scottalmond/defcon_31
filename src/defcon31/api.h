@@ -29,3 +29,4 @@ u16 get_random(u16 x);
 u8 get_audio_level(void);
 void set_millis(u32 new_time);
 u8 get_eeprom_byte(u16 address);
+//@far @interrupt void TIM2_UPD_OVF_IRQHandler (void);

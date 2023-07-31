@@ -138,10 +138,10 @@ void GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin, GPIO_Mode_TypeDef
   *         data register.
   * @retval None
   */
-void GPIO_Write(GPIO_TypeDef* GPIOx, uint8_t PortVal)
+/*void GPIO_Write(GPIO_TypeDef* GPIOx, uint8_t PortVal)
 {
   GPIOx->ODR = PortVal;
-}
+}*/
 
 /**
   * @brief  Writes high level to the specified GPIO pins.
