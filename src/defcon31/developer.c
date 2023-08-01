@@ -17,6 +17,7 @@ void setup_developer()
 	flush_leds(1);
 	//print_welcome();
 	//Serial_print_string("Entering Terminal\n");
+	Serial_newline();
 	print_ascii_art(1);
 	//while(Serial_available()) Serial_read_char();//flush any outstanding serial input content, isn't helping with trash buffer problem
 }
@@ -106,6 +107,7 @@ void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETER
 			{
 				str[0]=input_char;
 				str_index++;
+				if(input_char=='\n') break;
 			}else{
 				if(input_char>='0' && input_char<='9')
 				{
@@ -219,21 +221,24 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 		}break;*/
 		case 't':{ //if parameters>=1, then set time, else print time
 			if(*parameter_count) set_millis((*parameters)[0]);
-			else Serial_print_u32(millis());
+			Serial_print_u32(millis());
 			is_valid=1;
 		}break;
+		case '?':
+		case '\n':
 		case 'h':{ //help dialog
 			//print_welcome();
-			Serial_print_string("GitHub.com/ScottAlmond/DefCon_31");
+			//Serial_print_string("GitHub.com/ScottAlmond/DefCon_31");//wouldn't know which pins are UART and the baud rate without already seeing this page written on the PCB
+			Serial_print_string("h\np 9 0 255\np0-3#\nt0-1#\nl2-3#\nw1-2#\na\ng");
 			is_valid=1;
 		}break;
-		case 'e':{ //eeprom interface
+		/*case 'e':{ //eeprom interface
 			if(*parameter_count==1 &&(*parameters)[0]<128)
 			{
 				//Serial_print_u32(FLASH_ReadByte(eeprom_address));
 				Serial_print_u32(get_eeprom_byte((*parameters)[0]));
 				is_valid=1;
-			}/*else if(parameter_count==2)
+			}else if(parameter_count==2)
 			{//write
 				if((*parameters)[1]<256)
 				{
@@ -243,11 +248,13 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 					FLASH_ProgramByte(FLASH_ReadByte((*parameters)[0]+0x4000),(*parameters)[1]);
 					FLASH_Lock(FLASH_MEMTYPE_DATA);
 				}
-			}*/
-		}break;
+			}
+		}break;*/
+		case '1'://in case user mis-reads L as 1
 		case 'l':{ //l as in lower case 'L' from 'LED'
 			is_valid=1;
-			if((*parameter_count)!=3) is_valid=0;
+			if((*parameter_count)<2) is_valid=0;
+			if(*parameter_count==2) (*parameters)[3]=255;
 			if((*parameters)[0]>=RGB_LED_COUNT) is_valid=0;
 			if((*parameters)[1]>=3) is_valid=0;
 			if((*parameters)[2]>255) is_valid=0;
@@ -255,14 +262,15 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 			{
 				set_rgb((*parameters)[0],(*parameters)[1],(*parameters)[2]);
 				flush_leds(2);//1 RGB led element and 1 for status led
-				Serial_print_string("LED Set");
+				//Serial_print_string("LED Set");
 			}
 		}break;
 		case 'w':{ //set white led (only populated on space SAOs
 			is_valid=1;
-			if(*parameter_count<2) is_valid=0;
+			if(*parameter_count<1) is_valid=0;
+			if(*parameter_count==1) (*parameters)[2]=255;
 			if((*parameters)[0]>=WHITE_LED_COUNT) is_valid=0;
-			if((*parameters)[1]>=255) is_valid=0;
+			if((*parameters)[1]>255) is_valid=0;
 			if(is_valid)
 			{
 				set_white((*parameters)[0],(*parameters)[1]);
@@ -287,13 +295,14 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 	else if(!is_valid)
 	{
 		
-		Serial_print_string("Invalid cmd params");
+		Serial_print_string("Invalid params");
 		//Serial_print_string(", ");
 		//Serial_print_int(*command);
 	}
 	Serial_newline();
 }
 
+//minesweeper.  removed ability to mark assumed mines with '?' in order to save program space
 void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETERS],u8 *parameter_count)
 {
 	u8 row,col;
@@ -301,12 +310,12 @@ void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETER
 	bool valid_input,is_lose=0;
 	u8 mine_locations[MINESWEEPER_ROWS];
 	u8 revealed_cells[MINESWEEPER_ROWS];
-	u8 marked_cells[MINESWEEPER_ROWS];
+	//u8 marked_cells[MINESWEEPER_ROWS];
 	for(row=0;row<MINESWEEPER_ROWS;row++)
 	{
 		mine_locations[row]=0;
 		revealed_cells[row]=0;
-		marked_cells[row]=0;
+		//marked_cells[row]=0;
 	}
 	while(mine_count<10)
 	{
@@ -321,23 +330,27 @@ void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETER
 	while(is_developer_valid())
 	{
 		valid_input=1;
-		hidden_count=print_minesweeper(&mine_locations,&revealed_cells,&marked_cells,is_lose);
+		hidden_count=print_minesweeper(&mine_locations,&revealed_cells,/*&marked_cells,*/is_lose);
 		if(hidden_count<=mine_count || is_lose) break;//won game
-		Serial_print_string("Move (m row col), Mark (? row col), or quit: ");
+		//Serial_print_string("Move (m row col), Mark (? row col), or quit: ");
+		Serial_print_string("Guess (row col), or quit: ");
 		//*command=0;//prepare for nested method calls to get_terminal_command() to get use input
 		//*parameter_count=0;
 		get_terminal_command(command,parameters,parameter_count);
 		if(*command=='q') return;
-		if(*command!='m' && *command!='?') valid_input=0;
-		else if(*parameter_count!=2) valid_input=0;
-		else if((*parameters)[0]>=9) valid_input=0;
-		else if((*parameters)[1]>=8) valid_input=0;
+		if(*command<'0' || *command>'9') valid_input=0;
+		else if(*parameter_count!=1) valid_input=0;
+		else if((*parameters)[0]>=8) valid_input=0;
+		//else if((*parameters)[1]>=8) valid_input=0;
 		if(valid_input)
 		{
-			row=(*parameters)[0];
-			col=(*parameters)[1];
-			if(*command=='?') marked_cells[row]|=0x01<<col;
-			else is_lose=make_guess(row,col,&mine_locations,&revealed_cells);
+			row=*command-'0';
+			col=(*parameters)[0];
+			//row=(*parameters)[0];
+			//col=(*parameters)[1];
+			//if(*command=='?') marked_cells[row]|=0x01<<col;
+			//else
+			is_lose=make_guess(row,col,&mine_locations,&revealed_cells);
 		}else Serial_print_string("Invalid\n");
 	}
 	if(!is_developer_valid()) return;//prevent displaying winner message because user left the menu manually
@@ -346,7 +359,7 @@ void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETER
 }
 
 //return number of cells still hiden from user (game is won when hidden_count==mine_count)
-u8 print_minesweeper(u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_mines)[MINESWEEPER_ROWS],u8 (*marked_cells)[MINESWEEPER_ROWS],bool is_lose)
+u8 print_minesweeper(u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_mines)[MINESWEEPER_ROWS],/*u8 (*marked_cells)[MINESWEEPER_ROWS],*/bool is_lose)
 {
 	u8 row,col,hidden_count=0;
 	bool is_mine;
@@ -361,10 +374,12 @@ u8 print_minesweeper(u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_mines)
 			if(is_lose && is_mine_at(row,col,mine_locations)) Serial_print_char('X');
 			else
 			{
-				if(is_mine_at(row,col,revealed_mines)) Serial_print_char('0'+get_nearby_count(row,col,mine_locations));
+				if(is_mine_at(row,col,revealed_mines))
+					Serial_print_char('0'+get_nearby_count(row,col,mine_locations));
 				else
 				{
-					Serial_print_char(is_mine_at(row,col,marked_cells)?'?':'.');
+					//Serial_print_char(is_mine_at(row,col,marked_cells)?'?':'.');
+					Serial_print_char('.');
 					hidden_count++;
 				}
 			}
