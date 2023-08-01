@@ -16,7 +16,8 @@ void setup_developer()
 	set_rgb(0,0,255);
 	flush_leds(1);
 	//print_welcome();
-	Serial_print_string("Entering Terminal\n");
+	//Serial_print_string("Entering Terminal\n");
+	print_ascii_art(1);
 	//while(Serial_available()) Serial_read_char();//flush any outstanding serial input content, isn't helping with trash buffer problem
 }
 
@@ -42,7 +43,7 @@ void run_developer()
 }
 
 //ascii art welcome message
-void print_welcome()
+void print_ascii_art(bool is_welcome)
 {
 	u8 space_bits[] = { 0b01111001,0b11110000,0b11000011,0b11001111,0b11011111,0b00101111,
 											0b10011110,0b01111100,0b10000100,0b11110000,0b10000001,0b00001001,
@@ -64,13 +65,20 @@ void print_welcome()
 											0b01000000,0b01000001,0b01000001,0b01000011,0b01000001,0b0001000,
 											0b01111110,0b01111111,0b01000000,0b00111110,0b01111111,0b01000001,
 											0b00111110,0b0111110 };
-	u8 length = is_space_sao()?sizeof(space_bits):sizeof(defcon31);
-	u8 lineBreakInterval = is_space_sao()?10:8;
+	u8 winner[] = {   0b10000010,0b11101000,0b00101000,0b00101111,0b11101111,0b110000,
+											0b10010010,0b01001100,0b00101100,0b00101000,0b00001000,0b001000,
+											0b10010010,0b01001010,0b00101010,0b00101000,0b00001000,0b001000,
+											0b10010010,0b01001001,0b00101001,0b00101111,0b10001111,0b110000,
+											0b10010010,0b01001000,0b10101000,0b10101000,0b00001000,0b100000,
+											0b10010010,0b01001000,0b01101000,0b01101000,0b00001000,0b010000,
+											0b01101100,0b11101000,0b00101000,0b00101111,0b11101000,0b001000 };
+	u8 length = is_welcome?(is_space_sao()?sizeof(space_bits):sizeof(defcon31)):sizeof(winner);
+	u8 lineBreakInterval = is_welcome?(is_space_sao()?10:8):6;
 	u8 i,j;
 	for (i = 0; i < length; i++) {
 			for (j = 7; j !=0xFF; j--) {
 				 // Extract the jth bit from the current byte and print '#' if it's 1, or ' ' if it's 0
-				 Serial_print_char((((is_space_sao()?space_bits[i]:defcon31[i]) >> j) & 0x01) ? '#' : ' ');
+				 Serial_print_char((( (is_welcome?(is_space_sao()?space_bits[i]:defcon31[i]):winner[i]) >> j)  & 0x01) ? '#' : ' ');
 				 //sprintf(buffer, "%c", (compressed[i] >> j) & 0x01 ? '#' : ' ');
 				 //Serial_print_s(buffer);
 			}
@@ -123,11 +131,11 @@ void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETER
 			}
 		}
 	}
-	Serial_print_string("Input (");
+	/*Serial_print_string("Input (");
 	Serial_print_u32(str_index);
 	Serial_print_string("): ");
 	Serial_print_string(str);
-	Serial_newline();
+	Serial_newline();*/
 	*command=str[0];
 	str[0]=0;
 	*parameter_count=0;
@@ -333,8 +341,8 @@ void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETER
 		}else Serial_print_string("Invalid\n");
 	}
 	if(!is_developer_valid()) return;//prevent displaying winner message because user left the menu manually
-if(is_lose){ Serial_print_string("Game Over\n"); is_lose=0; }
-	else Serial_print_string("Winner\n");
+	if(is_lose){ Serial_print_string("Game Over\n"); is_lose=0; }
+	else print_ascii_art(0);//Serial_print_string("Winner\n");
 }
 
 //return number of cells still hiden from user (game is won when hidden_count==mine_count)
