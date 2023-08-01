@@ -5,7 +5,7 @@
 #include "STM8s.h"
 #include "stm8s103_ADC.h"
 
-const u8 LED_COUNT=43;//10 RGB (3 LEDs each) + 12 white + 1 debug
+#define LED_COUNT 43 //10 RGB (3 LEDs each) + 12 white + 1 debug
 unsigned long tms=0,tms2=0,tms3=0;
 
 //application space settings
@@ -504,6 +504,8 @@ int main()
 				Serial_print_string("tms2: ");
 				Serial_print_int(tms2/1000);
 				Serial_newline();
+				setMatrixHighZ();
+				setRGB(0,(tms>>11)%4);
 				for(iter=0;iter<30000;iter++){}
 			}
 		}

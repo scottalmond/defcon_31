@@ -227,4 +227,59 @@ pwm_sleep_remaining-=sleep_amount;
 TIM3->CCR1L = ( (TIM3->CCR1L) + sleep_amount )%250;
 
 
+u8 main()
+{
+	while(1)
+	{
+		display_morse();
+	}
+}
 
+//returns 0 for OFF, 1 for dit, 2 for dah
+u8 display_morse()
+{
+	u8 dih_vs_dah,iter;
+	u8 morse_space[]={0x01011101, 0x11010001, 0x01110001, ... }; // <-- fill in this part ("SPACE BITS R US" or similar) left to right with info about just whether leds should be on or off, no compression.  dit is a '1', dah is '111'
+	//PARIS: 0 1 0 111 0 111 0 1 000 1 0 111 000 1 0 111
+	//={0x01011101,0x11010001,0x01110001,0x0111... }
+	//pad with 0s at the end as needed to fill in the final byte
+	//PRECON: the MSB on the first byte shall be 0
+	u8 morse_defcon[]={0x01011101, 0x11010001, 0x01110001, ... }; // <-- fill in this part for "DEFCON31"
+	u16 sizeof_morse_list=is_space_sao()?sizeof(morse_space):sizeof(morse_defcon);
+	dih_vs_dah=get_morse(is_space_sao()?morse_space:morse_defcon,sizeof_morse_list);
+	for(iter=0;iter<WHITE_LED_COUNT;iter++)
+	{
+		if((dih_vs_dah==1 && dih_vs_dah&0x01) || dih_vs_dah==2)
+		{//dih is every other LED ON, dah is all LEDs ON for longer time
+			if(iter<RGB_LED_COUNT) set_rgb(iter,2,255);
+			if(is_space_sao()) set_white(iter,255);
+		}
+	}
+	flush_leds(WHITE_LED_COUNT+RGB_LED_COUNT+1);
+}
+
+//return 0 for OFF, dih as 1, or dah as 2
+u8 get_morse(u8 *morse_list,u16 sizeof_morse_list)
+{
+	u16 morse_cycle=0x0008;//period of the morse code cycling in lengths of *units* (there are dead bands at the end of each cycle while the patterns waits to repeat - needs to be an even multiple of 2 to make the clock math easy
+	u16 morse_shift=sizeof_morse_list;//number of *bytes* in morse_list
+	while(morse_shift)
+	{
+		morse_cycle<<=1;
+		morse_shift>>=1;
+	}
+	u16 morse_bit=(millis()>>6)&(morse_cycle-1);//>>6 reduces speed (64 ms per unit) to around 20 wpm.  &val makes this periodic every morse_cycle
+	bool is_dit=get_morse_unit(morse_bit,&morse_list,sizeof_morse_list);
+	bool is_dah_ish=get_morse_unit(morse_bit-1,&morse_list,sizeof_morse_list)||get_morse_unit(morse_bit+1,&morse_list,sizeof_morse_list);
+	return is_dit+(is_dit&is_dah_ish);//0 if !is_dit.  1 if is_dit, but neither neighbor is ON.  2 if morse_bit is ON and at least one neighbor is too
+}
+
+//returns 1 if the LEDs should be ON at the given morse_bit, returns 0 if LEDs should be OFF
+bool get_morse_unit(u16 morse_bit,u8 (*morse_list),u16 sizeof_morse_list)
+{
+	//if(morse_bit==0xFFFF) return 0;//value at index -1 --> save a line of code: PRECON is that morse_list shall have 0 as MSB on first byte, so the value at [-1] is undefined and also doesn't matter
+	u16 morse_index=morse_bit>>3;//get the byte-wise index within the array
+	if(morse_index>=sizeof_morse_list) return 0;
+	u8 morse_shift=morse_bit&0x07;//3 LSBs are which bit within the byte to fetch
+	return (*morse_list)[morse_index]>>(7-morse_shift)&0x01;//use "7-" to make it easier to generate and read the list constructor left-to-right
+}

@@ -123,40 +123,40 @@ void ADC1_Init(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef A
   * @param  NewState: specifies the peripheral enabled or disabled state.
   * @retval None
   */
-void ADC1_Cmd(FunctionalState NewState)
+/*void ADC1_Cmd(FunctionalState NewState)
 {
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
   if (NewState != DISABLE)
   {
     ADC1->CR1 |= ADC1_CR1_ADON;
   }
-  else /* NewState == DISABLE */
+  else // NewState == DISABLE 
   {
     ADC1->CR1 &= (uint8_t)(~ADC1_CR1_ADON);
   }
-}
+}*/
 
 /**
   * @brief  Enables or Disables the ADC1 scan mode.
   * @param  NewState: specifies the selected mode enabled or disabled state.
   * @retval None
   */
-void ADC1_ScanModeCmd(FunctionalState NewState)
+/*void ADC1_ScanModeCmd(FunctionalState NewState)
 {
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
   if (NewState != DISABLE)
   {
     ADC1->CR2 |= ADC1_CR2_SCAN;
   }
-  else /* NewState == DISABLE */
+  else // NewState == DISABLE 
   {
     ADC1->CR2 &= (uint8_t)(~ADC1_CR2_SCAN);
   }
-}
+}*/
 
 /**
   * @brief  Enables or Disables the ADC1 data store into the Data Buffer registers rather than in the Data Register
@@ -367,7 +367,7 @@ void ADC1_StartConversion(void)
   * @par Required preconditions:
   * ADC1 conversion finished.
   */
-/*uint16_t ADC1_GetConversionValue(void)
+uint16_t ADC1_GetConversionValue(void)
 {
   uint16_t temph = 0;
   uint8_t templ = 0;
@@ -392,7 +392,7 @@ void ADC1_StartConversion(void)
   }
   
   return ((uint16_t)temph);
-}*/
+}
 
 /**
   * @brief  Enables or disables the analog watchdog for the given channel.

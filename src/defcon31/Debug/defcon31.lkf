@@ -54,7 +54,6 @@ Debug\stm8s103_serial.o
 Debug\sleep.o
 Debug\stm8s_adc1.o
 Debug\stm8s_clk.o
-Debug\stm8s_exti.o
 Debug\stm8s_gpio.o
 Debug\stm8s_uart1.o
 Debug\api.o

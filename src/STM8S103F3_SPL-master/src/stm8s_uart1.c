@@ -458,13 +458,13 @@ uint8_t UART1_ReceiveData8(void)
   * @param  None
   * @retval The received data.
   */
-uint16_t UART1_ReceiveData9(void)
+/*uint16_t UART1_ReceiveData9(void)
 {
   uint16_t temp = 0;
   
   temp = (uint16_t)(((uint16_t)( (uint16_t)UART1->CR1 & (uint16_t)UART1_CR1_R8)) << 1);
   return (uint16_t)( (((uint16_t) UART1->DR) | temp ) & ((uint16_t)0x01FF));
-}
+}*/
 
 /**
   * @brief  Transmits 8 bit data through the UART1 peripheral.
@@ -483,41 +483,41 @@ void UART1_SendData8(uint8_t Data)
   *         This parameter should be lower than 0x1FF.
   * @retval None
   */
-void UART1_SendData9(uint16_t Data)
+/*void UART1_SendData9(uint16_t Data)
 {
-  /**< Clear the transmit data bit 8 [8]  */
+  //< Clear the transmit data bit 8 [8]  
   UART1->CR1 &= ((uint8_t)~UART1_CR1_T8);
-  /**< Write the transmit data bit [8]  */
+  //< Write the transmit data bit [8]  
   UART1->CR1 |= (uint8_t)(((uint8_t)(Data >> 2)) & UART1_CR1_T8);
-  /**< Write the transmit data bit [0:7] */
+  //< Write the transmit data bit [0:7] 
   UART1->DR   = (uint8_t)(Data);
-}
+}*/
 
 /**
   * @brief  Transmits break characters.
   * @param  None
   * @retval None
   */
-void UART1_SendBreak(void)
+/*void UART1_SendBreak(void)
 {
   UART1->CR2 |= UART1_CR2_SBK;
-}
+}*/
 
 /**
   * @brief  Sets the address of the UART1 node.
   * @param  UART1_Address: Indicates the address of the UART1 node.
   * @retval None
   */
-void UART1_SetAddress(uint8_t UART1_Address)
+/*void UART1_SetAddress(uint8_t UART1_Address)
 {
-  /*assert_param for UART1_Address*/
+  //assert_param for UART1_Address
   assert_param(IS_UART1_ADDRESS_OK(UART1_Address));
   
-  /* Clear the UART1 address */
+  // Clear the UART1 address 
   UART1->CR4 &= ((uint8_t)~UART1_CR4_ADD);
-  /* Set the UART1 address node */
+  // Set the UART1 address node 
   UART1->CR4 |= UART1_Address;
-}
+}*/
 
 /**
   * @brief  Sets the specified UART guard time.
@@ -553,11 +553,11 @@ void UART1_SetAddress(uint8_t UART1_Address)
   *         - ...
   * @retval None
   */
-void UART1_SetPrescaler(uint8_t UART1_Prescaler)
+/*void UART1_SetPrescaler(uint8_t UART1_Prescaler)
 {
-  /* Load the UART1 prescaler value*/
+  // Load the UART1 prescaler value
   UART1->PSCR = UART1_Prescaler;
-}
+}*/
 
 /**
   * @brief  Checks whether the specified UART1 flag is set or not.
@@ -772,21 +772,21 @@ void UART1_ClearFlag(UART1_Flag_TypeDef UART1_FLAG)
   *           (UART1_SendData8() or UART1_SendData9()).
   * @retval None
   */
-void UART1_ClearITPendingBit(UART1_IT_TypeDef UART1_IT)
+/*void UART1_ClearITPendingBit(UART1_IT_TypeDef UART1_IT)
 {
   assert_param(IS_UART1_CLEAR_IT_OK(UART1_IT));
   
-  /* Clear the Receive Register Not Empty pending bit */
+  // Clear the Receive Register Not Empty pending bit 
   if (UART1_IT == UART1_IT_RXNE)
   {
     UART1->SR = (uint8_t)~(UART1_SR_RXNE);
   }
-  /* Clear the LIN Break Detection pending bit */
+  // Clear the LIN Break Detection pending bit 
   else
   {
     UART1->CR4 &= (uint8_t)~(UART1_CR4_LBDF);
   }
-}
+}*/
 
   
 

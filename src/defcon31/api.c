@@ -27,7 +27,9 @@ u8 pwm_state=0;//LSB (bit 0) is index of pwm_brightness to pull pwm info from.  
 
 //buttons
 #define BUTTON_COUNT 2
-u32 button_start_ms;//if 0, then button is unpressed.  if >0 then button si pressed and is waiting for release
+//u32 button_start_ms;//if 0, then button is unpressed.  if >0 then button si pressed and is waiting for release
+u32 button_start_ms=0;
+bool is_right_button_down=0;
 bool button_pressed_event[BUTTON_COUNT][2];//event flag registering a button push
 #define BUTTON_LONG_PRESS_MS 512 //number of millisconds to consititue a long press rather than a short press
 #define BUTTON_MINIMUM_PRESS_MS 50 //minimum time a button needs to be pressed down to be registered as a complete button press
@@ -51,11 +53,10 @@ void setup_serial(bool is_enabled,bool is_fast_baud_rate)
 {
 	if(is_enabled)
 	{
-		UART1_Cmd(DISABLE);
 		GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
 		GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
 		UART1_DeInit();
-		UART1_Init(is_fast_baud_rate?9600:1000000, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+		UART1_Init(is_fast_baud_rate?115200:9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
 		UART1_Cmd(ENABLE);
 	}else{
 		UART1_Cmd(DISABLE);
@@ -124,26 +125,31 @@ void set_millis(u32 new_time)
 
 //log short or long rpess button events for applicatio layer to use as user input
 //PRECON: don't press buttons at the same time (state machine gets confused).  Leveraging just one u32 to store timestamp of button press start to conserve memory
-//PRECON: assuming button is pressed less than 1 minute (otherwise state machine gets confused)
 void update_buttons()
 {
-	bool is_any_down=0;
+	u32 elapsed_pressed_ms;
 	u8 button_index;
-	u16 elapsed_pressed_ms=millis()-button_start_ms;
-	for(button_index=0;button_index<BUTTON_COUNT;button_index++)
+	if(button_start_ms)
 	{
-		if(is_button_down(button_index))
+		//set_debug(255);//only need to enable this when true.  Is automatically cleared every frame
+		set_rgb(0,0,255);//v1 development
+		if(!is_button_down(is_right_button_down))
 		{
-			if(!button_start_ms) button_start_ms=millis();//if button is down and haven't started a button press event, start it
-			set_debug(255);//only need to enable this when true.  Is automatically cleared every frame
-			is_any_down=1;
-		}else{
-			if(elapsed_pressed_ms>BUTTON_LONG_PRESS_MS) button_pressed_event[button_index][1]=1;
-			else if(elapsed_pressed_ms>BUTTON_MINIMUM_PRESS_MS) button_pressed_event[button_index][0]=1;
-			//else ignore button press
+			elapsed_pressed_ms=millis()-button_start_ms;
+			if(elapsed_pressed_ms>BUTTON_LONG_PRESS_MS) button_pressed_event[is_right_button_down][1]=1;
+			else if(elapsed_pressed_ms>BUTTON_MINIMUM_PRESS_MS) button_pressed_event[is_right_button_down][0]=1;
+			button_start_ms=0;
+		}
+	}else{
+		for(button_index=0;button_index<BUTTON_COUNT && !button_start_ms;button_index++)
+		{
+			if(is_button_down(button_index))
+			{
+				is_right_button_down=button_index;
+				button_start_ms=millis();
+			}
 		}
 	}
-	if(!is_any_down) button_start_ms=0;
 }
 
 //returns true if the API has registered the requested type of event
@@ -203,12 +209,13 @@ u8 get_audio_level()
 { return audio_std; }
 
 //millisecond interrupt
-@far @interrupt void TIM2_UPD_OVF_IRQHandler (void) {
+@svlreg @far @interrupt void TIM2_UPD_OVF_IRQHandler (void) {
 	TIM2->SR1&=~TIM2_SR1_UIF;//reset interrupt
 	api_counter++;
 	//read buttons (if in application mode), update state
-	
+	update_buttons();
 	//read audio, update state
+	//update_audio();
 }
 
 //LED interrupt
@@ -356,7 +363,7 @@ void set_led(u8 led_index)
 	//(10*3) is debug
 	//(10*3+1) to (10*3+1+12) is white LEDs
 	const u8 led_lookup[LED_COUNT][2]={//[0] is HIGH mat, [1] is LOW mat
-		{0,1},{0,2},{1,2},//LED7  RGB
+		/*{0,1},{0,2},{1,2},//LED7  RGB
 		{1,0},{2,0},{2,1},//LED3  RGB
 		{5,0},{5,1},{5,2},//LED1  RGB
 		{6,0},{6,1},{6,2},//LED20 RGB
@@ -365,7 +372,11 @@ void set_led(u8 led_index)
 		{3,4},{3,5},{3,6},//LED21 RGB
 		{0,5},{0,6},{1,6},//LED19 RGB
 		{0,4},{1,4},{2,4},//LED18 RGB
-		{0,3},{1,3},{2,3},//LED2  RGB
+		{0,3},{1,3},{2,3},*///LED2  RGB
+		
+		{0,1},{1,0},{5,0},{6,0},{6,5},{4,3},{3,4},{0,5},{0,4},{0,3},//reds
+		{0,2},{2,0},{5,1},{6,1},{6,4},{5,3},{3,5},{0,6},{1,4},{1,3},//greens
+		{1,2},{2,1},{5,2},{6,2},{5,4},{6,3},{3,6},{1,6},{2,4},{2,3},//blues
 		{7,7},//debug; GND is tied low, no charlieplexing involved
 		{3,0},//LED6
 		{3,1},//LED4
@@ -430,7 +441,7 @@ void set_led(u8 led_index)
 //true for Space Bits R Us SAOs, false for Pony SAOs
 bool is_space_sao()
 {
-	return 1;//TODO: implement EEPROM read
+	return 0;//TODO: implement EEPROM read
 }
 
 u8 get_eeprom_byte(u16 eeprom_address)

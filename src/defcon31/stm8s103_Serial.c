@@ -3,12 +3,18 @@
  #include "stm8s103_Serial.h"
 
 
- char Serial_read_char(void)
+ char Serial_read_char(bool is_blocking)
  {
-	 while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET);
+	 while (is_blocking && UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET);
 	 UART1_ClearFlag(UART1_FLAG_RXNE);
 	 return (UART1_ReceiveData8());
  }
+ 
+ /*char Serial_read_char_now(void)
+ {
+	 UART1_ClearFlag(UART1_FLAG_RXNE);
+	 return (UART1_ReceiveData8());
+ }*/
 
  void Serial_print_char (char value)
  {
@@ -36,19 +42,19 @@
  
  void Serial_print_u32(u32 number)
  {
-	 u8 iter;
+	 s8 iter;
 	 u8 digit;
 	 Serial_print_string("0x");
-	 for(iter=28;iter<32;iter-=4)
+	 for(iter=28;iter>=0;iter-=4)
 	 {
-		 digit=number>>iter;
+		 digit=(number>>iter)&0x0F;
 		 if(digit>9) Serial_print_char('A'+(digit-10));
 		 else Serial_print_char('0'+digit);
 		 if(iter==16) Serial_print_char('_');
 	 }
  }
  
- /*void Serial_print_int (int number) //Funtion to print int value to serial monitor 
+ /*void Serial_print_int(int number) //Funtion to print int value to serial monitor 
  {
 	 char count = 0;
 	 char digit[5] = "";
@@ -89,10 +95,11 @@
  
  bool Serial_available()
  {
-	 if(UART1_GetFlagStatus(UART1_FLAG_RXNE) == TRUE)
+	 return UART1_GetFlagStatus(UART1_FLAG_RXNE);
+	 /*if(UART1_GetFlagStatus(UART1_FLAG_RXNE) == TRUE)
 	 return TRUE;
 	 else
-	 return FALSE;
+	 return FALSE;*/
  }
  
  

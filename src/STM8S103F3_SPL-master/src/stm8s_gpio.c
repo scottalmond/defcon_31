@@ -138,10 +138,10 @@ void GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin, GPIO_Mode_TypeDef
   *         data register.
   * @retval None
   */
-void GPIO_Write(GPIO_TypeDef* GPIOx, uint8_t PortVal)
+/*void GPIO_Write(GPIO_TypeDef* GPIOx, uint8_t PortVal)
 {
   GPIOx->ODR = PortVal;
-}
+}*/
 
 /**
   * @brief  Writes high level to the specified GPIO pins.
@@ -151,10 +151,10 @@ void GPIO_Write(GPIO_TypeDef* GPIOx, uint8_t PortVal)
   *         data register.
   * @retval None
   */
-void GPIO_WriteHigh(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
+/*void GPIO_WriteHigh(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
 {
   GPIOx->ODR |= (uint8_t)PortPins;
-}
+}*/
 
 /**
   * @brief  Writes low level to the specified GPIO pins.
@@ -164,10 +164,10 @@ void GPIO_WriteHigh(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
   *         data register.
   * @retval None
   */
-void GPIO_WriteLow(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
+/*void GPIO_WriteLow(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
 {
   GPIOx->ODR &= (uint8_t)(~PortPins);
-}
+}*/
 
 /**
   * @brief  Writes reverse level to the specified GPIO pins.
@@ -177,10 +177,10 @@ void GPIO_WriteLow(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
   *         data register.
   * @retval None
   */
-void GPIO_WriteReverse(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
+/*void GPIO_WriteReverse(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
 {
   GPIOx->ODR ^= (uint8_t)PortPins;
-}
+}*/
 
 /**
   * @brief  Reads the specified GPIO output data port.
@@ -188,10 +188,10 @@ void GPIO_WriteReverse(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
   * @param  GPIOx : Select the GPIO peripheral number (x = A to I).
   * @retval GPIO output data port value.
   */
-uint8_t GPIO_ReadOutputData(GPIO_TypeDef* GPIOx)
+/*uint8_t GPIO_ReadOutputData(GPIO_TypeDef* GPIOx)
 {
   return ((uint8_t)GPIOx->ODR);
-}
+}*/
 
 /**
   * @brief  Reads the specified GPIO input data port.
@@ -199,10 +199,10 @@ uint8_t GPIO_ReadOutputData(GPIO_TypeDef* GPIOx)
   * @param  GPIOx : Select the GPIO peripheral number (x = A to I).
   * @retval GPIO input data port value.
   */
-uint8_t GPIO_ReadInputData(GPIO_TypeDef* GPIOx)
+/*uint8_t GPIO_ReadInputData(GPIO_TypeDef* GPIOx)
 {
   return ((uint8_t)GPIOx->IDR);
-}
+}*/
 
 /**
   * @brief  Reads the specified GPIO input data pin.
@@ -222,20 +222,20 @@ BitStatus GPIO_ReadInputPin(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin)
   * @param  NewState : The new state of the pull up pin.
   * @retval None
   */
-void GPIO_ExternalPullUpConfig(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin, FunctionalState NewState)
+/*void GPIO_ExternalPullUpConfig(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin, FunctionalState NewState)
 {
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_GPIO_PIN_OK(GPIO_Pin));
   assert_param(IS_FUNCTIONALSTATE_OK(NewState));
   
-  if (NewState != DISABLE) /* External Pull-Up Set*/
+  if (NewState != DISABLE) // External Pull-Up Set
   {
     GPIOx->CR1 |= (uint8_t)GPIO_Pin;
-  } else /* External Pull-Up Reset*/
+  } else // External Pull-Up Reset
   {
     GPIOx->CR1 &= (uint8_t)(~(GPIO_Pin));
   }
-}
+}*/
 
 /**
   * @}
