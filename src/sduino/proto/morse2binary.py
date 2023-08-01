@@ -9,11 +9,14 @@ for c in spacebitsrus_morse:
    if c == ".":
       spacebitsrus_bin += "10"
       prevMorseChar = "dit"
+      print("dit","-")
    elif c == "-":
       spacebitsrus_bin += "1110"
       prevMorseChar = "dah"
+      print("dah","-")
    else:
       spacebitsrus_bin += "0"
+      print(" ")
       prevMorseChar = None
 
 print(spacebitsrus_bin)
@@ -25,9 +28,12 @@ uintstr = "uint8_t morse_space[] = {"
 chunkedList = wrap(spacebitsrus_bin, 8)
       
 # Iterate over each chunk in the chunked list
-for index, chunk in enumerate(chunkedList):      
-   if len(chunk) <= 7:
+for index, chunk in enumerate(chunkedList): 
+   if len(chunk) < 7:
       chunk += chunk.ljust(8-len(chunk),'0')
+   elif len(chunk) == 7:
+      chunk += "0"
+      
    if index != len(chunkedList) - 1:
       uintstr += "0b" + chunk + ","
    else:
@@ -58,8 +64,7 @@ uintstr = "uint8_t morse_defcon[] = {"
 chunkedList = wrap(defcon31_bin, 8)
       
 # Iterate over each chunk in the chunked list
-for index, chunk in enumerate(chunkedList):      
-   # Append '00' to the chunk if its length is less than 7
+for index, chunk in enumerate(chunkedList): 
    if len(chunk) <= 7:
       chunk += chunk.ljust(8-len(chunk),'0')
    if index != len(chunkedList) - 1:
