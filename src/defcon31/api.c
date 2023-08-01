@@ -441,7 +441,7 @@ void set_led(u8 led_index)
 //true for Space Bits R Us SAOs, false for Pony SAOs
 bool is_space_sao()
 {
-	return 1;//TODO: implement EEPROM read
+	return 0;//TODO: implement EEPROM read
 }
 
 u8 get_eeprom_byte(u16 eeprom_address)

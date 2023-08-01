@@ -148,16 +148,32 @@ void set_frame_audio()
 void set_frame_blink()
 {
 	//Linear Congruential Generator for pseudo-random numbers
-	u8 LED_WHITE_COUNT=12;
+	//u8 LED_WHITE_COUNT=12;
 	//u8 RGB_ELEMENT_COUNT=RGB_LED_COUNT*3;//10*3=30
-	u8 MAX_SIMULTANEOUS_LEDS_ON=4;//red and green and blue are each coutned independently
-	u16 m=RGB_LED_COUNT+LED_WHITE_COUNT;
-	u16 x=millis()>>9;//divide by the period (in ms) with which to change which LEDs are shown --> 256 is ~4 Hz, 128 is ~8 Hz, >>9 is ~2 Hz
+	u8 MAX_SIMULTANEOUS_LEDS_ON=5;//red and green and blue are each coutned independently
+	//u16 m=RGB_LED_COUNT+LED_WHITE_COUNT;
+	u16 x=millis()>>7;//divide by the period (in ms) with which to change which LEDs are shown --> 256 is ~4 Hz, 128 is ~8 Hz, >>9 is ~2 Hz
 	u8 led_index;
 	u8 iter;
 	for(iter=0;iter<MAX_SIMULTANEOUS_LEDS_ON;iter++)
 	{
-		x=get_random(x);
+		/*if(get_random(~x)&0x01 && is_space_sao())
+		{
+			led_index=get_random(x)%WHITE_LED_COUNT;
+			set_white(led_index,255);
+		}else{*/
+			led_index=get_random(x^(x>>1))%RGB_LED_COUNT;
+			set_hue(led_index,get_random(x^(x>>1)),255);
+			//if(iter==0&&!(millis()&0x70))
+			if(iter==0&&(((u8)millis()&0x7F)<0x47))
+			{
+				set_rgb(led_index,0,255);
+				set_rgb(led_index,1,255);
+				set_rgb(led_index,2,255);
+			}
+		//}
+		x--;
+		/*x=get_random(x);
 		led_index=x%m;
 		if(led_index>=RGB_LED_COUNT)
 		{
@@ -165,7 +181,7 @@ void set_frame_blink()
 		}else{
 			//set_rgb(led_index/3,led_index%3,255);
 			set_hue(led_index,get_random(x),255);
-		}
+		}*/
 	}
 	flush_leds(MAX_SIMULTANEOUS_LEDS_ON<<1+1);
 }
