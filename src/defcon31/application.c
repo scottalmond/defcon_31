@@ -2,27 +2,19 @@
 #include "application.h"
 #include "api.h"
 
-const u8 SUBMENU_COUNT=3; //screen savers, games, puzzles
-const u8 SUBMENU_TIME_OUT_MS=2048; //how long the top menu will display for before entering the submenu
-const u8 SCREEN_SAVER_COUNT_PONY=3;//all SAOs have these screen savers
-const u8 SCREEN_SAVER_COUNT_SPACE=0;//only space ones have these
-//const u16 SCREEN_SAVER_DURATION_MS=32768;
+#define SUBMENU_COUNT 4 //screen savers, games, puzzles
+#define SUBMENU_TIME_OUT_MS 2048 //how long the top menu will display for before entering the submenu
+#define SCREEN_SAVER_COUNT_PONY 4//all SAOs have these screen savers
+#define SCREEN_SAVER_COUNT_SPACE 1//only space ones have these
 
+//configure peripherals before using them
 void setup_application()
 {
 	setup_serial(0,0);
 	clear_button_events();
 }
 
-/*void run_application()
-{
-	setup_application();
-	while(is_application_valid())
-	{
-		show_cyclone();
-	}
-}*/
-
+//launch point for the top level menu
 void run_application()
 {
 	u8 submenu_index=0;
@@ -37,30 +29,31 @@ void run_application()
 			show_top_menu_since_ms=millis();
 		}
 		if(is_button_down(0)) show_top_menu_since_ms=millis();
-		if((show_top_menu_since_ms+(u32)SUBMENU_TIME_OUT_MS)>millis())
+		if((show_top_menu_since_ms+SUBMENU_TIME_OUT_MS)>millis())
 		{//if the countdown timeout expiration is in the future (because button is currently down or within 2 seconds of timeout), show top menu
 			for(iter=0;iter<RGB_LED_COUNT;iter++) 
-				if(iter&0x01)
-					set_hue(iter,submenu_index<<14,255);//set all LEDs to the same color
+				set_hue_max(iter,submenu_index<<14);//set all LEDs to the same color
 			flush_leds(RGB_LED_COUNT+1);//10 RGB LEDs (2-elements each), only every-other enabled, and the status LED to give feedback about the button push to the user
 		}else{//showing submenu
 			show_top_menu_since_ms=0;
 			switch(submenu_index)
 			{
 				case 0:{ show_screen_savers(); }break;
-				case 1:{ show_cyclone(); }break;
-				case 2:{ show_counter(); }break;
-				//case 3:{ show_puzzle(); }break;
+				case 1:{ show_game(0); }break;//cyclone
+				case 2:{ show_game(4); }break;//gate
+				case 3:{ show_counter(); }break;
 			}
 		}
 	}
 }
 
+//if left button has been pushed, return 0
 bool is_submenu_valid()
 {
 	return is_application_valid()&&!get_button_event(0,0);
 }
 
+//within the first menu
 void show_screen_savers()
 {
 	bool is_auto_cycle=1;//automatically cycle through screen savers as a function of millis() (sync millis across multiple SAOs through terminal to get multiple badges sync'd)
@@ -72,26 +65,23 @@ void show_screen_savers()
 			is_auto_cycle=0;
 			screen_saver_index++;
 		}
-		if(is_auto_cycle)
-		{
-			screen_saver_index=millis()>>15;
-		}//else{
-		//	if(clear_button_event(1,0)) screen_saver_index++;//short right button push to go to next screen saver
-		//}
+		if(is_auto_cycle) screen_saver_index=millis()>>15;//proceed automatically to the next screen saver every 32 seconds
 		if(clear_button_event(1,1)) is_auto_cycle=!is_auto_cycle;
-		screen_saver_index%=SCREEN_SAVER_COUNT_PONY+(is_space_sao()?SCREEN_SAVER_COUNT_SPACE:0);
+		screen_saver_index%=SCREEN_SAVER_COUNT_PONY+(IS_SPACE_SAO?SCREEN_SAVER_COUNT_SPACE:0);
 		switch(screen_saver_index)
 		{
 			case 0:{ set_frame_rainbow(); }break;
-			case 1:{ set_frame_blink(); }break;
-			case 2:{ set_frame_audio(); }break;
+			case 1:{ set_frame_audio(); }break;
+			case 2:{ set_frame_blink(); }break;
+			case 3:{ set_frame_morse(); }break;
+			case 4:{ set_frame_space_bits(); }break;//exclusive to space bits badges
 		}
 	}
 }
 
 void show_counter()
 {//it counts the number of times you have clicked the right button.  Long-press to toggle clock mode.
-	u32 state=1;
+	u16 state=1;
 	bool is_clock_mode=0;
 	u8 iter;
 	while(is_submenu_valid())
@@ -99,11 +89,10 @@ void show_counter()
 		if(is_clock_mode) state=millis()>>8;
 		else if(clear_button_event(1,0)) state++;
 		if(clear_button_event(1,1)) is_clock_mode=!is_clock_mode;
-		state&=0x03FF;
 		for(iter=0;iter<RGB_LED_COUNT;iter++)
 		{
 			if((state>>iter)&0x01)
-				set_hue(iter,millis()<<3,255);
+				set_hue_max(iter,millis()<<3);
 		}
 		flush_leds(21);
 	}
@@ -112,33 +101,31 @@ void show_counter()
 void set_frame_rainbow()
 {
 	u8 iter;
-	for(iter=0;iter<RGB_LED_COUNT;iter++) set_hue(iter,(millis()*32+0x1999*iter),255);
-	/*set_rgb(2,0,get_button_event(0,0)?255:0);
-	set_rgb(2,2,get_button_event(0,1)?255:0);
-	set_rgb(4,0,get_button_event(1,0)?255:0);
-	set_rgb(4,2,get_button_event(1,1)?255:0);*/
+	for(iter=0;iter<RGB_LED_COUNT;iter++) set_hue_max(iter,(millis()<<5+0x1999*iter));
+	iter=(millis()>>8)&0x0F;
+	if(IS_SPACE_SAO&&iter<WHITE_LED_COUNT) set_white_max(iter);
 	flush_leds(2*RGB_LED_COUNT+1);//max 2 colors ON at a time and one led for button pushes
 }
 
 void set_frame_audio()
 {
 	u8 audio_level,iter;
-	audio_level=get_audio_level()/2;
+	audio_level=get_audio_level()>>1;
 	for(iter=0;iter<RGB_LED_COUNT;iter++)
 	{
 		if(audio_level>=iter)
 		{
 			if(iter>7)
 			{//red for loud
-				set_rgb(iter,0,255);
+				set_rgb_max(iter,0);
 			}
 			else if(iter>4)
 			{//yellow for medium
-				set_rgb(iter,0,128);
-				set_rgb(iter,1,128);
+				set_rgb_max(iter,0);
+				set_rgb_max(iter,1);
 			}else{
 				//green quiet
-				set_rgb(iter,1,255);
+				set_rgb_max(iter,1);
 			}
 		}
 	}
@@ -147,55 +134,66 @@ void set_frame_audio()
 
 void set_frame_blink()
 {
-	//Linear Congruential Generator for pseudo-random numbers
-	//u8 LED_WHITE_COUNT=12;
-	//u8 RGB_ELEMENT_COUNT=RGB_LED_COUNT*3;//10*3=30
-	u8 MAX_SIMULTANEOUS_LEDS_ON=5;//red and green and blue are each coutned independently
-	//u16 m=RGB_LED_COUNT+LED_WHITE_COUNT;
+	const u8 MAX_SIMULTANEOUS_LEDS_ON=5;
 	u16 x=millis()>>7;//divide by the period (in ms) with which to change which LEDs are shown --> 256 is ~4 Hz, 128 is ~8 Hz, >>9 is ~2 Hz
 	u8 led_index;
 	u8 iter;
 	for(iter=0;iter<MAX_SIMULTANEOUS_LEDS_ON;iter++)
 	{
-		/*if(get_random(~x)&0x01 && is_space_sao())
+		led_index=get_random(x^(x>>1))%RGB_LED_COUNT;
+		set_hue_max(led_index,get_random(x^(x>>1)));
+		if(iter==0&&(((u8)millis()&0x7F)<0x47))
 		{
-			led_index=get_random(x)%WHITE_LED_COUNT;
-			set_white(led_index,255);
-		}else{*/
-			led_index=get_random(x^(x>>1))%RGB_LED_COUNT;
-			set_hue(led_index,get_random(x^(x>>1)),255);
-			//if(iter==0&&!(millis()&0x70))
-			if(iter==0&&(((u8)millis()&0x7F)<0x47))
-			{
-				set_rgb(led_index,0,255);
-				set_rgb(led_index,1,255);
-				set_rgb(led_index,2,255);
-			}
-		//}
+			set_rgb_max(led_index,0);
+			set_rgb_max(led_index,1);
+			set_rgb_max(led_index,2);
+		}
 		x--;
-		/*x=get_random(x);
-		led_index=x%m;
-		if(led_index>=RGB_LED_COUNT)
-		{
-			if(is_space_sao()) set_white(led_index-RGB_LED_COUNT,255);
-		}else{
-			//set_rgb(led_index/3,led_index%3,255);
-			set_hue(led_index,get_random(x),255);
-		}*/
 	}
 	flush_leds(MAX_SIMULTANEOUS_LEDS_ON<<1+1);
 }
 
-//timing game
-void show_cyclone()
+//2 words per second
+void set_frame_space_bits()
+{
+	switch((millis()>>9)&0x03)
+	{
+		case 0:{ 
+			set_white_max(0);
+			set_white_max(1);
+			set_white_max(4);
+			set_white_max(5);
+		}break;
+		case 1:{ 
+			set_white_max(5);
+			set_white_max(6);
+		}break;
+		case 2:{ 
+			set_white_max(1);
+			set_white_max(2);
+		}break;
+		case 3:{ 
+			if((millis()>>6)&0x01)
+			{
+				set_white_max(6);
+				set_white_max(11);
+			}else{
+				set_white_max(7);
+				set_white_max(10);
+			}
+		}break;
+	}
+}
+
+//multiple games, selected by initial game state (allows re-use of ending game animation and loop logic with less code space)
+void show_game(u8 state)
 {
 	u32 start_state_ms=millis();
-	u8 state=0;
 	bool is_increasing=0;
 	u8 TARGET_POSITION=5;//constant postiion of the winning position
 	u8 player_position=0;
 	u8 level=0;
-	u8 iter,color;
+	u8 iter,target_color=0,player_color=0;
 	u32 residual;
 	u8 PERIOD_MS=100;//how many ms pass before the 
 	while(is_submenu_valid())
@@ -203,14 +201,8 @@ void show_cyclone()
 		residual=millis()-start_state_ms;
 		switch(state)
 		{
-			case 0:{  //normal pay
-				if((millis()>>9)&0x01)//alternating goal posts
-					set_rgb(TARGET_POSITION-1,level,255);
-				else
-					set_rgb(TARGET_POSITION+1,level,255);
-				for(iter=0;iter<3;iter++) //tail length
-					for(color=0;color<3;color++) //rgb
-						set_rgb((player_position+(is_increasing?1:-1)+RGB_LED_COUNT)%RGB_LED_COUNT,color,255);
+			case 0:{  //cyclone normal play
+				set_rgb_max(TARGET_POSITION,level);//single target objective to hit
 				if(residual>PERIOD_MS)
 				{
 					player_position+=is_increasing?1:-1;
@@ -232,17 +224,17 @@ void show_cyclone()
 					else state=2;
 				}
 			}break;
-			case 1:{ //win
+			case 1:{ //cyclone win
 				if((millis()>>7)&0x01)
 				{//blinking target, faster than goal posts
-					set_rgb(TARGET_POSITION,0,255);
-					set_rgb(TARGET_POSITION,1,255);
-					set_rgb(TARGET_POSITION,2,255);
+					set_rgb_max(TARGET_POSITION,0);
+					set_rgb_max(TARGET_POSITION,1);
+					set_rgb_max(TARGET_POSITION,2);
 				}
 				if((millis()>>9)&0x01)
 				{//syncronized blinking goal posts
-					set_rgb(TARGET_POSITION-1,level,255);
-					set_rgb(TARGET_POSITION+1,level,255);
+					set_rgb_max(TARGET_POSITION-1,level);
+					set_rgb_max(TARGET_POSITION+1,level);
 				}
 				if(clear_button_event(1,0)||clear_button_event(1,1))
 				{//wait for user to accept win before returning to game
@@ -253,17 +245,17 @@ void show_cyclone()
 					start_state_ms=millis();
 				}
 			}break;
-			case 2:{ 
+			case 2:{ //cyclone lose
 				if((millis()>>7)&0x01)
 				{//blinking target, faster than goal posts
-					set_rgb(player_position,0,255);
-					set_rgb(player_position,1,255);
-					set_rgb(player_position,2,255);
+					set_rgb_max(player_position,0);
+					set_rgb_max(player_position,1);
+					set_rgb_max(player_position,2);
 				}
 				if((millis()>>9)&0x01)//alternating goal posts
-					set_rgb(TARGET_POSITION-1,level,255);
+					set_rgb_max(TARGET_POSITION-1,level);
 				else
-					set_rgb(TARGET_POSITION+1,level,255);
+					set_rgb_max(TARGET_POSITION+1,level);
 				if(clear_button_event(1,0)||clear_button_event(1,1))
 				{//wait for user to accept win before returning to game
 					state=0;
@@ -281,27 +273,84 @@ void show_cyclone()
 					player_position%=RGB_LED_COUNT;
 					start_state_ms+=PERIOD_MS;
 				}
-				set_rgb(player_position,0,255);
-				set_rgb(player_position,1,255);
-				set_rgb(player_position,2,255);
+				set_rgb_max(player_position,0);
+				set_rgb_max(player_position,1);
+				set_rgb_max(player_position,2);
 				for(iter=1;iter<4;iter++)
 				{
-					set_hue((player_position+iter)%RGB_LED_COUNT,(millis()<<3)-(iter<<11),128);
+					set_hue_max((player_position+iter)%RGB_LED_COUNT,(millis()<<3)-(iter<<11));
 				}
 			}break;
+			case 4:{//gate game
+				set_rgb_max(TARGET_POSITION,target_color);//stationary gate
+				if(residual>PERIOD_MS)
+				{
+					if(player_position==TARGET_POSITION)//"player" is the autonomous moving piece.  user controls color of target gate through button presses
+					{
+						player_color=get_random(millis())%3;
+						PERIOD_MS-=2;
+					}
+					player_position++;
+					player_position%=RGB_LED_COUNT;
+					start_state_ms+=PERIOD_MS;
+					if(player_position==TARGET_POSITION)
+					{
+						if(player_color!=target_color) state=5;
+					}
+					if(PERIOD_MS<60) state=3;//win game
+				}
+				if(clear_button_event(1,0)||clear_button_event(1,1))
+				{
+					target_color++;
+					target_color%=3;
+				}
+			}
+			case 5:{//gate game lose
+				if(millis()&0x40)
+					set_rgb_max(TARGET_POSITION,player_color);
+				else
+					set_rgb_max(TARGET_POSITION,target_color);
+				if(clear_button_event(1,0)||clear_button_event(1,1))
+				{
+					state=4;//restart game
+				}
+			}
 		}
 		flush_leds(12);//white (3 colors) * 3 tail + 2x goals + 1x status button
 	}
 }
 
-/*void show_puzzle()
+void set_frame_morse()
 {
-	while(is_submenu_valid())
+	u8 morse_units[]= {
+		#if IS_SPACE_SAO
+			 0b10111000 
+		#else
+			 0b11111110 
+		#endif
+		};
+	u16 morse_period_units=0x0008;//will become the period of the morse code cycling in lengths of *units* (there are dead bands at the end of each cycle while the patterns waits to repeat - needs to be an even multiple of 2 to make the clock math easy
+	u8 morse_shift=sizeof(morse_units);//number of *bytes* in morse_list
+	u8 morse_bit;
+	u8 morse_index,iter;
+	while(morse_shift)//for every multiple of 2 bytes in morse_units, divide morse_units by 2 and multiple morse_period_units by 2 to get morse_period_units to become the next even mulitple of 2 greater than morse_units
 	{
-		if(millis()&0b10000000)
-			set_rgb(9,2,255);
-		else
-			set_rgb(8,2,255);
-		flush_leds(2);
+		morse_period_units<<=1;
+		morse_shift>>=1;
 	}
-}*/
+	morse_bit=(millis()>>6)&(morse_period_units-1);//use time to index into the array
+	morse_index=morse_bit>>3;//get the byte-wise index within the array
+	if(morse_index<sizeof(morse_units))//needs to be within the array to light any LEDs
+	{
+		morse_shift=morse_bit&0x07;//3 LSBs are which bit within the byte to fetch
+		if(morse_units[morse_index]>>(7-morse_shift)&0x01)//use "7-" to make it easier to generate and read the list constructor left-to-right
+		{
+			#if IS_SPACE_SAO
+				for(iter=0;iter<WHITE_LED_COUNT;iter++) set_white_max(iter);
+			#else
+				for(iter=0;iter<RGB_LED_COUNT;iter++) set_rgb_max(iter,2);
+			#endif
+		}
+	}//else all LEDs OFF
+	flush_leds(RGB_LED_COUNT+1);
+}

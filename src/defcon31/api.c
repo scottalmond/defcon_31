@@ -1,7 +1,8 @@
 #include "STM8s.h"
 #include "api.h"
+#include "stm8s_adc1.h"
 
-const u8 hw_revision=1;
+#define hw_revision 1
 //1: v1r1 has MAT0 on PD3 and mic on PD4, which precludes audio input (no analog connection) <-- prototype units
 //2: v1r2 moved MAT0 to PD4, and audio input to PD3 <-- defcon31 as-built/delivered version
 
@@ -10,14 +11,10 @@ u32 api_counter=0;//increments roughly every millisecond, give-or-take a factor 
 
 //application space settings
 #define LED_COUNT 43 //10 RGB (3 LEDs each) + 12 white + 1 debug
-u8 pwm_brightness_buffer[LED_COUNT]/*={ 0,0,0,0,0,0,0,0,0,0,
-																			0,0,0,0,0,0,0,0,0,0,
-																			0,0,0,0,0,0,0,0,0,0,
-																			0,0,0,0,0,0,0,0,0,0,
-																			0,0,0}*/;//a space for the developer to place the brightness of each LED independent of the pwm volatile display
+u8 pwm_brightness_buffer[LED_COUNT];//a space for the developer to place the brightness of each LED independent of the pwm volatile display
 
 //LED pwm control state machine
-const u8 PWM_MAX_PERIOD=250;//interrupt counter has max value, so delaying longer requires multiple interrupt triggers
+#define PWM_MAX_PERIOD 250 //interrupt counter has max value, so delaying longer requires multiple interrupt triggers
 u8 pwm_brightness[LED_COUNT][2][2];//array index, [led index, led pwm], [A vs B side live]
 u16 pwm_sleep[2];//[A vs B side live], how many LED LSBs to wait with LEDs OFF before putting LEDs back ON
 u8 pwm_led_count[2];//how many LEDs to cycle through
@@ -27,7 +24,6 @@ u8 pwm_state=0;//LSB (bit 0) is index of pwm_brightness to pull pwm info from.  
 
 //buttons
 #define BUTTON_COUNT 2
-//u32 button_start_ms;//if 0, then button is unpressed.  if >0 then button si pressed and is waiting for release
 u32 button_start_ms=0;
 bool is_right_button_down=0;
 bool button_pressed_event[BUTTON_COUNT][2];//event flag registering a button push
@@ -42,6 +38,7 @@ u16 audio_running_mean;//the running sum of the mean CURRENTLY being computed
 u16 audio_running_std;//the running sum of the std CURRENTLY being computed
 
 //return a pseudo-random number based on the input seed (ex. millis())
+//Linear Congruential Generator for pseudo-random numbers
 u16 get_random(u16 x)
 {
 	u16 a=1664525;
@@ -57,6 +54,7 @@ void setup_serial(bool is_enabled,bool is_fast_baud_rate)
 		GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
 		UART1_DeInit();
 		UART1_Init(is_fast_baud_rate?115200:9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+		//unit can do 1Mbaud, but is not stable with other interrupts present (LED, buttons, audio) also running, causes reading character to be skipped
 		UART1_Cmd(ENABLE);
 	}else{
 		UART1_Cmd(DISABLE);
@@ -68,21 +66,15 @@ void setup_serial(bool is_enabled,bool is_fast_baud_rate)
 
 //leave application mode if SWIM pin floats high or sleep mode is activated (long press on left button)
 bool is_application_valid()
-{
-	return !is_button_down(2) && !get_button_event(0,1);
-}
+{ return !is_button_down(2) && !get_button_event(0,1); }
 
 //exit developer mode if SWIM pin floats high
 bool is_developer_valid()
-{
-	return is_button_down(2) && !get_button_event(0,1);
-}
+{ return is_button_down(2) && !get_button_event(0,1); }
 
 //exit sleep mode if any button is pushed
 bool is_sleep_valid()
-{
-	return !(get_button_event(0,0) || get_button_event(1,0) || get_button_event(0,1) || get_button_event(1,1));
-}
+{ return !(get_button_event(0,0) || get_button_event(1,0) || get_button_event(0,1) || get_button_event(1,1)); }
 
 void setup_main()
 {
@@ -103,7 +95,7 @@ void setup_main()
 	
 	/*ADC1_DeInit();
 	ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
-					 AIN4,
+					 ADC1_CHANNEL_4,
 					 ADC1_PRESSEL_FCPU_D18,//D18 
 					 ADC1_EXTTRIG_TIM, 
 					 DISABLE, 
@@ -156,7 +148,7 @@ void update_buttons()
 bool get_button_event(u8 button_index,bool is_long)
 { return button_pressed_event[button_index][is_long]; }
 
-//clears the specified type of event from the event queue
+//clears the specified type of event from the event queue.  returns if it was triggered before clearing
 bool clear_button_event(u8 button_index,bool is_long)
 {
 	bool out=button_pressed_event[button_index][is_long];
@@ -186,6 +178,7 @@ bool is_button_down(u8 index)
 	return 0;
 }
 
+//fetch audio reading and update state machine that computes the "RMS"
 void update_audio()
 {
 	u8 reading,reading_residual;
@@ -271,42 +264,44 @@ void flush_leds(u8 led_count)
 	pwm_state|=0x02;//raise flag that data is ready for volatile pwm process to pick up and use
 }
 
-void set_hue(u8 index,u16 color,u8 brightness)
+//assumes max brightness
+void set_hue_max(u8 index,u16 color)
 {
+	const u8 brightness=255;
 	u8 red=0,green=0,blue=0;
-	u16 residual=color%(0x2AAB);
-	residual=(u8)(residual*brightness/0x2AAB);
-	switch(color/(0x2AAB))//0xFFFF/6
+	u16 residual_16=color%(0x2AAB);
+	u8 residual_8=(residual_16<<8)/0x2AAB;
+	switch(color/(0x2AAB))
 	{
 		case 0:{
 			red=brightness;
-			green=residual;
+			green=residual_8;
 			blue=0;
 			break;
 		}case 1:{
-			red=brightness-residual;
+			red=brightness-residual_8;
 			green=brightness;
 			blue=0;
 			break;
 		}case 2:{
 			red=0;
 			green=brightness;
-			blue=residual;
+			blue=residual_8;
 			break;
 		}case 3:{
 			red=0;
-			green=brightness-residual;
+			green=brightness-residual_8;
 			blue=brightness;
 			break;
 		}case 4:{
-			red=residual;
+			red=residual_8;
 			green=0;
 			blue=brightness;
 			break;
 		}case 5:{
 			red=brightness;
 			green=0;
-			blue=brightness-residual;
+			blue=brightness-residual_8;
 			break;
 		}default:{}
 	}
@@ -332,6 +327,11 @@ void set_debug(u8 brightness)
 	pwm_brightness_buffer[30]=brightness;
 }
 
+void set_rgb_max(u8 index,u8 color)
+{ set_rgb(index,color,255); }
+void set_white_max(u8 index)
+{ set_white(index,255); }
+
 void set_matrix_high_z()
 {
 	if(hw_revision==1)
@@ -344,35 +344,24 @@ void set_matrix_high_z()
 	}
 }
 
-//PRECON: this method assumes a fixed-rate sampling so that "ADC1_GetFlagStatus(ADC1_FLAG_EOC) == FALSE" does not need to be queried
-/*u8 get_audio_sample()
-{
-	return 
-	if(hw_revision==2)
-	{
-		//return reading here, queue up next reading
-		
-	}
-	return 0;//revision 1 hw misrouted this connection, made it un-readable
-}*/
-
 //turn ON the relevant LED
 void set_led(u8 led_index)
 {
+	u8 is_high;
 	//0-(10*3-1) is RGB
 	//(10*3) is debug
 	//(10*3+1) to (10*3+1+12) is white LEDs
 	const u8 led_lookup[LED_COUNT][2]={//[0] is HIGH mat, [1] is LOW mat
-		/*{0,1},{0,2},{1,2},//LED7  RGB
-		{1,0},{2,0},{2,1},//LED3  RGB
-		{5,0},{5,1},{5,2},//LED1  RGB
-		{6,0},{6,1},{6,2},//LED20 RGB
-		{6,5},{6,4},{5,4},//LED22 RGB
-		{4,3},{5,3},{6,3},//LED23 RGB
-		{3,4},{3,5},{3,6},//LED21 RGB
-		{0,5},{0,6},{1,6},//LED19 RGB
-		{0,4},{1,4},{2,4},//LED18 RGB
-		{0,3},{1,3},{2,3},*///LED2  RGB
+		//{0,1},{0,2},{1,2},//LED7  RGB
+		//{1,0},{2,0},{2,1},//LED3  RGB
+		//{5,0},{5,1},{5,2},//LED1  RGB
+		//{6,0},{6,1},{6,2},//LED20 RGB
+		//{6,5},{6,4},{5,4},//LED22 RGB
+		//{4,3},{5,3},{6,3},//LED23 RGB
+		//{3,4},{3,5},{3,6},//LED21 RGB
+		//{0,5},{0,6},{1,6},//LED19 RGB
+		//{0,4},{1,4},{2,4},//LED18 RGB
+		//{0,3},{1,3},{2,3},//LED2  RGB
 		
 		{0,1},{1,0},{5,0},{6,0},{6,5},{4,3},{3,4},{0,5},{0,4},{0,3},//reds
 		{0,2},{2,0},{5,1},{6,1},{6,4},{5,3},{3,5},{0,6},{1,4},{1,3},//greens
@@ -391,60 +380,45 @@ void set_led(u8 led_index)
 		{4,5},//LED13
 		{5,6} //LED11
 	};
-	bool is_high=0;
-	do{
+	for(is_high=0;is_high<2;is_high++)
+	{
 		GPIO_TypeDef* GPIOx;
 		GPIO_Pin_TypeDef PortPin;
 		switch(led_lookup[led_index][!is_high])
 		{
 			case 0:{
-				GPIOx=GPIOD;
+				GPIOx=GPIOD;//GPIOD,GPIO_PIN_3
 				PortPin=GPIO_PIN_3;
 			}break;
 			case 1:{
-				GPIOx=GPIOD;
+				GPIOx=GPIOD;//GPIOD,GPIO_PIN_2
 				PortPin=GPIO_PIN_2;
 			}break;
 			case 2:{
-				GPIOx=GPIOC;
+				GPIOx=GPIOC;//GPIOC,GPIO_PIN_7
 				PortPin=GPIO_PIN_7;
 			}break;
 			case 3:{
-				GPIOx=GPIOC;
+				GPIOx=GPIOC;//GPIOC,GPIO_PIN_6
 				PortPin=GPIO_PIN_6;
 			}break;
 			case 4:{
-				GPIOx=GPIOC;
+				GPIOx=GPIOC;//GPIOC,GPIO_PIN_5
 				PortPin=GPIO_PIN_5;
 			}break;
 			case 5:{
-				GPIOx=GPIOC;
+				GPIOx=GPIOC;//GPIOC,GPIO_PIN_4
 				PortPin=GPIO_PIN_4;
 			}break;
 			case 6:{
-				GPIOx=GPIOC;
+				GPIOx=GPIOC;//GPIOC,GPIO_PIN_3
 				PortPin=GPIO_PIN_3;
 			}break;
 			case 7:{
-				GPIOx=GPIOA;
+				GPIOx=GPIOA;//GPIOA,GPIO_PIN_3
 				PortPin=GPIO_PIN_3;
-			}break;
-			default:{
-				
 			}break;
 		}
 		GPIO_Init(GPIOx, PortPin, is_high?GPIO_MODE_OUT_PP_HIGH_SLOW:GPIO_MODE_OUT_PP_LOW_SLOW);
-		is_high=!is_high;
-	}while(is_high);
-}
-
-//true for Space Bits R Us SAOs, false for Pony SAOs
-bool is_space_sao()
-{
-	return 0;//TODO: implement EEPROM read
-}
-
-u8 get_eeprom_byte(u16 eeprom_address)
-{
-	return (*(PointerAttr uint8_t *) (0x4000+eeprom_address));
+	}
 }
