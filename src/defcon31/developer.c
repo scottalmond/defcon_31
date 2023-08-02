@@ -5,9 +5,10 @@
 
 void setup_developer()
 {
-	setup_serial(1,1);//enabled, 0: 9600 baud, 1: at high speed (1MBaud)
+	setup_serial(1,1);//enabled at high speed
 	clear_button_events();
 	flush_leds(0);//clear outstanding led buffer
+	//set_debug(255);
 	set_rgb(0,0,255);
 	flush_leds(1);
 	Serial_newline();
@@ -61,13 +62,13 @@ void print_ascii_art(bool is_welcome)
 											0b00111110,0b0111110
 		#endif
 		};
-	u8 winner[] = {     0b10000010,0b11101000,0b00101000,0b00101111,0b11101111,0b110000,
-											0b10010010,0b01001100,0b00101100,0b00101000,0b00001000,0b001000,
-											0b10010010,0b01001010,0b00101010,0b00101000,0b00001000,0b001000,
-											0b10010010,0b01001001,0b00101001,0b00101111,0b10001111,0b110000,
-											0b10010010,0b01001000,0b10101000,0b10101000,0b00001000,0b100000,
-											0b10010010,0b01001000,0b01101000,0b01101000,0b00001000,0b010000,
-											0b01101100,0b11101000,0b00101000,0b00101111,0b11101000,0b001000 };
+	u8 winner[] = {     0b10000010,0b11101000,0b00101000,0b00101111,0b11101111,0b11000000,
+											0b10010010,0b01001100,0b00101100,0b00101000,0b00001000,0b00100000,
+											0b10010010,0b01001010,0b00101010,0b00101000,0b00001000,0b00100000,
+											0b10010010,0b01001001,0b00101001,0b00101111,0b10001111,0b11000000,
+											0b10010010,0b01001000,0b10101000,0b10101000,0b00001000,0b10000000,
+											0b10010010,0b01001000,0b01101000,0b01101000,0b00001000,0b01000000,
+											0b01101100,0b11101000,0b00101000,0b00101111,0b11101000,0b00100000 };
 	u8 length = is_welcome?sizeof(welcome):sizeof(winner);
 	u8 lineBreakInterval = is_welcome?
 		#if IS_SPACE_SAO
@@ -78,14 +79,14 @@ void print_ascii_art(bool is_welcome)
 			:6;
 	u8 i,j;
 	for (i = 0; i < length; i++) {
-			for (j = 7; j !=0xFF; j--) {
-				 // Extract the jth bit from the current byte and print '#' if it's 1, or ' ' if it's 0
-				 Serial_print_char((( (is_welcome?welcome[i]:winner[i]) >> j)  & 0x01) ? '#' : ' ');
-			}
-			if ((i % lineBreakInterval) == (lineBreakInterval-1)) {
-				 // Insert a line break after every lineBreakInterval elements
-				 Serial_newline();
-			}
+		for (j = 7; j !=0xFF; j--) {
+			// Extract the jth bit from the current byte and print '#' if it's 1, or ' ' if it's 0
+			Serial_print_char((( (is_welcome?welcome[i]:winner[i]) >> j)  & 0x01) ? '#' : ' ');
+		}
+		if ((i % lineBreakInterval) == (lineBreakInterval-1)) {
+			// Insert a line break after every lineBreakInterval elements
+			Serial_newline();
+		}
 	}
 }
 
@@ -132,7 +133,7 @@ void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETER
 			}
 		}
 	}
-	//print buffer read contents
+	//echo the received characters
 	/*Serial_print_string("Input (");
 	Serial_print_u32(str_index);
 	Serial_print_string("): ");
@@ -181,8 +182,8 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 		case '?':
 		case '\n':
 		case 'h':{ //help dialog
-			Serial_print_string("GitHub.com/ScottAlmond/DefCon_31");//user wouldn't know which pins are UART, and the baud rate, unless they've already seen this page, so it's a moot point
-			//Serial_print_string("h\np 9 0 255\np0-3#\nt0-1#\nl2-3#\nw1-2#\na\ng");
+			//Serial_print_string("GitHub.com/ScottAlmond/DefCon_31");//user wouldn't know which pins are UART, and the baud rate, unless they've already seen this page, so it's a moot point
+			Serial_print_string("h\np 9 0 255\np0-3#\nt0-1#\nl2-3#\nw1-2#\na\ng");//more cryptic version
 			is_valid=1;
 		}break;
 		case '1'://in case user mis-reads L as 1

@@ -1,7 +1,8 @@
 
-#define RGB_LED_COUNT 10  //number of RGB LEDs around periphery
-#define WHITE_LED_COUNT 12 //number of white ELDs on the Space SAO ONLY
 #define IS_SPACE_SAO 1 //1 for Space Bits R Us SAOs, 0 for Pony SAOs
+
+#define RGB_LED_COUNT 10  //number of RGB LEDs around periphery
+#define WHITE_LED_COUNT 12 //number of white LEDs on the Space SAO ONLY
 
 void setup_serial(bool is_enabled,bool is_fast_baud_rate);
 bool is_application_valid(void);
