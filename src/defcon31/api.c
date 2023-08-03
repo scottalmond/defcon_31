@@ -52,7 +52,7 @@ void setup_serial(bool is_enabled,bool is_fast_baud_rate)
 		GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
 		GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
 		UART1_DeInit();
-		UART1_Init(is_fast_baud_rate?115200:9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+		UART1_Init(is_fast_baud_rate?57600:9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
 		//unit can do 1Mbaud, but is not stable with other interrupts present (LED, buttons, audio) also running, causes reading character to be skipped
 		UART1_Cmd(ENABLE);
 	}else{
@@ -83,7 +83,7 @@ void setup_main()
 		
 	//run pwm interrupt at 2.000 kHz period (to allow for >40 Hz frames with all LEDs ON)
 	TIM2->CCR1H=0;//this will always be zero based on application architecutre
-	TIM2->PSCR= 6;// init divider register 16MHz/2^X
+	TIM2->PSCR= 5;// init divider register 16MHz/2^X
 	TIM2->ARRH= 0;// init auto reload register
 	TIM2->ARRL= PWM_MAX_PERIOD;// init auto reload register
 	TIM2->CR1|= TIM2_CR1_ARPE | TIM2_CR1_URS | TIM2_CR1_CEN;// enable timer
@@ -129,12 +129,12 @@ void setup_main()
 
 u32 millis()
 {
-	return api_counter;
+	return api_counter>>1;
 }
 
 void set_millis(u32 new_time)
 {
-	api_counter=new_time;
+	api_counter=new_time<<1;
 }
 
 //log short or long rpess button events for applicatio layer to use as user input
@@ -251,7 +251,7 @@ u8 get_audio_level()
 		if(pwm_led_index<pwm_led_count[buffer_index])
 		{
 			set_led(pwm_brightness[pwm_led_index][0][buffer_index]);//turn on the next LED
-			pwm_sleep_remaining=0x00FF&(pwm_brightness[pwm_led_index][1][buffer_index]+15);//set how long to sleep in this state //+15 works ok here as magic number to correct timing errors from interrupts
+			pwm_sleep_remaining=/*0x00FF&*/(pwm_brightness[pwm_led_index][1][buffer_index]+32);//set how long to sleep in this state //+15 works ok here as magic number to correct timing errors from interrupts
 			pwm_led_index++;//prepare state machine to go to the next led later
 		}else{//sleep pading at the end with all LEDs OFF
 			pwm_led_index=0;//reset state machine to 0
@@ -275,7 +275,7 @@ void flush_leds(u8 led_count)
 	//write application layer data (brightness values) into the pwm volatile memory
 	for(led_read_index=0;(led_read_index<LED_COUNT && led_write_index<led_count);led_read_index++)
 	{
-		if(pwm_brightness_buffer[led_read_index]>4)//min brightness, below this value instaiblity occurs magic number to avoid interrupt timing error
+		if(pwm_brightness_buffer[led_read_index]>7)//min brightness, below this value instaiblity occurs magic number to avoid interrupt timing error
 		{//if these is an led with a non-zero brightness to be shown, then add it to the relevant list
 			pwm_brightness[led_write_index][0][buffer_index]=led_read_index;
 			pwm_brightness[led_write_index][1][buffer_index]=pwm_brightness_buffer[led_read_index];

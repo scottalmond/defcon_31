@@ -280,7 +280,7 @@ void show_game(u8 state)
 				for(iter=0;iter<4;iter++)
 				{
 					player_color=(player_position+iter)%RGB_LED_COUNT;//re-use variable for win animation index
-					set_hue_max(player_color,(millis()<<3)-(iter<<11));
+					set_hue_max(player_color,(millis()<<3)+(iter<<11));
 					if(iter==3)
 					{
 						set_rgb_max(player_color,0);
@@ -337,29 +337,34 @@ void set_frame_morse()
 			 0b11101010,0b01001010,0b11101001,0b11010111,0b01001110,0b11101110,0b01110100,0b10101011,0b10111001,0b01110111,0b01110111,0b00000000
 		#endif
 		};
-	u16 morse_period_units=0x0008;//will become the period of the morse code cycling in lengths of *units* (there are dead bands at the end of each cycle while the patterns waits to repeat - needs to be an even multiple of 2 to make the clock math easy
+	u8 MORSE_PERIOD_UNITS=0x7F;//nearest power of 2 (-1) above the length of the list, *8 for byte --> bit conversion)
 	u8 morse_shift=sizeof(morse_units);//number of *bytes* in morse_list
 	u8 morse_bit;
 	u8 morse_index,iter;
-	while(morse_shift)//for every multiple of 2 bytes in morse_units, divide morse_units by 2 and multiple morse_period_units by 2 to get morse_period_units to become the next even mulitple of 2 greater than morse_units
-	{
-		morse_period_units<<=1;
-		morse_shift>>=1;
-	}
-	morse_bit=(millis()>>7)&(morse_period_units-1);//use time to index into the array
+	morse_bit=(millis()>>7)&(MORSE_PERIOD_UNITS);//use time to index into the array
 	morse_index=morse_bit>>3;//get the byte-wise index within the array
-	if(morse_index<sizeof(morse_units))//needs to be within the array to light any LEDs
+#if IS_SPACE_SAO
+	for(iter=0;iter<WHITE_LED_COUNT;iter++)
 	{
-		morse_shift=morse_bit&0x07;//3 LSBs are which bit within the byte to fetch
-		if(morse_units[morse_index]>>(7-morse_shift)&0x01)//use "7-" to make it easier to generate and read the list constructor left-to-right
+		set_white(iter,16);//default brightness - trying to be less obnoxious than full-on/full-off
+#else
+	for(iter=0;iter<RGB_LED_COUNT;iter++)
+	{
+		set_rgb(iter,16);
+#endif
+		if(morse_index<sizeof(morse_units))//needs to be within the array to light any LEDs
 		{
-			#if IS_SPACE_SAO
-				for(iter=0;iter<WHITE_LED_COUNT;iter++) set_white_max(iter);
-			#else
-				for(iter=0;iter<RGB_LED_COUNT;iter++) set_rgb_max(iter,2);
-			#endif
-		}
-	}//else all LEDs OFF
+			morse_shift=morse_bit&0x07;//3 LSBs are which bit within the byte to fetch
+			if(morse_units[morse_index]>>(7-morse_shift)&0x01)//use "7-" to make it easier to generate and read the list constructor left-to-right
+			{
+				#if IS_SPACE_SAO
+					set_white_max(iter);
+				#else
+					set_rgb_max(iter,2);
+				#endif
+			}
+		}//else all LEDs OFF
+	}
 	#if IS_SPACE_SAO
 		flush_leds(WHITE_LED_COUNT+1);
 	#else
