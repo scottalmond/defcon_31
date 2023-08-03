@@ -116,7 +116,7 @@ void setup_main()
   /*------------------TDR configuration ---------------------------*/
   /* Configure the schmitt trigger channel and state respectively
   according to ADC1_SchmittTriggerChannel & ADC1_SchmittTriggerNewState  values */
-	//ADC1_SchmittTriggerConfig(ADC1_SCHMITTTRIG_ALL, DISABLE);//causes hang-up
+	//ADC1_SchmittTriggerConfig(ADC1_SCHMITTTRIG_ALL, DISABLE);//causes hang-up?
   
   /* Enable the ADC1 peripheral */
   ADC1->CR1 |= ADC1_CR1_ADON;

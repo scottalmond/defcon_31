@@ -26,7 +26,7 @@ void run_developer()
 	setup_developer();
 	while(is_developer_valid())
 	{
-		Serial_print_string("> ");
+		Serial_print_char('>');
 		get_terminal_command(&command,&parameters,&parameter_count);
 		#if HW_REVISION==1
 			set_rgb(0,0,255);

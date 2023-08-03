@@ -101,7 +101,7 @@ void show_counter()
 void set_frame_rainbow()
 {
 	u8 iter;
-	for(iter=0;iter<RGB_LED_COUNT;iter++) set_hue_max(iter,(millis()<<5)+(iter<<13));
+	for(iter=0;iter<RGB_LED_COUNT;iter++) set_hue_max(iter,(millis()<<5)+(iter*0x1999));
 	iter=(millis()>>8)&0x0F;
 	if(IS_SPACE_SAO&&iter<WHITE_LED_COUNT) set_white_max(iter);
 	flush_leds((RGB_LED_COUNT<<1)+1+1);//max 2 colors ON at a time and one led for button pushes
