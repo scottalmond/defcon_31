@@ -91,40 +91,19 @@ void setup_main()
 	
 	//TODO analog input for audio setup here...
 	
-	ADC1_DeInit();
-	/*ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
+	//ADC1_DeInit();
+	ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
 					 ADC1_CHANNEL_4,
 					 ADC1_PRESSEL_FCPU_D2,//D18 
 					 ADC1_EXTTRIG_TIM, 
 					 DISABLE, 
 					 ADC1_ALIGN_RIGHT, //left to put 8 bits in ADC1->DRH; right for all 10 bits with ADC1_GetConversionValue()
 					 ADC1_SCHMITTTRIG_ALL, 
-					 DISABLE);*/
+					 DISABLE);
 	//ADC1_Cmd(ENABLE);
 	
-	//void ADC1_Init(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_PresSel_TypeDef ADC1_PrescalerSelection, ADC1_ExtTrig_TypeDef ADC1_ExtTrigger, FunctionalState ADC1_ExtTriggerState, ADC1_Align_TypeDef ADC1_Align, ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState ADC1_SchmittTriggerState)
-	
-  ADC1_ConversionConfig(ADC1_CONVERSIONMODE_CONTINUOUS, ADC1_CHANNEL_4, ADC1_ALIGN_RIGHT);
-  /* Select the prescaler division factor according to ADC1_PrescalerSelection values */
-  ADC1_PrescalerConfig(ADC1_PRESSEL_FCPU_D2);
-  
-  /*-----------------CR2 configuration --------------------*/
-  /* Configure the external trigger state and event respectively
-  according to NewState, ADC1_ExtTrigger */
-  ADC1_ExternalTriggerConfig(ADC1_EXTTRIG_TIM, DISABLE);
-  
-  /*------------------TDR configuration ---------------------------*/
-  /* Configure the schmitt trigger channel and state respectively
-  according to ADC1_SchmittTriggerChannel & ADC1_SchmittTriggerNewState  values */
-	//ADC1_SchmittTriggerConfig(ADC1_SCHMITTTRIG_ALL, DISABLE);//causes hang-up
-  
-  /* Enable the ADC1 peripheral */
-  ADC1->CR1 |= ADC1_CR1_ADON;
-	
-	ADC1_Cmd(ENABLE);
 	
 	enableInterrupts();
-	
 }
 
 u32 millis()
@@ -207,7 +186,6 @@ bool is_button_down(u8 index)
 void update_audio()
 {
 	u8 reading,reading_residual;
-	//while(!ADC1_GetFlagStatus(ADC1_FLAG_EOC));
 	reading=ADC1->DRL;//only get 8 least significant bits of the 10 available, assuming reading is not changing fast enough or near enough the 1/4-full-scale point to matter
 	ADC1_ClearFlag(ADC1_FLAG_EOC);
 	audio_measurement_count++;
@@ -234,7 +212,6 @@ u8 get_audio_level()
 	//read buttons (if in application mode), update state
 	update_buttons();
 	//read audio, update state
-	update_audio();
 }
 
 //LED interrupt

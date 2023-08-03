@@ -85,9 +85,9 @@ void ADC1_DeInit(void)
   * can be one of the values of @ref FunctionalState.
   * @retval None
   */
-void ADC1_Init(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_PresSel_TypeDef ADC1_PrescalerSelection, ADC1_ExtTrig_TypeDef ADC1_ExtTrigger, FunctionalState ADC1_ExtTriggerState, ADC1_Align_TypeDef ADC1_Align, ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState ADC1_SchmittTriggerState)
+/*void ADC1_Init(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_PresSel_TypeDef ADC1_PrescalerSelection, ADC1_ExtTrig_TypeDef ADC1_ExtTrigger, FunctionalState ADC1_ExtTriggerState, ADC1_Align_TypeDef ADC1_Align, ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState ADC1_SchmittTriggerState)
 {
-  /* Check the parameters */
+  // Check the parameters 
   assert_param(IS_ADC1_CONVERSIONMODE_OK(ADC1_ConversionMode));
   assert_param(IS_ADC1_CHANNEL_OK(ADC1_Channel));
   assert_param(IS_ADC1_PRESSEL_OK(ADC1_PrescalerSelection));
@@ -97,26 +97,26 @@ void ADC1_Init(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef A
   assert_param(IS_ADC1_SCHMITTTRIG_OK(ADC1_SchmittTriggerChannel));
   assert_param(IS_FUNCTIONALSTATE_OK(ADC1_SchmittTriggerState));
   
-  /*-----------------CR1 & CSR configuration --------------------*/
-  /* Configure the conversion mode and the channel to convert
-  respectively according to ADC1_ConversionMode & ADC1_Channel values  &  ADC1_Align values */
+  //-----------------CR1 & CSR configuration --------------------
+  // Configure the conversion mode and the channel to convert
+  respectively according to ADC1_ConversionMode & ADC1_Channel values  &  ADC1_Align values 
   ADC1_ConversionConfig(ADC1_ConversionMode, ADC1_Channel, ADC1_Align);
-  /* Select the prescaler division factor according to ADC1_PrescalerSelection values */
+  // Select the prescaler division factor according to ADC1_PrescalerSelection values 
   ADC1_PrescalerConfig(ADC1_PrescalerSelection);
   
-  /*-----------------CR2 configuration --------------------*/
-  /* Configure the external trigger state and event respectively
-  according to NewState, ADC1_ExtTrigger */
+  //-----------------CR2 configuration --------------------
+  // Configure the external trigger state and event respectively
+  according to NewState, ADC1_ExtTrigger 
   ADC1_ExternalTriggerConfig(ADC1_ExtTrigger, ADC1_ExtTriggerState);
   
-  /*------------------TDR configuration ---------------------------*/
-  /* Configure the schmitt trigger channel and state respectively
-  according to ADC1_SchmittTriggerChannel & ADC1_SchmittTriggerNewState  values */
+  //------------------TDR configuration ---------------------------
+  // Configure the schmitt trigger channel and state respectively
+  according to ADC1_SchmittTriggerChannel & ADC1_SchmittTriggerNewState  values 
   ADC1_SchmittTriggerConfig(ADC1_SchmittTriggerChannel, ADC1_SchmittTriggerState);
   
-  /* Enable the ADC1 peripheral */
+  // Enable the ADC1 peripheral 
   ADC1->CR1 |= ADC1_CR1_ADON;
-}
+}*/
 
 /**
   * @brief  Enables or Disables the ADC1 peripheral.

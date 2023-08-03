@@ -1,11 +1,11 @@
    1                     ; C Compiler for STM8 (COSMIC Software)
    2                     ; Parser V4.12.8.1 - 09 Jan 2023
    3                     ; Generator (Limited) V4.5.5 - 08 Nov 2022
-  44                     ; 12 @far @interrupt void NonHandledInterrupt (void)
-  44                     ; 13 {
+  44                     ; 14 @far @interrupt void NonHandledInterrupt (void)
+  44                     ; 15 {
   45                     	switch	.text
   46  0000               f_NonHandledInterrupt:
-  50                     ; 17 	return;
+  50                     ; 19 	return;
   53  0000 80            	iret
   55                     .const:	section	.text
   56  0000               __vectab:

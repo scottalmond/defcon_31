@@ -110,7 +110,8 @@ void set_frame_rainbow()
 void set_frame_audio()
 {
 	u8 audio_level,iter;
-	audio_level=get_audio_level()>>1;
+	//update_audio();
+	audio_level=get_audio_level();
 	for(iter=0;iter<RGB_LED_COUNT;iter++)
 	{
 		if(audio_level>=iter)
@@ -167,10 +168,13 @@ void set_frame_space_bits()
 		case 1:{ 
 			set_white_max(5);
 			set_white_max(6);
+			set_white_max(9);
+			set_white_max(10);
 		}break;
 		case 2:{ 
 			set_white_max(1);
 			set_white_max(2);
+			set_white_max(3);
 		}break;
 		case 3:{ 
 			if((millis()>>6)&0x01)
@@ -342,7 +346,7 @@ void set_frame_morse()
 		morse_period_units<<=1;
 		morse_shift>>=1;
 	}
-	morse_bit=(millis()>>6)&(morse_period_units-1);//use time to index into the array
+	morse_bit=(millis()>>7)&(morse_period_units-1);//use time to index into the array
 	morse_index=morse_bit>>3;//get the byte-wise index within the array
 	if(morse_index<sizeof(morse_units))//needs to be within the array to light any LEDs
 	{
@@ -356,5 +360,9 @@ void set_frame_morse()
 			#endif
 		}
 	}//else all LEDs OFF
-	flush_leds(RGB_LED_COUNT+1);
+	#if IS_SPACE_SAO
+		flush_leds(WHITE_LED_COUNT+1);
+	#else
+		flush_leds(WHITE_LED_COUNT+1);
+	#endif
 }

@@ -1,4 +1,5 @@
 
+#define HW_REVISION 2
 #define IS_SPACE_SAO 1 //1 for Space Bits R Us SAOs, 0 for Pony SAOs
 
 #define RGB_LED_COUNT 10  //number of RGB LEDs around periphery

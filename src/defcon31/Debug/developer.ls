@@ -1,1074 +1,1580 @@
    1                     ; C Compiler for STM8 (COSMIC Software)
    2                     ; Parser V4.12.8.1 - 09 Jan 2023
    3                     ; Generator (Limited) V4.5.5 - 08 Nov 2022
-  45                     ; 25  char Serial_read_char(void)
-  45                     ; 26  {
-  47                     	switch	.text
-  48  0000               _Serial_read_char:
-  52  0000               L32:
-  53                     ; 27 	 while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET);
-  55  0000 ae0080        	ldw	x,#128
-  56  0003 cd0000        	call	_UART1_GetFlagStatus
-  58  0006 4d            	tnz	a
-  59  0007 27f7          	jreq	L32
-  60                     ; 28 	 UART1_ClearFlag(UART1_FLAG_RXNE);
-  62  0009 ae0020        	ldw	x,#32
-  63  000c cd0000        	call	_UART1_ClearFlag
-  65                     ; 29 	 return (UART1_ReceiveData8());
-  67  000f cd0000        	call	_UART1_ReceiveData8
-  71  0012 81            	ret
- 107                     ; 32  void Serial_print_char (char value)
- 107                     ; 33  {
- 108                     	switch	.text
- 109  0013               _Serial_print_char:
- 113                     ; 34 	 UART1_SendData8(value);
- 115  0013 cd0000        	call	_UART1_SendData8
- 118  0016               L74:
- 119                     ; 35 	 while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET); //wait for sending
- 121  0016 ae0080        	ldw	x,#128
- 122  0019 cd0000        	call	_UART1_GetFlagStatus
- 124  001c 4d            	tnz	a
- 125  001d 27f7          	jreq	L74
- 126                     ; 36  }
- 129  001f 81            	ret
- 167                     ; 38   void Serial_begin(uint32_t baud_rate)
- 167                     ; 39  {
- 168                     	switch	.text
- 169  0020               _Serial_begin:
- 171       00000000      OFST:	set	0
- 174                     ; 40 	 GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
- 176  0020 4bf0          	push	#240
- 177  0022 4b20          	push	#32
- 178  0024 ae500f        	ldw	x,#20495
- 179  0027 cd0000        	call	_GPIO_Init
- 181  002a 85            	popw	x
- 182                     ; 41 	 GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
- 184  002b 4b40          	push	#64
- 185  002d 4b40          	push	#64
- 186  002f ae500f        	ldw	x,#20495
- 187  0032 cd0000        	call	_GPIO_Init
- 189  0035 85            	popw	x
- 190                     ; 43 	 UART1_DeInit(); //Deinitialize UART peripherals 
- 192  0036 cd0000        	call	_UART1_DeInit
- 194                     ; 46 		UART1_Init(baud_rate, 
- 194                     ; 47                 UART1_WORDLENGTH_8D, 
- 194                     ; 48                 UART1_STOPBITS_1, 
- 194                     ; 49                 UART1_PARITY_NO, 
- 194                     ; 50                 UART1_SYNCMODE_CLOCK_DISABLE, 
- 194                     ; 51                 UART1_MODE_TXRX_ENABLE); //(BaudRate, Wordlegth, StopBits, Parity, SyncMode, Mode)
- 196  0039 4b0c          	push	#12
- 197  003b 4b80          	push	#128
- 198  003d 4b00          	push	#0
- 199  003f 4b00          	push	#0
- 200  0041 4b00          	push	#0
- 201  0043 1e0a          	ldw	x,(OFST+10,sp)
- 202  0045 89            	pushw	x
- 203  0046 1e0a          	ldw	x,(OFST+10,sp)
- 204  0048 89            	pushw	x
- 205  0049 cd0000        	call	_UART1_Init
- 207  004c 5b09          	addw	sp,#9
- 208                     ; 53 		UART1_Cmd(ENABLE);
- 210  004e a601          	ld	a,#1
- 211  0050 cd0000        	call	_UART1_Cmd
- 213                     ; 54  }
- 216  0053 81            	ret
- 270                     ; 56  void Serial_print_u32(u32 number)
- 270                     ; 57  {
- 271                     	switch	.text
- 272  0054               _Serial_print_u32:
- 274  0054 89            	pushw	x
- 275       00000002      OFST:	set	2
- 278                     ; 60 	 Serial_print_string("0x");
- 280  0055 ae00c0        	ldw	x,#L711
- 281  0058 cd010d        	call	_Serial_print_string
- 283                     ; 61 	 for(iter=28;iter<32;iter-=4)
- 285  005b a61c          	ld	a,#28
- 286  005d 6b02          	ld	(OFST+0,sp),a
- 288  005f               L121:
- 289                     ; 63 		 digit=number>>iter;
- 291  005f 96            	ldw	x,sp
- 292  0060 1c0005        	addw	x,#OFST+3
- 293  0063 cd0000        	call	c_ltor
- 295  0066 7b02          	ld	a,(OFST+0,sp)
- 296  0068 cd0000        	call	c_lursh
- 298  006b b603          	ld	a,c_lreg+3
- 299  006d 6b01          	ld	(OFST-1,sp),a
- 301                     ; 64 		 if(digit>9) Serial_print_char('A'+(digit-10));
- 303  006f 7b01          	ld	a,(OFST-1,sp)
- 304  0071 a10a          	cp	a,#10
- 305  0073 2508          	jrult	L721
- 308  0075 7b01          	ld	a,(OFST-1,sp)
- 309  0077 ab37          	add	a,#55
- 310  0079 ad98          	call	_Serial_print_char
- 313  007b 2006          	jra	L131
- 314  007d               L721:
- 315                     ; 65 		 else Serial_print_char('0'+digit);
- 317  007d 7b01          	ld	a,(OFST-1,sp)
- 318  007f ab30          	add	a,#48
- 319  0081 ad90          	call	_Serial_print_char
- 321  0083               L131:
- 322                     ; 66 		 if(iter==16) Serial_print_char('_');
- 324  0083 7b02          	ld	a,(OFST+0,sp)
- 325  0085 a110          	cp	a,#16
- 326  0087 2604          	jrne	L331
- 329  0089 a65f          	ld	a,#95
- 330  008b ad86          	call	_Serial_print_char
- 332  008d               L331:
- 333                     ; 61 	 for(iter=28;iter<32;iter-=4)
- 335  008d 7b02          	ld	a,(OFST+0,sp)
- 336  008f a004          	sub	a,#4
- 337  0091 6b02          	ld	(OFST+0,sp),a
- 341  0093 7b02          	ld	a,(OFST+0,sp)
- 342  0095 a120          	cp	a,#32
- 343  0097 25c6          	jrult	L121
- 344                     ; 68  }
- 347  0099 85            	popw	x
- 348  009a 81            	ret
- 351                     .const:	section	.text
- 352  0000               L531_digit:
- 353  0000 00            	dc.b	0
- 354  0001 00000000      	ds.b	4
- 407                     ; 70  void Serial_print_int (int number) //Funtion to print int value to serial monitor 
- 407                     ; 71  {
- 408                     	switch	.text
- 409  009b               _Serial_print_int:
- 411  009b 89            	pushw	x
- 412  009c 5208          	subw	sp,#8
- 413       00000008      OFST:	set	8
- 416                     ; 72 	 char count = 0;
- 418  009e 0f08          	clr	(OFST+0,sp)
- 420                     ; 73 	 char digit[5] = "";
- 422  00a0 96            	ldw	x,sp
- 423  00a1 1c0003        	addw	x,#OFST-5
- 424  00a4 90ae0000      	ldw	y,#L531_digit
- 425  00a8 a605          	ld	a,#5
- 426  00aa cd0000        	call	c_xymov
- 429  00ad 2023          	jra	L171
- 430  00af               L561:
- 431                     ; 77 		 digit[count] = number%10;
- 433  00af 96            	ldw	x,sp
- 434  00b0 1c0003        	addw	x,#OFST-5
- 435  00b3 9f            	ld	a,xl
- 436  00b4 5e            	swapw	x
- 437  00b5 1b08          	add	a,(OFST+0,sp)
- 438  00b7 2401          	jrnc	L61
- 439  00b9 5c            	incw	x
- 440  00ba               L61:
- 441  00ba 02            	rlwa	x,a
- 442  00bb 1609          	ldw	y,(OFST+1,sp)
- 443  00bd a60a          	ld	a,#10
- 444  00bf cd0000        	call	c_smody
- 446  00c2 9001          	rrwa	y,a
- 447  00c4 f7            	ld	(x),a
- 448  00c5 9002          	rlwa	y,a
- 449                     ; 78 		 count++;
- 451  00c7 0c08          	inc	(OFST+0,sp)
- 453                     ; 79 		 number = number/10;
- 455  00c9 1e09          	ldw	x,(OFST+1,sp)
- 456  00cb a60a          	ld	a,#10
- 457  00cd cd0000        	call	c_sdivx
- 459  00d0 1f09          	ldw	(OFST+1,sp),x
- 460  00d2               L171:
- 461                     ; 75 	 while (number != 0) //split the int to char array 
- 463  00d2 1e09          	ldw	x,(OFST+1,sp)
- 464  00d4 26d9          	jrne	L561
- 466  00d6 201f          	jra	L771
- 467  00d8               L571:
- 468                     ; 84 		UART1_SendData8(digit[count-1] + 0x30);
- 470  00d8 96            	ldw	x,sp
- 471  00d9 1c0003        	addw	x,#OFST-5
- 472  00dc 1f01          	ldw	(OFST-7,sp),x
- 474  00de 7b08          	ld	a,(OFST+0,sp)
- 475  00e0 5f            	clrw	x
- 476  00e1 97            	ld	xl,a
- 477  00e2 5a            	decw	x
- 478  00e3 72fb01        	addw	x,(OFST-7,sp)
- 479  00e6 f6            	ld	a,(x)
- 480  00e7 ab30          	add	a,#48
- 481  00e9 cd0000        	call	_UART1_SendData8
- 484  00ec               L502:
- 485                     ; 85 		while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET); //wait for sending 
- 487  00ec ae0080        	ldw	x,#128
- 488  00ef cd0000        	call	_UART1_GetFlagStatus
- 490  00f2 4d            	tnz	a
- 491  00f3 27f7          	jreq	L502
- 492                     ; 86 		count--; 
- 494  00f5 0a08          	dec	(OFST+0,sp)
- 496  00f7               L771:
- 497                     ; 82 	 while (count !=0) //print char array in correct direction 
- 499  00f7 0d08          	tnz	(OFST+0,sp)
- 500  00f9 26dd          	jrne	L571
- 501                     ; 88  }
- 504  00fb 5b0a          	addw	sp,#10
- 505  00fd 81            	ret
- 530                     ; 90  void Serial_newline(void)
- 530                     ; 91  {
- 531                     	switch	.text
- 532  00fe               _Serial_newline:
- 536                     ; 92 	 UART1_SendData8(0x0a);
- 538  00fe a60a          	ld	a,#10
- 539  0100 cd0000        	call	_UART1_SendData8
- 542  0103               L322:
- 543                     ; 93 	while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET); //wait for sending 
- 545  0103 ae0080        	ldw	x,#128
- 546  0106 cd0000        	call	_UART1_GetFlagStatus
- 548  0109 4d            	tnz	a
- 549  010a 27f7          	jreq	L322
- 550                     ; 94  }
- 553  010c 81            	ret
- 600                     ; 96  void Serial_print_string (char string[])
- 600                     ; 97  {
- 601                     	switch	.text
- 602  010d               _Serial_print_string:
- 604  010d 89            	pushw	x
- 605  010e 88            	push	a
- 606       00000001      OFST:	set	1
- 609                     ; 99 	 char i=0;
- 611  010f 0f01          	clr	(OFST+0,sp)
- 614  0111 2016          	jra	L552
- 615  0113               L152:
- 616                     ; 103 		UART1_SendData8(string[i]);
- 618  0113 7b01          	ld	a,(OFST+0,sp)
- 619  0115 5f            	clrw	x
- 620  0116 97            	ld	xl,a
- 621  0117 72fb02        	addw	x,(OFST+1,sp)
- 622  011a f6            	ld	a,(x)
- 623  011b cd0000        	call	_UART1_SendData8
- 626  011e               L362:
- 627                     ; 104 		while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET);
- 629  011e ae0080        	ldw	x,#128
- 630  0121 cd0000        	call	_UART1_GetFlagStatus
- 632  0124 4d            	tnz	a
- 633  0125 27f7          	jreq	L362
- 634                     ; 105 		i++;
- 636  0127 0c01          	inc	(OFST+0,sp)
- 638  0129               L552:
- 639                     ; 101 	 while (string[i] != 0x00)
- 641  0129 7b01          	ld	a,(OFST+0,sp)
- 642  012b 5f            	clrw	x
- 643  012c 97            	ld	xl,a
- 644  012d 72fb02        	addw	x,(OFST+1,sp)
- 645  0130 7d            	tnz	(x)
- 646  0131 26e0          	jrne	L152
- 647                     ; 107  }
- 650  0133 5b03          	addw	sp,#3
- 651  0135 81            	ret
- 696                     ; 109  bool Serial_available()
- 696                     ; 110  {
- 697                     	switch	.text
- 698  0136               _Serial_available:
- 702                     ; 111 	 if(UART1_GetFlagStatus(UART1_FLAG_RXNE) == TRUE)
- 704  0136 ae0020        	ldw	x,#32
- 705  0139 cd0000        	call	_UART1_GetFlagStatus
- 707  013c a101          	cp	a,#1
- 708  013e 2603          	jrne	L703
- 709                     ; 112 	 return TRUE;
- 711  0140 a601          	ld	a,#1
- 714  0142 81            	ret
- 715  0143               L703:
- 716                     ; 114 	 return FALSE;
- 718  0143 4f            	clr	a
- 721  0144 81            	ret
- 766                     ; 10 void setup_developer()
- 766                     ; 11 {
- 767                     	switch	.text
- 768  0145               _setup_developer:
- 772                     ; 12 	setup_serial(1,1);//enabled, 0: 9600 baud, 1: at high speed (1MBaud)
- 774  0145 ae0101        	ldw	x,#257
- 775  0148 cd0000        	call	_setup_serial
- 777                     ; 13 	clear_button_events();
- 779  014b cd0000        	call	_clear_button_events
- 781                     ; 14 	flush_leds(0);//clear outstanding led buffer
- 783  014e 4f            	clr	a
- 784  014f cd0000        	call	_flush_leds
- 786                     ; 15 	set_debug(255);//show only one debug led ON
- 788  0152 a6ff          	ld	a,#255
- 789  0154 cd0000        	call	_set_debug
- 791                     ; 16 	flush_leds(1);
- 793  0157 a601          	ld	a,#1
- 794  0159 cd0000        	call	_flush_leds
- 796                     ; 17 	print_welcome();
- 798  015c ad40          	call	_print_welcome
- 800                     ; 18 }
- 803  015e 81            	ret
- 862                     ; 20 void run_developer()
- 862                     ; 21 {
- 863                     	switch	.text
- 864  015f               _run_developer:
- 866  015f 520e          	subw	sp,#14
- 867       0000000e      OFST:	set	14
- 870                     ; 25 	setup_developer();
- 872  0161 ade2          	call	_setup_developer
- 875  0163 2030          	jra	L163
- 876  0165               L753:
- 877                     ; 28 		Serial_print_string("> ");
- 879  0165 ae00bd        	ldw	x,#L563
- 880  0168 ada3          	call	_Serial_print_string
- 882                     ; 29 		get_terminal_command(&command,&parameters,&parameter_count);
- 884  016a 96            	ldw	x,sp
- 885  016b 1c000e        	addw	x,#OFST+0
- 886  016e 89            	pushw	x
- 887  016f 96            	ldw	x,sp
- 888  0170 1c0003        	addw	x,#OFST-11
- 889  0173 89            	pushw	x
- 890  0174 96            	ldw	x,sp
- 891  0175 1c0011        	addw	x,#OFST+3
- 892  0178 cd021e        	call	_get_terminal_command
- 894  017b 5b04          	addw	sp,#4
- 895                     ; 30 		set_debug(255);//show only one debug led ON
- 897  017d a6ff          	ld	a,#255
- 898  017f cd0000        	call	_set_debug
- 900                     ; 31 		execute_terminal_command(command,&parameters,parameter_count);
- 902  0182 7b0e          	ld	a,(OFST+0,sp)
- 903  0184 88            	push	a
- 904  0185 96            	ldw	x,sp
- 905  0186 1c0002        	addw	x,#OFST-12
- 906  0189 89            	pushw	x
- 907  018a 7b10          	ld	a,(OFST+2,sp)
- 908  018c cd0300        	call	_execute_terminal_command
- 910  018f 5b03          	addw	sp,#3
- 911                     ; 32 		command=0;
- 913  0191 0f0d          	clr	(OFST-1,sp)
- 915                     ; 33 		parameter_count=0;
- 917  0193 0f0e          	clr	(OFST+0,sp)
- 919  0195               L163:
- 920                     ; 26 	while(is_developer_valid())
- 922  0195 cd0000        	call	_is_developer_valid
- 924  0198 4d            	tnz	a
- 925  0199 26ca          	jrne	L753
- 926                     ; 38 }
- 929  019b 5b0e          	addw	sp,#14
- 930  019d 81            	ret
- 933                     	switch	.const
- 934  0005               L763_space_bits:
- 935  0005 79            	dc.b	121
- 936  0006 f0            	dc.b	240
- 937  0007 c3            	dc.b	195
- 938  0008 cf            	dc.b	207
- 939  0009 df            	dc.b	223
- 940  000a 2f            	dc.b	47
- 941  000b 9e            	dc.b	158
- 942  000c 7c            	dc.b	124
- 943  000d 84            	dc.b	132
- 944  000e f0            	dc.b	240
- 945  000f 81            	dc.b	129
- 946  0010 09            	dc.b	9
- 947  0011 24            	dc.b	36
- 948  0012 28            	dc.b	40
- 949  0013 10            	dc.b	16
- 950  0014 a2            	dc.b	162
- 951  0015 20            	dc.b	32
- 952  0016 42            	dc.b	66
- 953  0017 85            	dc.b	133
- 954  0018 00            	dc.b	0
- 955  0019 79            	dc.b	121
- 956  001a 0a            	dc.b	10
- 957  001b 14            	dc.b	20
- 958  001c 0f            	dc.b	15
- 959  001d 9f            	dc.b	159
- 960  001e 22            	dc.b	34
- 961  001f 1e            	dc.b	30
- 962  0020 42            	dc.b	66
- 963  0021 84            	dc.b	132
- 964  0022 f0            	dc.b	240
- 965  0023 05            	dc.b	5
- 966  0024 f3            	dc.b	243
- 967  0025 f4            	dc.b	244
- 968  0026 08            	dc.b	8
- 969  0027 10            	dc.b	16
- 970  0028 a2            	dc.b	162
- 971  0029 01            	dc.b	1
- 972  002a 7c            	dc.b	124
- 973  002b 84            	dc.b	132
- 974  002c 08            	dc.b	8
- 975  002d 85            	dc.b	133
- 976  002e 02            	dc.b	2
- 977  002f 14            	dc.b	20
- 978  0030 28            	dc.b	40
- 979  0031 10            	dc.b	16
- 980  0032 a2            	dc.b	162
- 981  0033 21            	dc.b	33
- 982  0034 44            	dc.b	68
- 983  0035 85            	dc.b	133
- 984  0036 08            	dc.b	8
- 985  0037 79            	dc.b	121
- 986  0038 02            	dc.b	2
- 987  0039 13            	dc.b	19
- 988  003a cf            	dc.b	207
- 989  003b df            	dc.b	223
- 990  003c 22            	dc.b	34
- 991  003d 1e            	dc.b	30
- 992  003e 42            	dc.b	66
- 993  003f 78            	dc.b	120
- 994  0040 f0            	dc.b	240
- 995  0041               L173_defcon31:
- 996  0041 7e            	dc.b	126
- 997  0042 7f            	dc.b	127
- 998  0043 7f            	dc.b	127
- 999  0044 3e            	dc.b	62
-1000  0045 7f            	dc.b	127
-1001  0046 41            	dc.b	65
-1002  0047 3e            	dc.b	62
-1003  0048 08            	dc.b	8
-1004  0049 41            	dc.b	65
-1005  004a 40            	dc.b	64
-1006  004b 40            	dc.b	64
-1007  004c 41            	dc.b	65
-1008  004d 41            	dc.b	65
-1009  004e 61            	dc.b	97
-1010  004f 41            	dc.b	65
-1011  0050 18            	dc.b	24
-1012  0051 41            	dc.b	65
-1013  0052 40            	dc.b	64
-1014  0053 40            	dc.b	64
-1015  0054 40            	dc.b	64
-1016  0055 41            	dc.b	65
-1017  0056 51            	dc.b	81
-1018  0057 01            	dc.b	1
-1019  0058 28            	dc.b	40
-1020  0059 41            	dc.b	65
-1021  005a 7c            	dc.b	124
-1022  005b 7c            	dc.b	124
-1023  005c 40            	dc.b	64
-1024  005d 41            	dc.b	65
-1025  005e 49            	dc.b	73
-1026  005f 3e            	dc.b	62
-1027  0060 08            	dc.b	8
-1028  0061 41            	dc.b	65
-1029  0062 40            	dc.b	64
-1030  0063 40            	dc.b	64
-1031  0064 40            	dc.b	64
-1032  0065 41            	dc.b	65
-1033  0066 45            	dc.b	69
-1034  0067 01            	dc.b	1
-1035  0068 08            	dc.b	8
-1036  0069 41            	dc.b	65
-1037  006a 40            	dc.b	64
-1038  006b 40            	dc.b	64
-1039  006c 41            	dc.b	65
-1040  006d 41            	dc.b	65
-1041  006e 43            	dc.b	67
-1042  006f 41            	dc.b	65
-1043  0070 08            	dc.b	8
-1044  0071 7e            	dc.b	126
-1045  0072 7f            	dc.b	127
-1046  0073 40            	dc.b	64
-1047  0074 3e            	dc.b	62
-1048  0075 7f            	dc.b	127
-1049  0076 41            	dc.b	65
-1050  0077 3e            	dc.b	62
-1051  0078 3e            	dc.b	62
-1133                     ; 41 void print_welcome()
-1133                     ; 42 {
-1134                     	switch	.text
-1135  019e               _print_welcome:
-1137  019e 5277          	subw	sp,#119
-1138       00000077      OFST:	set	119
-1141                     ; 43 	u8 space_bits[] = { 0b01111001,0b11110000,0b11000011,0b11001111,0b11011111,0b00101111,
-1141                     ; 44 											0b10011110,0b01111100,0b10000100,0b11110000,0b10000001,0b00001001,
-1141                     ; 45 											0b00100100,0b00101000,0b00010000,0b10100010,0b00100000,0b01000010,
-1141                     ; 46 											0b10000101,0b00000000,0b01111001,0b00001010,0b00010100,0b00001111,
-1141                     ; 47 											0b10011111,0b00100010,0b00011110,0b01000010,0b10000100,0b11110000,
-1141                     ; 48 											0b00000101,0b11110011,0b11110100,0b00001000,0b00010000,0b10100010,
-1141                     ; 49 											0b00000001,0b01111100,0b10000100,0b00001000,0b10000101,0b00000010,
-1141                     ; 50 											0b00010100,0b00101000,0b00010000,0b10100010,0b00100001,0b01000100,
-1141                     ; 51 											0b10000101,0b00001000,0b01111001,0b00000010,0b00010011,0b11001111,
-1141                     ; 52 											0b11011111,0b00100010,0b00011110,0b01000010,0b01111000,0b11110000}; 
-1143  01a0 96            	ldw	x,sp
-1144  01a1 1c0002        	addw	x,#OFST-117
-1145  01a4 90ae0005      	ldw	y,#L763_space_bits
-1146  01a8 a63c          	ld	a,#60
-1147  01aa cd0000        	call	c_xymov
-1149                     ; 53 	u8 defcon31[] = {   0b01111110,0b01111111,0b01111111,0b00111110,0b01111111,0b01000001,
-1149                     ; 54 											0b00111110,0b0001000,0b01000001,0b01000000,0b01000000,0b01000001,
-1149                     ; 55 											0b01000001,0b01100001,0b01000001,0b0011000,0b01000001,0b01000000,
-1149                     ; 56 											0b01000000,0b01000000,0b01000001,0b01010001,0b00000001,0b0101000,
-1149                     ; 57 											0b01000001,0b01111100,0b01111100,0b01000000,0b01000001,0b01001001,//last bit messed up?
-1149                     ; 58 											0b00111110,0b0001000,0b01000001,0b01000000,0b01000000,0b01000000,//mis-typed bit?
-1149                     ; 59 											0b01000001,0b01000101,0b00000001,0b0001000,0b01000001,0b01000000,
-1149                     ; 60 											0b01000000,0b01000001,0b01000001,0b01000011,0b01000001,0b0001000,
-1149                     ; 61 											0b01111110,0b01111111,0b01000000,0b00111110,0b01111111,0b01000001,
-1149                     ; 62 											0b00111110,0b0111110 };
-1151  01ad 96            	ldw	x,sp
-1152  01ae 1c003e        	addw	x,#OFST-57
-1153  01b1 90ae0041      	ldw	y,#L173_defcon31
-1154  01b5 a638          	ld	a,#56
-1155  01b7 cd0000        	call	c_xymov
-1157                     ; 63 	u8 length = sizeof(is_space_sao()?space_bits:defcon31);
-1159  01ba a602          	ld	a,#2
-1160  01bc 6b01          	ld	(OFST-118,sp),a
-1162                     ; 64 	u8 lineBreakInterval = is_space_sao()?10:8;
-1164  01be cd0000        	call	_is_space_sao
-1166  01c1 4d            	tnz	a
-1167  01c2 2705          	jreq	L43
-1168  01c4 ae000a        	ldw	x,#10
-1169  01c7 2003          	jra	L63
-1170  01c9               L43:
-1171  01c9 ae0008        	ldw	x,#8
-1172  01cc               L63:
-1173                     ; 66 	for (i = 0; i < length; i++) {
-1175  01cc 0f76          	clr	(OFST-1,sp)
-1178  01ce 2045          	jra	L144
-1179  01d0               L534:
-1180                     ; 67 			for (j = 7; j >= 0; j--) {
-1182  01d0 a607          	ld	a,#7
-1183  01d2 6b77          	ld	(OFST+0,sp),a
-1185  01d4               L544:
-1186                     ; 69 				 Serial_print_char((((is_space_sao()?space_bits[i]:defcon31[i]) >> j) & 0x01) ? '#' : ' ');
-1188  01d4 cd0000        	call	_is_space_sao
-1190  01d7 4d            	tnz	a
-1191  01d8 2711          	jreq	L24
-1192  01da 96            	ldw	x,sp
-1193  01db 1c0002        	addw	x,#OFST-117
-1194  01de 9f            	ld	a,xl
-1195  01df 5e            	swapw	x
-1196  01e0 1b76          	add	a,(OFST-1,sp)
-1197  01e2 2401          	jrnc	L44
-1198  01e4 5c            	incw	x
-1199  01e5               L44:
-1200  01e5 02            	rlwa	x,a
-1201  01e6 f6            	ld	a,(x)
-1202  01e7 5f            	clrw	x
-1203  01e8 97            	ld	xl,a
-1204  01e9 200f          	jra	L64
-1205  01eb               L24:
-1206  01eb 96            	ldw	x,sp
-1207  01ec 1c003e        	addw	x,#OFST-57
-1208  01ef 9f            	ld	a,xl
-1209  01f0 5e            	swapw	x
-1210  01f1 1b76          	add	a,(OFST-1,sp)
-1211  01f3 2401          	jrnc	L05
-1212  01f5 5c            	incw	x
-1213  01f6               L05:
-1214  01f6 02            	rlwa	x,a
-1215  01f7 f6            	ld	a,(x)
-1216  01f8 5f            	clrw	x
-1217  01f9 97            	ld	xl,a
-1218  01fa               L64:
-1219  01fa 7b77          	ld	a,(OFST+0,sp)
-1220  01fc 4d            	tnz	a
-1221  01fd 2704          	jreq	L25
-1222  01ff               L45:
-1223  01ff 57            	sraw	x
-1224  0200 4a            	dec	a
-1225  0201 26fc          	jrne	L45
-1226  0203               L25:
-1227  0203 01            	rrwa	x,a
-1228  0204 a501          	bcp	a,#1
-1229  0206 2704          	jreq	L04
-1230  0208 a623          	ld	a,#35
-1231  020a 2002          	jra	L65
-1232  020c               L04:
-1233  020c a620          	ld	a,#32
-1234  020e               L65:
-1235  020e cd0013        	call	_Serial_print_char
-1237                     ; 67 			for (j = 7; j >= 0; j--) {
-1239  0211 0a77          	dec	(OFST+0,sp)
-1242  0213 20bf          	jra	L544
-1243  0215               L144:
-1244                     ; 66 	for (i = 0; i < length; i++) {
-1247  0215 7b76          	ld	a,(OFST-1,sp)
-1248  0217 1101          	cp	a,(OFST-118,sp)
-1249  0219 25b5          	jrult	L534
-1250                     ; 78 }
-1253  021b 5b77          	addw	sp,#119
-1254  021d 81            	ret
-1363                     ; 80 void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETERS],u8 *parameter_count)
-1363                     ; 81 {
-1364                     	switch	.text
-1365  021e               _get_terminal_command:
-1367  021e 89            	pushw	x
-1368  021f 5207          	subw	sp,#7
-1369       00000007      OFST:	set	7
-1372                     ; 82 	bool is_new_line=0;
-1374  0221 0f05          	clr	(OFST-2,sp)
-1376                     ; 83 	bool is_any_input=0;//set to true after new inpute received, including a value of '0'
-1378  0223 0f06          	clr	(OFST-1,sp)
-1381  0225 acf002f0      	jpf	L135
-1382  0229               L525:
-1383                     ; 87 		if(Serial_available())
-1385  0229 cd0136        	call	_Serial_available
-1387  022c 4d            	tnz	a
-1388  022d 2603          	jrne	L26
-1389  022f cc02f0        	jp	L135
-1390  0232               L26:
-1391                     ; 89 			input_char=Serial_read_char();
-1393  0232 cd0000        	call	_Serial_read_char
-1395  0235 6b07          	ld	(OFST+0,sp),a
-1397                     ; 90 			if(input_char=='\n') is_new_line=1;//break on new line character found
-1399  0237 7b07          	ld	a,(OFST+0,sp)
-1400  0239 a10a          	cp	a,#10
-1401  023b 2608          	jrne	L735
-1404  023d a601          	ld	a,#1
-1405  023f 6b05          	ld	(OFST-2,sp),a
-1408  0241 acf002f0      	jpf	L135
-1409  0245               L735:
-1410                     ; 91 			else if((*command)==0) (*command)=input_char;
-1412  0245 1e08          	ldw	x,(OFST+1,sp)
-1413  0247 7d            	tnz	(x)
-1414  0248 2609          	jrne	L345
-1417  024a 7b07          	ld	a,(OFST+0,sp)
-1418  024c 1e08          	ldw	x,(OFST+1,sp)
-1419  024e f7            	ld	(x),a
-1421  024f acf002f0      	jpf	L135
-1422  0253               L345:
-1423                     ; 93 				if('0'<=input_char && input_char<='9')
-1425  0253 7b07          	ld	a,(OFST+0,sp)
-1426  0255 a130          	cp	a,#48
-1427  0257 2402          	jruge	L46
-1428  0259 2078          	jp	L745
-1429  025b               L46:
-1431  025b 7b07          	ld	a,(OFST+0,sp)
-1432  025d a13a          	cp	a,#58
-1433  025f 2472          	jruge	L745
-1434                     ; 95 					if(!is_any_input) (*parameters)[(*parameter_count)]=0;
-1436  0261 0d06          	tnz	(OFST-1,sp)
-1437  0263 2619          	jrne	L155
-1440  0265 1e0e          	ldw	x,(OFST+7,sp)
-1441  0267 f6            	ld	a,(x)
-1442  0268 97            	ld	xl,a
-1443  0269 a604          	ld	a,#4
-1444  026b 42            	mul	x,a
-1445  026c 72fb0c        	addw	x,(OFST+5,sp)
-1446  026f a600          	ld	a,#0
-1447  0271 e703          	ld	(3,x),a
-1448  0273 a600          	ld	a,#0
-1449  0275 e702          	ld	(2,x),a
-1450  0277 a600          	ld	a,#0
-1451  0279 e701          	ld	(1,x),a
-1452  027b a600          	ld	a,#0
-1453  027d f7            	ld	(x),a
-1454  027e               L155:
-1455                     ; 96 					(*parameters)[(*parameter_count)]=((*parameters)[(*parameter_count)]<<3+(*parameters)[(*parameter_count)]<<1)+(input_char-'0');//new_value = old_value*8 + old_value*2 + char;
-1457  027e 7b07          	ld	a,(OFST+0,sp)
-1458  0280 5f            	clrw	x
-1459  0281 97            	ld	xl,a
-1460  0282 1d0030        	subw	x,#48
-1461  0285 cd0000        	call	c_itolx
-1463  0288 96            	ldw	x,sp
-1464  0289 1c0001        	addw	x,#OFST-6
-1465  028c cd0000        	call	c_rtol
-1468  028f 1e0e          	ldw	x,(OFST+7,sp)
-1469  0291 f6            	ld	a,(x)
-1470  0292 97            	ld	xl,a
-1471  0293 a604          	ld	a,#4
-1472  0295 42            	mul	x,a
-1473  0296 72fb0c        	addw	x,(OFST+5,sp)
-1474  0299 cd0000        	call	c_ltor
-1476  029c 1e0e          	ldw	x,(OFST+7,sp)
-1477  029e f6            	ld	a,(x)
-1478  029f 97            	ld	xl,a
-1479  02a0 a604          	ld	a,#4
-1480  02a2 42            	mul	x,a
-1481  02a3 72fb0c        	addw	x,(OFST+5,sp)
-1482  02a6 e603          	ld	a,(3,x)
-1483  02a8 5f            	clrw	x
-1484  02a9 97            	ld	xl,a
-1485  02aa 1c0003        	addw	x,#3
-1486  02ad 01            	rrwa	x,a
-1487  02ae cd0000        	call	c_llsh
-1489  02b1 3803          	sll	c_lreg+3
-1490  02b3 3902          	rlc	c_lreg+2
-1491  02b5 3901          	rlc	c_lreg+1
-1492  02b7 3900          	rlc	c_lreg
-1493  02b9 96            	ldw	x,sp
-1494  02ba 1c0001        	addw	x,#OFST-6
-1495  02bd cd0000        	call	c_ladd
-1497  02c0 1e0e          	ldw	x,(OFST+7,sp)
-1498  02c2 f6            	ld	a,(x)
-1499  02c3 97            	ld	xl,a
-1500  02c4 a604          	ld	a,#4
-1501  02c6 42            	mul	x,a
-1502  02c7 72fb0c        	addw	x,(OFST+5,sp)
-1503  02ca cd0000        	call	c_rtol
-1505                     ; 97 					is_any_input=1;
-1507  02cd a601          	ld	a,#1
-1508  02cf 6b06          	ld	(OFST-1,sp),a
-1511  02d1 201d          	jra	L135
-1512  02d3               L745:
-1513                     ; 99 					if(is_any_input)
-1515  02d3 0d06          	tnz	(OFST-1,sp)
-1516  02d5 2719          	jreq	L135
-1517                     ; 101 						(*parameter_count)++;
-1519  02d7 1e0e          	ldw	x,(OFST+7,sp)
-1520  02d9 7c            	inc	(x)
-1521                     ; 102 						is_any_input=0;
-1523  02da 0f06          	clr	(OFST-1,sp)
-1525                     ; 103 						(*parameter_count)%=MAX_TERMINAL_PARAMETERS;//protect against array indexing overflow
-1527  02dc 1e0e          	ldw	x,(OFST+7,sp)
-1528  02de f6            	ld	a,(x)
-1529  02df 905f          	clrw	y
-1530  02e1 9097          	ld	yl,a
-1531  02e3 a603          	ld	a,#3
-1532  02e5 9062          	div	y,a
-1533  02e7 905f          	clrw	y
-1534  02e9 9097          	ld	yl,a
-1535  02eb 9001          	rrwa	y,a
-1536  02ed f7            	ld	(x),a
-1537  02ee 9002          	rlwa	y,a
-1538  02f0               L135:
-1539                     ; 85 	while(is_developer_valid() && !is_new_line)
-1541  02f0 cd0000        	call	_is_developer_valid
-1543  02f3 4d            	tnz	a
-1544  02f4 2707          	jreq	L755
-1546  02f6 0d05          	tnz	(OFST-2,sp)
-1547  02f8 2603          	jrne	L66
-1548  02fa cc0229        	jp	L525
-1549  02fd               L66:
-1550  02fd               L755:
-1551                     ; 109 }
-1554  02fd 5b09          	addw	sp,#9
-1555  02ff 81            	ret
-1641                     	switch	.const
-1642  0079               L27:
-1643  0079 00004000      	dc.l	16384
-1644  007d               L47:
-1645  007d 00000100      	dc.l	256
-1646  0081               L67:
-1647  0081 0000000a      	dc.l	10
-1648  0085               L001:
-1649  0085 00000003      	dc.l	3
-1650  0089               L201:
-1651  0089 000000ff      	dc.l	255
-1652  008d               L401:
-1653  008d 0000000c      	dc.l	12
-1654                     ; 111 void execute_terminal_command(char command,u32 (*parameters)[MAX_TERMINAL_PARAMETERS],u8 parameter_count)
-1654                     ; 112 {
-1655                     	switch	.text
-1656  0300               _execute_terminal_command:
-1658  0300 88            	push	a
-1659  0301 88            	push	a
-1660       00000001      OFST:	set	1
-1663                     ; 114 	bool is_valid=0;
-1665  0302 0f01          	clr	(OFST+0,sp)
-1667                     ; 115 	switch(command)
-1670                     ; 178 		}break;
-1671  0304 a061          	sub	a,#97
-1672  0306 2603          	jrne	L601
-1673  0308 cc0499        	jp	L575
-1674  030b               L601:
-1675  030b a004          	sub	a,#4
-1676  030d 2603          	jrne	L011
-1677  030f cc03a0        	jp	L765
-1678  0312               L011:
-1679  0312 a003          	sub	a,#3
-1680  0314 2779          	jreq	L565
-1681  0316 a004          	sub	a,#4
-1682  0318 2603          	jrne	L211
-1683  031a cc03f3        	jp	L175
-1684  031d               L211:
-1685  031d a004          	sub	a,#4
-1686  031f 270f          	jreq	L165
-1687  0321 a004          	sub	a,#4
-1688  0323 273f          	jreq	L365
-1689  0325 a003          	sub	a,#3
-1690  0327 2603          	jrne	L411
-1691  0329 cc0453        	jp	L375
-1692  032c               L411:
-1693  032c acb304b3      	jpf	L736
-1694  0330               L165:
-1695                     ; 118 			Serial_print_char(command);
-1697  0330 7b02          	ld	a,(OFST+1,sp)
-1698  0332 cd0013        	call	_Serial_print_char
-1700                     ; 119 			for(iter=0;iter<parameter_count;iter++)
-1702  0335 0f01          	clr	(OFST+0,sp)
-1705  0337 201d          	jra	L546
-1706  0339               L146:
-1707                     ; 121 				Serial_print_char(' ');
-1709  0339 a620          	ld	a,#32
-1710  033b cd0013        	call	_Serial_print_char
-1712                     ; 122 				Serial_print_u32((*parameters)[iter]);
-1714  033e 7b01          	ld	a,(OFST+0,sp)
-1715  0340 97            	ld	xl,a
-1716  0341 a604          	ld	a,#4
-1717  0343 42            	mul	x,a
-1718  0344 72fb05        	addw	x,(OFST+4,sp)
-1719  0347 9093          	ldw	y,x
-1720  0349 ee02          	ldw	x,(2,x)
-1721  034b 89            	pushw	x
-1722  034c 93            	ldw	x,y
-1723  034d fe            	ldw	x,(x)
-1724  034e 89            	pushw	x
-1725  034f cd0054        	call	_Serial_print_u32
-1727  0352 5b04          	addw	sp,#4
-1728                     ; 119 			for(iter=0;iter<parameter_count;iter++)
-1730  0354 0c01          	inc	(OFST+0,sp)
-1732  0356               L546:
-1735  0356 7b01          	ld	a,(OFST+0,sp)
-1736  0358 1107          	cp	a,(OFST+6,sp)
-1737  035a 25dd          	jrult	L146
-1738                     ; 124 			is_valid=1;
-1740  035c a601          	ld	a,#1
-1741  035e 6b01          	ld	(OFST+0,sp),a
-1743                     ; 125 		}break;
-1745  0360 acb304b3      	jpf	L736
-1746  0364               L365:
-1747                     ; 127 			if(parameter_count) set_millis((*parameters)[0]);
-1749  0364 0d07          	tnz	(OFST+6,sp)
-1750  0366 2711          	jreq	L156
-1753  0368 1e05          	ldw	x,(OFST+4,sp)
-1754  036a 9093          	ldw	y,x
-1755  036c ee02          	ldw	x,(2,x)
-1756  036e 89            	pushw	x
-1757  036f 93            	ldw	x,y
-1758  0370 fe            	ldw	x,(x)
-1759  0371 89            	pushw	x
-1760  0372 cd0000        	call	_set_millis
-1762  0375 5b04          	addw	sp,#4
-1764  0377 200e          	jra	L356
-1765  0379               L156:
-1766                     ; 128 			else Serial_print_u32(millis());
-1768  0379 cd0000        	call	_millis
-1770  037c be02          	ldw	x,c_lreg+2
-1771  037e 89            	pushw	x
-1772  037f be00          	ldw	x,c_lreg
-1773  0381 89            	pushw	x
-1774  0382 cd0054        	call	_Serial_print_u32
-1776  0385 5b04          	addw	sp,#4
-1777  0387               L356:
-1778                     ; 129 			is_valid=1;
-1780  0387 a601          	ld	a,#1
-1781  0389 6b01          	ld	(OFST+0,sp),a
-1783                     ; 130 		}break;
-1785  038b acb304b3      	jpf	L736
-1786  038f               L565:
-1787                     ; 132 			print_welcome();
-1789  038f cd019e        	call	_print_welcome
-1791                     ; 133 			Serial_print_string("GitHub.com/ScottAlmond/DefCon_31");
-1793  0392 ae009c        	ldw	x,#L556
-1794  0395 cd010d        	call	_Serial_print_string
-1796                     ; 134 			is_valid=1;
-1798  0398 a601          	ld	a,#1
-1799  039a 6b01          	ld	(OFST+0,sp),a
-1801                     ; 135 		}break;
-1803  039c acb304b3      	jpf	L736
-1804  03a0               L765:
-1805                     ; 137 			if(parameter_count==1)
-1807  03a0 7b07          	ld	a,(OFST+6,sp)
-1808  03a2 a101          	cp	a,#1
-1809  03a4 262d          	jrne	L756
-1810                     ; 139 				Serial_print_u32(FLASH_ReadByte((*parameters)[0]+0x4000));
-1812  03a6 1e05          	ldw	x,(OFST+4,sp)
-1813  03a8 cd0000        	call	c_ltor
-1815  03ab ae0079        	ldw	x,#L27
-1816  03ae cd0000        	call	c_ladd
-1818  03b1 be02          	ldw	x,c_lreg+2
-1819  03b3 89            	pushw	x
-1820  03b4 be00          	ldw	x,c_lreg
-1821  03b6 89            	pushw	x
-1822  03b7 cd0000        	call	_FLASH_ReadByte
-1824  03ba 5b04          	addw	sp,#4
-1825  03bc b703          	ld	c_lreg+3,a
-1826  03be 3f02          	clr	c_lreg+2
-1827  03c0 3f01          	clr	c_lreg+1
-1828  03c2 3f00          	clr	c_lreg
-1829  03c4 be02          	ldw	x,c_lreg+2
-1830  03c6 89            	pushw	x
-1831  03c7 be00          	ldw	x,c_lreg
-1832  03c9 89            	pushw	x
-1833  03ca cd0054        	call	_Serial_print_u32
-1835  03cd 5b04          	addw	sp,#4
-1837  03cf acb304b3      	jpf	L736
-1838  03d3               L756:
-1839                     ; 140 			}else if(parameter_count==2)
-1841  03d3 7b07          	ld	a,(OFST+6,sp)
-1842  03d5 a102          	cp	a,#2
-1843  03d7 2703          	jreq	L611
-1844  03d9 cc04b3        	jp	L736
-1845  03dc               L611:
-1846                     ; 142 				if((*parameters)[1]<256)
-1848  03dc 1e05          	ldw	x,(OFST+4,sp)
-1849  03de 1c0004        	addw	x,#4
-1850  03e1 cd0000        	call	c_ltor
-1852  03e4 ae007d        	ldw	x,#L47
-1853  03e7 cd0000        	call	c_lcmp
-1855  03ea 2503          	jrult	L021
-1856  03ec cc04b3        	jp	L736
-1857  03ef               L021:
-1858  03ef acb304b3      	jpf	L736
-1859  03f3               L175:
-1860                     ; 153 			is_valid=1;
-1862  03f3 a601          	ld	a,#1
-1863  03f5 6b01          	ld	(OFST+0,sp),a
-1865                     ; 154 			if(parameter_count<3) is_valid=0;
-1867  03f7 7b07          	ld	a,(OFST+6,sp)
-1868  03f9 a103          	cp	a,#3
-1869  03fb 2402          	jruge	L766
-1872  03fd 0f01          	clr	(OFST+0,sp)
-1874  03ff               L766:
-1875                     ; 155 			if((*parameters)[0]>=RGB_LED_COUNT) is_valid=0;
-1877  03ff 1e05          	ldw	x,(OFST+4,sp)
-1878  0401 cd0000        	call	c_ltor
-1880  0404 ae0081        	ldw	x,#L67
-1881  0407 cd0000        	call	c_lcmp
-1883  040a 2502          	jrult	L176
-1886  040c 0f01          	clr	(OFST+0,sp)
-1888  040e               L176:
-1889                     ; 156 			if((*parameters)[1]>=3) is_valid=0;
-1891  040e 1e05          	ldw	x,(OFST+4,sp)
-1892  0410 1c0004        	addw	x,#4
-1893  0413 cd0000        	call	c_ltor
-1895  0416 ae0085        	ldw	x,#L001
-1896  0419 cd0000        	call	c_lcmp
-1898  041c 2502          	jrult	L376
-1901  041e 0f01          	clr	(OFST+0,sp)
-1903  0420               L376:
-1904                     ; 157 			if((*parameters)[2]>=255) is_valid=0;
-1906  0420 1e05          	ldw	x,(OFST+4,sp)
-1907  0422 1c0008        	addw	x,#8
-1908  0425 cd0000        	call	c_ltor
-1910  0428 ae0089        	ldw	x,#L201
-1911  042b cd0000        	call	c_lcmp
-1913  042e 2502          	jrult	L576
-1916  0430 0f01          	clr	(OFST+0,sp)
-1918  0432               L576:
-1919                     ; 158 			if(is_valid)
-1921  0432 0d01          	tnz	(OFST+0,sp)
-1922  0434 2602          	jrne	L221
-1923  0436 207b          	jp	L736
-1924  0438               L221:
-1925                     ; 160 				set_rgb((*parameters)[0],(*parameters)[1],(*parameters)[2]);
-1927  0438 1e05          	ldw	x,(OFST+4,sp)
-1928  043a e60b          	ld	a,(11,x)
-1929  043c 88            	push	a
-1930  043d 1e06          	ldw	x,(OFST+5,sp)
-1931  043f e607          	ld	a,(7,x)
-1932  0441 97            	ld	xl,a
-1933  0442 1606          	ldw	y,(OFST+5,sp)
-1934  0444 90e603        	ld	a,(3,y)
-1935  0447 95            	ld	xh,a
-1936  0448 cd0000        	call	_set_rgb
-1938  044b 84            	pop	a
-1939                     ; 161 				flush_leds(2);//1 RGB led element and 1 for status led
-1941  044c a602          	ld	a,#2
-1942  044e cd0000        	call	_flush_leds
-1944  0451 2060          	jra	L736
-1945  0453               L375:
-1946                     ; 165 			is_valid=1;
-1948  0453 a601          	ld	a,#1
-1949  0455 6b01          	ld	(OFST+0,sp),a
-1951                     ; 166 			if(parameter_count<2) is_valid=0;
-1953  0457 7b07          	ld	a,(OFST+6,sp)
-1954  0459 a102          	cp	a,#2
-1955  045b 2402          	jruge	L107
-1958  045d 0f01          	clr	(OFST+0,sp)
-1960  045f               L107:
-1961                     ; 167 			if((*parameters)[0]>=WHITE_LED_COUNT) is_valid=0;
-1963  045f 1e05          	ldw	x,(OFST+4,sp)
-1964  0461 cd0000        	call	c_ltor
-1966  0464 ae008d        	ldw	x,#L401
-1967  0467 cd0000        	call	c_lcmp
-1969  046a 2502          	jrult	L307
-1972  046c 0f01          	clr	(OFST+0,sp)
-1974  046e               L307:
-1975                     ; 168 			if((*parameters)[1]>=255) is_valid=0;
-1977  046e 1e05          	ldw	x,(OFST+4,sp)
-1978  0470 1c0004        	addw	x,#4
-1979  0473 cd0000        	call	c_ltor
-1981  0476 ae0089        	ldw	x,#L201
-1982  0479 cd0000        	call	c_lcmp
-1984  047c 2502          	jrult	L507
-1987  047e 0f01          	clr	(OFST+0,sp)
-1989  0480               L507:
-1990                     ; 169 			if(is_valid)
-1992  0480 0d01          	tnz	(OFST+0,sp)
-1993  0482 272f          	jreq	L736
-1994                     ; 171 				set_white((*parameters)[0],(*parameters)[1]);
-1996  0484 1e05          	ldw	x,(OFST+4,sp)
-1997  0486 e607          	ld	a,(7,x)
-1998  0488 97            	ld	xl,a
-1999  0489 1605          	ldw	y,(OFST+4,sp)
-2000  048b 90e603        	ld	a,(3,y)
-2001  048e 95            	ld	xh,a
-2002  048f cd0000        	call	_set_white
-2004                     ; 172 				flush_leds(2);//1 RGB led element and 1 for status led
-2006  0492 a602          	ld	a,#2
-2007  0494 cd0000        	call	_flush_leds
-2009  0497 201a          	jra	L736
-2010  0499               L575:
-2011                     ; 176 			Serial_print_u32(get_audio_level());
-2013  0499 cd0000        	call	_get_audio_level
-2015  049c b703          	ld	c_lreg+3,a
-2016  049e 3f02          	clr	c_lreg+2
-2017  04a0 3f01          	clr	c_lreg+1
-2018  04a2 3f00          	clr	c_lreg
-2019  04a4 be02          	ldw	x,c_lreg+2
-2020  04a6 89            	pushw	x
-2021  04a7 be00          	ldw	x,c_lreg
-2022  04a9 89            	pushw	x
-2023  04aa cd0054        	call	_Serial_print_u32
-2025  04ad 5b04          	addw	sp,#4
-2026                     ; 177 			is_valid=1;
-2028  04af a601          	ld	a,#1
-2029  04b1 6b01          	ld	(OFST+0,sp),a
-2031                     ; 178 		}break;
-2033  04b3               L736:
-2034                     ; 180 	if(!is_valid) Serial_print_string("Invalid. h");
-2036  04b3 0d01          	tnz	(OFST+0,sp)
-2037  04b5 2606          	jrne	L117
-2040  04b7 ae0091        	ldw	x,#L317
-2041  04ba cd010d        	call	_Serial_print_string
-2043  04bd               L117:
-2044                     ; 181 	Serial_newline();
-2046  04bd cd00fe        	call	_Serial_newline
-2048                     ; 182 }
-2051  04c0 85            	popw	x
-2052  04c1 81            	ret
-2065                     	xdef	_Serial_print_u32
-2066                     	xdef	_Serial_read_char
-2067                     	xdef	_Serial_available
-2068                     	xdef	_Serial_newline
-2069                     	xdef	_Serial_print_string
-2070                     	xdef	_Serial_print_char
-2071                     	xdef	_Serial_print_int
-2072                     	xdef	_Serial_begin
-2073                     	xdef	_print_welcome
-2074                     	xdef	_execute_terminal_command
-2075                     	xdef	_get_terminal_command
-2076                     	xdef	_run_developer
-2077                     	xdef	_setup_developer
-2078                     	xref	_set_millis
-2079                     	xref	_get_audio_level
-2080                     	xref	_is_space_sao
-2081                     	xref	_clear_button_events
-2082                     	xref	_is_developer_valid
-2083                     	xref	_flush_leds
-2084                     	xref	_set_debug
-2085                     	xref	_set_white
-2086                     	xref	_set_rgb
-2087                     	xref	_millis
-2088                     	xref	_setup_serial
-2089                     	xref	_UART1_ClearFlag
-2090                     	xref	_UART1_GetFlagStatus
-2091                     	xref	_UART1_SendData8
-2092                     	xref	_UART1_ReceiveData8
-2093                     	xref	_UART1_Cmd
-2094                     	xref	_UART1_Init
-2095                     	xref	_UART1_DeInit
-2096                     	xref	_GPIO_Init
-2097                     	xref	_FLASH_ReadByte
-2098                     	switch	.const
-2099  0091               L317:
-2100  0091 496e76616c69  	dc.b	"Invalid. h",0
-2101  009c               L556:
-2102  009c 476974487562  	dc.b	"GitHub.com/ScottAl"
-2103  00ae 6d6f6e642f44  	dc.b	"mond/DefCon_31",0
-2104  00bd               L563:
-2105  00bd 3e2000        	dc.b	"> ",0
-2106  00c0               L711:
-2107  00c0 307800        	dc.b	"0x",0
-2108                     	xref.b	c_lreg
-2109                     	xref.b	c_x
-2110                     	xref.b	c_y
-2130                     	xref	c_lcmp
-2131                     	xref	c_ladd
-2132                     	xref	c_rtol
-2133                     	xref	c_itolx
-2134                     	xref	c_llsh
-2135                     	xref	c_sdivx
-2136                     	xref	c_smody
-2137                     	xref	c_smodx
-2138                     	xref	c_xymov
-2139                     	xref	c_lursh
-2140                     	xref	c_ltor
-2141                     	end
+  48                     ; 6 void setup_developer()
+  48                     ; 7 {
+  50                     	switch	.text
+  51  0000               _setup_developer:
+  55                     ; 8 	setup_serial(1,1);//enabled at high speed
+  57  0000 ae0101        	ldw	x,#257
+  58  0003 cd0000        	call	_setup_serial
+  60                     ; 9 	clear_button_events();
+  62  0006 cd0000        	call	_clear_button_events
+  64                     ; 10 	flush_leds(0);//clear outstanding led buffer
+  66  0009 4f            	clr	a
+  67  000a cd0000        	call	_flush_leds
+  69                     ; 14 		set_debug(255);//show only one debug led ON
+  71  000d a6ff          	ld	a,#255
+  72  000f cd0000        	call	_set_debug
+  74                     ; 16 	flush_leds(1);
+  76  0012 a601          	ld	a,#1
+  77  0014 cd0000        	call	_flush_leds
+  79                     ; 17 	Serial_newline();
+  81  0017 cd0000        	call	_Serial_newline
+  83                     ; 18 	print_ascii_art(1);
+  85  001a a601          	ld	a,#1
+  86  001c ad50          	call	_print_ascii_art
+  88                     ; 19 }
+  91  001e 81            	ret
+ 151                     ; 21 void run_developer()
+ 151                     ; 22 {
+ 152                     	switch	.text
+ 153  001f               _run_developer:
+ 155  001f 520e          	subw	sp,#14
+ 156       0000000e      OFST:	set	14
+ 159                     ; 26 	setup_developer();
+ 161  0021 addd          	call	_setup_developer
+ 164  0023 2031          	jra	L15
+ 165  0025               L74:
+ 166                     ; 29 		Serial_print_string("> ");
+ 168  0025 ae0100        	ldw	x,#L55
+ 169  0028 cd0000        	call	_Serial_print_string
+ 171                     ; 30 		get_terminal_command(&command,&parameters,&parameter_count);
+ 173  002b 96            	ldw	x,sp
+ 174  002c 1c0002        	addw	x,#OFST-12
+ 175  002f 89            	pushw	x
+ 176  0030 96            	ldw	x,sp
+ 177  0031 1c0005        	addw	x,#OFST-9
+ 178  0034 89            	pushw	x
+ 179  0035 96            	ldw	x,sp
+ 180  0036 1c0005        	addw	x,#OFST-9
+ 181  0039 cd0119        	call	_get_terminal_command
+ 183  003c 5b04          	addw	sp,#4
+ 184                     ; 34 			set_debug(255);//show only one debug led ON
+ 186  003e a6ff          	ld	a,#255
+ 187  0040 cd0000        	call	_set_debug
+ 189                     ; 36 		execute_terminal_command(&command,&parameters,&parameter_count);
+ 191  0043 96            	ldw	x,sp
+ 192  0044 1c0002        	addw	x,#OFST-12
+ 193  0047 89            	pushw	x
+ 194  0048 96            	ldw	x,sp
+ 195  0049 1c0005        	addw	x,#OFST-9
+ 196  004c 89            	pushw	x
+ 197  004d 96            	ldw	x,sp
+ 198  004e 1c0005        	addw	x,#OFST-9
+ 199  0051 cd0285        	call	_execute_terminal_command
+ 201  0054 5b04          	addw	sp,#4
+ 202  0056               L15:
+ 203                     ; 27 	while(is_developer_valid())
+ 205  0056 cd0000        	call	_is_developer_valid
+ 207  0059 4d            	tnz	a
+ 208  005a 26c9          	jrne	L74
+ 209                     ; 38 	Serial_print_string("Exiting Terminal\n");
+ 211  005c ae00ee        	ldw	x,#L75
+ 212  005f cd0000        	call	_Serial_print_string
+ 214                     ; 39 	flush_leds(0);//turn off debug led
+ 216  0062 4f            	clr	a
+ 217  0063 cd0000        	call	_flush_leds
+ 219                     ; 40 	flush_leds(1);//turn off debug led
+ 221  0066 a601          	ld	a,#1
+ 222  0068 cd0000        	call	_flush_leds
+ 224                     ; 41 }
+ 227  006b 5b0e          	addw	sp,#14
+ 228  006d 81            	ret
+ 231                     .const:	section	.text
+ 232  0000               L16_welcome:
+ 233  0000 79            	dc.b	121
+ 234  0001 f0            	dc.b	240
+ 235  0002 c3            	dc.b	195
+ 236  0003 cf            	dc.b	207
+ 237  0004 df            	dc.b	223
+ 238  0005 2f            	dc.b	47
+ 239  0006 9e            	dc.b	158
+ 240  0007 7c            	dc.b	124
+ 241  0008 84            	dc.b	132
+ 242  0009 f0            	dc.b	240
+ 243  000a 81            	dc.b	129
+ 244  000b 09            	dc.b	9
+ 245  000c 24            	dc.b	36
+ 246  000d 28            	dc.b	40
+ 247  000e 10            	dc.b	16
+ 248  000f a2            	dc.b	162
+ 249  0010 20            	dc.b	32
+ 250  0011 42            	dc.b	66
+ 251  0012 85            	dc.b	133
+ 252  0013 00            	dc.b	0
+ 253  0014 79            	dc.b	121
+ 254  0015 0a            	dc.b	10
+ 255  0016 14            	dc.b	20
+ 256  0017 0f            	dc.b	15
+ 257  0018 9f            	dc.b	159
+ 258  0019 22            	dc.b	34
+ 259  001a 1e            	dc.b	30
+ 260  001b 42            	dc.b	66
+ 261  001c 84            	dc.b	132
+ 262  001d f0            	dc.b	240
+ 263  001e 05            	dc.b	5
+ 264  001f f3            	dc.b	243
+ 265  0020 f4            	dc.b	244
+ 266  0021 08            	dc.b	8
+ 267  0022 10            	dc.b	16
+ 268  0023 a2            	dc.b	162
+ 269  0024 01            	dc.b	1
+ 270  0025 7c            	dc.b	124
+ 271  0026 84            	dc.b	132
+ 272  0027 08            	dc.b	8
+ 273  0028 85            	dc.b	133
+ 274  0029 02            	dc.b	2
+ 275  002a 14            	dc.b	20
+ 276  002b 28            	dc.b	40
+ 277  002c 10            	dc.b	16
+ 278  002d a2            	dc.b	162
+ 279  002e 21            	dc.b	33
+ 280  002f 44            	dc.b	68
+ 281  0030 85            	dc.b	133
+ 282  0031 08            	dc.b	8
+ 283  0032 79            	dc.b	121
+ 284  0033 02            	dc.b	2
+ 285  0034 13            	dc.b	19
+ 286  0035 cf            	dc.b	207
+ 287  0036 df            	dc.b	223
+ 288  0037 22            	dc.b	34
+ 289  0038 1e            	dc.b	30
+ 290  0039 42            	dc.b	66
+ 291  003a 78            	dc.b	120
+ 292  003b f0            	dc.b	240
+ 293  003c               L36_winner:
+ 294  003c 82            	dc.b	130
+ 295  003d e8            	dc.b	232
+ 296  003e 28            	dc.b	40
+ 297  003f 2f            	dc.b	47
+ 298  0040 ef            	dc.b	239
+ 299  0041 c0            	dc.b	192
+ 300  0042 92            	dc.b	146
+ 301  0043 4c            	dc.b	76
+ 302  0044 2c            	dc.b	44
+ 303  0045 28            	dc.b	40
+ 304  0046 08            	dc.b	8
+ 305  0047 20            	dc.b	32
+ 306  0048 92            	dc.b	146
+ 307  0049 4a            	dc.b	74
+ 308  004a 2a            	dc.b	42
+ 309  004b 28            	dc.b	40
+ 310  004c 08            	dc.b	8
+ 311  004d 20            	dc.b	32
+ 312  004e 92            	dc.b	146
+ 313  004f 49            	dc.b	73
+ 314  0050 29            	dc.b	41
+ 315  0051 2f            	dc.b	47
+ 316  0052 8f            	dc.b	143
+ 317  0053 c0            	dc.b	192
+ 318  0054 92            	dc.b	146
+ 319  0055 48            	dc.b	72
+ 320  0056 a8            	dc.b	168
+ 321  0057 a8            	dc.b	168
+ 322  0058 08            	dc.b	8
+ 323  0059 80            	dc.b	128
+ 324  005a 92            	dc.b	146
+ 325  005b 48            	dc.b	72
+ 326  005c 68            	dc.b	104
+ 327  005d 68            	dc.b	104
+ 328  005e 08            	dc.b	8
+ 329  005f 40            	dc.b	64
+ 330  0060 6c            	dc.b	108
+ 331  0061 e8            	dc.b	232
+ 332  0062 28            	dc.b	40
+ 333  0063 2f            	dc.b	47
+ 334  0064 e8            	dc.b	232
+ 335  0065 20            	dc.b	32
+ 446                     ; 44 void print_ascii_art(bool is_welcome)
+ 446                     ; 45 {
+ 447                     	switch	.text
+ 448  006e               _print_ascii_art:
+ 450  006e 88            	push	a
+ 451  006f 526a          	subw	sp,#106
+ 452       0000006a      OFST:	set	106
+ 455                     ; 46 	u8 welcome[] = {
+ 455                     ; 47 		#if IS_SPACE_SAO
+ 455                     ; 48 											0b01111001,0b11110000,0b11000011,0b11001111,0b11011111,0b00101111,
+ 455                     ; 49 											0b10011110,0b01111100,0b10000100,0b11110000,0b10000001,0b00001001,
+ 455                     ; 50 											0b00100100,0b00101000,0b00010000,0b10100010,0b00100000,0b01000010,
+ 455                     ; 51 											0b10000101,0b00000000,0b01111001,0b00001010,0b00010100,0b00001111,
+ 455                     ; 52 											0b10011111,0b00100010,0b00011110,0b01000010,0b10000100,0b11110000,
+ 455                     ; 53 											0b00000101,0b11110011,0b11110100,0b00001000,0b00010000,0b10100010,
+ 455                     ; 54 											0b00000001,0b01111100,0b10000100,0b00001000,0b10000101,0b00000010,
+ 455                     ; 55 											0b00010100,0b00101000,0b00010000,0b10100010,0b00100001,0b01000100,
+ 455                     ; 56 											0b10000101,0b00001000,0b01111001,0b00000010,0b00010011,0b11001111,
+ 455                     ; 57 											0b11011111,0b00100010,0b00011110,0b01000010,0b01111000,0b11110000
+ 455                     ; 58 		#else
+ 455                     ; 59 											0b01111110,0b01111111,0b01111111,0b00111110,0b01111111,0b01000001,
+ 455                     ; 60 											0b00111110,0b0001000,0b01000001,0b01000000,0b01000000,0b01000001,
+ 455                     ; 61 											0b01000001,0b01100001,0b01000001,0b0011000,0b01000001,0b01000000,
+ 455                     ; 62 											0b01000000,0b01000000,0b01000001,0b01010001,0b00000001,0b0101000,
+ 455                     ; 63 											0b01000001,0b01111100,0b01111100,0b01000000,0b01000001,0b01001001,//last bit messed up?
+ 455                     ; 64 											0b00111110,0b0001000,0b01000001,0b01000000,0b01000000,0b01000000,//mis-typed bit?
+ 455                     ; 65 											0b01000001,0b01000101,0b00000001,0b0001000,0b01000001,0b01000000,
+ 455                     ; 66 											0b01000000,0b01000001,0b01000001,0b01000011,0b01000001,0b0001000,
+ 455                     ; 67 											0b01111110,0b01111111,0b01000000,0b00111110,0b01111111,0b01000001,
+ 455                     ; 68 											0b00111110,0b0111110
+ 455                     ; 69 		#endif
+ 455                     ; 70 		};
+ 457  0071 96            	ldw	x,sp
+ 458  0072 1c0002        	addw	x,#OFST-104
+ 459  0075 90ae0000      	ldw	y,#L16_welcome
+ 460  0079 a63c          	ld	a,#60
+ 461  007b cd0000        	call	c_xymov
+ 463                     ; 71 	u8 winner[] = {     0b10000010,0b11101000,0b00101000,0b00101111,0b11101111,0b11000000,
+ 463                     ; 72 											0b10010010,0b01001100,0b00101100,0b00101000,0b00001000,0b00100000,
+ 463                     ; 73 											0b10010010,0b01001010,0b00101010,0b00101000,0b00001000,0b00100000,
+ 463                     ; 74 											0b10010010,0b01001001,0b00101001,0b00101111,0b10001111,0b11000000,
+ 463                     ; 75 											0b10010010,0b01001000,0b10101000,0b10101000,0b00001000,0b10000000,
+ 463                     ; 76 											0b10010010,0b01001000,0b01101000,0b01101000,0b00001000,0b01000000,
+ 463                     ; 77 											0b01101100,0b11101000,0b00101000,0b00101111,0b11101000,0b00100000 };
+ 465  007e 96            	ldw	x,sp
+ 466  007f 1c003e        	addw	x,#OFST-44
+ 467  0082 90ae003c      	ldw	y,#L36_winner
+ 468  0086 a62a          	ld	a,#42
+ 469  0088 cd0000        	call	c_xymov
+ 471                     ; 78 	u8 length = is_welcome?sizeof(welcome):sizeof(winner);
+ 473  008b 0d6b          	tnz	(OFST+1,sp)
+ 474  008d 2704          	jreq	L21
+ 475  008f a63c          	ld	a,#60
+ 476  0091 2002          	jra	L41
+ 477  0093               L21:
+ 478  0093 a62a          	ld	a,#42
+ 479  0095               L41:
+ 480  0095 6b01          	ld	(OFST-105,sp),a
+ 482                     ; 79 	u8 lineBreakInterval = is_welcome?
+ 482                     ; 80 		#if IS_SPACE_SAO
+ 482                     ; 81 			10
+ 482                     ; 82 		#else
+ 482                     ; 83 			8
+ 482                     ; 84 		#endif
+ 482                     ; 85 			:6;
+ 484  0097 0d6b          	tnz	(OFST+1,sp)
+ 485  0099 2704          	jreq	L61
+ 486  009b a60a          	ld	a,#10
+ 487  009d 2002          	jra	L02
+ 488  009f               L61:
+ 489  009f a606          	ld	a,#6
+ 490  00a1               L02:
+ 491  00a1 6b68          	ld	(OFST-2,sp),a
+ 493                     ; 87 	for (i = 0; i < length; i++) {
+ 495  00a3 0f6a          	clr	(OFST+0,sp)
+ 498  00a5 2069          	jra	L741
+ 499  00a7               L341:
+ 500                     ; 88 		for (j = 7; j !=0xFF; j--) {
+ 502  00a7 a607          	ld	a,#7
+ 503  00a9 6b69          	ld	(OFST-1,sp),a
+ 505  00ab               L351:
+ 506                     ; 90 			Serial_print_char((( (is_welcome?welcome[i]:winner[i]) >> j)  & 0x01) ? '#' : ' ');
+ 508  00ab 0d6b          	tnz	(OFST+1,sp)
+ 509  00ad 2711          	jreq	L42
+ 510  00af 96            	ldw	x,sp
+ 511  00b0 1c0002        	addw	x,#OFST-104
+ 512  00b3 9f            	ld	a,xl
+ 513  00b4 5e            	swapw	x
+ 514  00b5 1b6a          	add	a,(OFST+0,sp)
+ 515  00b7 2401          	jrnc	L62
+ 516  00b9 5c            	incw	x
+ 517  00ba               L62:
+ 518  00ba 02            	rlwa	x,a
+ 519  00bb f6            	ld	a,(x)
+ 520  00bc 5f            	clrw	x
+ 521  00bd 97            	ld	xl,a
+ 522  00be 200f          	jra	L03
+ 523  00c0               L42:
+ 524  00c0 96            	ldw	x,sp
+ 525  00c1 1c003e        	addw	x,#OFST-44
+ 526  00c4 9f            	ld	a,xl
+ 527  00c5 5e            	swapw	x
+ 528  00c6 1b6a          	add	a,(OFST+0,sp)
+ 529  00c8 2401          	jrnc	L23
+ 530  00ca 5c            	incw	x
+ 531  00cb               L23:
+ 532  00cb 02            	rlwa	x,a
+ 533  00cc f6            	ld	a,(x)
+ 534  00cd 5f            	clrw	x
+ 535  00ce 97            	ld	xl,a
+ 536  00cf               L03:
+ 537  00cf 7b69          	ld	a,(OFST-1,sp)
+ 538  00d1 4d            	tnz	a
+ 539  00d2 2704          	jreq	L43
+ 540  00d4               L63:
+ 541  00d4 57            	sraw	x
+ 542  00d5 4a            	dec	a
+ 543  00d6 26fc          	jrne	L63
+ 544  00d8               L43:
+ 545  00d8 01            	rrwa	x,a
+ 546  00d9 a501          	bcp	a,#1
+ 547  00db 2704          	jreq	L22
+ 548  00dd a623          	ld	a,#35
+ 549  00df 2002          	jra	L04
+ 550  00e1               L22:
+ 551  00e1 a620          	ld	a,#32
+ 552  00e3               L04:
+ 553  00e3 cd0000        	call	_Serial_print_char
+ 555                     ; 88 		for (j = 7; j !=0xFF; j--) {
+ 557  00e6 0a69          	dec	(OFST-1,sp)
+ 561  00e8 7b69          	ld	a,(OFST-1,sp)
+ 562  00ea a1ff          	cp	a,#255
+ 563  00ec 26bd          	jrne	L351
+ 564                     ; 92 		if ((i % lineBreakInterval) == (lineBreakInterval-1)) {
+ 566  00ee 7b6a          	ld	a,(OFST+0,sp)
+ 567  00f0 5f            	clrw	x
+ 568  00f1 97            	ld	xl,a
+ 569  00f2 7b68          	ld	a,(OFST-2,sp)
+ 570  00f4 905f          	clrw	y
+ 571  00f6 9097          	ld	yl,a
+ 572  00f8 cd0000        	call	c_idiv
+ 574  00fb 51            	exgw	x,y
+ 575  00fc 7b68          	ld	a,(OFST-2,sp)
+ 576  00fe 905f          	clrw	y
+ 577  0100 9097          	ld	yl,a
+ 578  0102 905a          	decw	y
+ 579  0104 90bf00        	ldw	c_y,y
+ 580  0107 b300          	cpw	x,c_y
+ 581  0109 2603          	jrne	L161
+ 582                     ; 94 			Serial_newline();
+ 584  010b cd0000        	call	_Serial_newline
+ 586  010e               L161:
+ 587                     ; 87 	for (i = 0; i < length; i++) {
+ 589  010e 0c6a          	inc	(OFST+0,sp)
+ 591  0110               L741:
+ 594  0110 7b6a          	ld	a,(OFST+0,sp)
+ 595  0112 1101          	cp	a,(OFST-105,sp)
+ 596  0114 2591          	jrult	L341
+ 597                     ; 97 }
+ 600  0116 5b6b          	addw	sp,#107
+ 601  0118 81            	ret
+ 727                     ; 99 void get_terminal_command(char *command,u32 (*parameters)[MAX_TERMINAL_PARAMETERS],u8 *parameter_count)
+ 727                     ; 100 {
+ 728                     	switch	.text
+ 729  0119               _get_terminal_command:
+ 731  0119 89            	pushw	x
+ 732  011a 522e          	subw	sp,#46
+ 733       0000002e      OFST:	set	46
+ 736                     ; 101 	bool is_new_line=0;
+ 738                     ; 102 	bool is_any_input=0;//set to true after new input received, including a value of '0'
+ 740                     ; 104 	u8 new_input_index=0;
+ 742                     ; 106 	u8 str_index=0,iter;
+ 744  011c 0f2e          	clr	(OFST+0,sp)
+ 747  011e aca601a6      	jpf	L152
+ 748  0122               L542:
+ 749                     ; 109 		if(Serial_available())
+ 751  0122 cd0000        	call	_Serial_available
+ 753  0125 4d            	tnz	a
+ 754  0126 2602          	jrne	L46
+ 755  0128 207c          	jp	L152
+ 756  012a               L46:
+ 757                     ; 111 			input_char=Serial_read_char(0);
+ 759  012a 4f            	clr	a
+ 760  012b cd0000        	call	_Serial_read_char
+ 762  012e 6b2d          	ld	(OFST-1,sp),a
+ 764                     ; 112 			if(str_index==0)
+ 766  0130 0d2e          	tnz	(OFST+0,sp)
+ 767  0132 260e          	jrne	L752
+ 768                     ; 114 				str[0]=input_char;
+ 770  0134 7b2d          	ld	a,(OFST-1,sp)
+ 771  0136 6b08          	ld	(OFST-38,sp),a
+ 773                     ; 115 				str_index++;
+ 775  0138 0c2e          	inc	(OFST+0,sp)
+ 777                     ; 116 				if(input_char=='\n') break;
+ 779  013a 7b2d          	ld	a,(OFST-1,sp)
+ 780  013c a10a          	cp	a,#10
+ 781  013e 2666          	jrne	L152
+ 784  0140 2073          	jra	L352
+ 785  0142               L752:
+ 786                     ; 118 				if(input_char>='0' && input_char<='9')
+ 788  0142 7b2d          	ld	a,(OFST-1,sp)
+ 789  0144 a130          	cp	a,#48
+ 790  0146 2525          	jrult	L562
+ 792  0148 7b2d          	ld	a,(OFST-1,sp)
+ 793  014a a13a          	cp	a,#58
+ 794  014c 241f          	jruge	L562
+ 795                     ; 120 					if(str_index==1)
+ 797  014e 7b2e          	ld	a,(OFST+0,sp)
+ 798  0150 a101          	cp	a,#1
+ 799  0152 2606          	jrne	L762
+ 800                     ; 122 						str[1]=' ';
+ 802  0154 a620          	ld	a,#32
+ 803  0156 6b09          	ld	(OFST-37,sp),a
+ 805                     ; 123 						str_index++;
+ 807  0158 0c2e          	inc	(OFST+0,sp)
+ 809  015a               L762:
+ 810                     ; 125 					str[str_index]=input_char;
+ 812  015a 96            	ldw	x,sp
+ 813  015b 1c0008        	addw	x,#OFST-38
+ 814  015e 9f            	ld	a,xl
+ 815  015f 5e            	swapw	x
+ 816  0160 1b2e          	add	a,(OFST+0,sp)
+ 817  0162 2401          	jrnc	L44
+ 818  0164 5c            	incw	x
+ 819  0165               L44:
+ 820  0165 02            	rlwa	x,a
+ 821  0166 7b2d          	ld	a,(OFST-1,sp)
+ 822  0168 f7            	ld	(x),a
+ 823                     ; 126 					str_index++;
+ 825  0169 0c2e          	inc	(OFST+0,sp)
+ 828  016b 2039          	jra	L152
+ 829  016d               L562:
+ 830                     ; 128 					if(input_char=='\n')
+ 832  016d 7b2d          	ld	a,(OFST-1,sp)
+ 833  016f a10a          	cp	a,#10
+ 834  0171 260f          	jrne	L372
+ 835                     ; 130 						str[str_index]='\0';
+ 837  0173 96            	ldw	x,sp
+ 838  0174 1c0008        	addw	x,#OFST-38
+ 839  0177 9f            	ld	a,xl
+ 840  0178 5e            	swapw	x
+ 841  0179 1b2e          	add	a,(OFST+0,sp)
+ 842  017b 2401          	jrnc	L64
+ 843  017d 5c            	incw	x
+ 844  017e               L64:
+ 845  017e 02            	rlwa	x,a
+ 846  017f 7f            	clr	(x)
+ 847                     ; 131 						break;
+ 849  0180 2033          	jra	L352
+ 850  0182               L372:
+ 851                     ; 133 					if(str[str_index-1]!=' ')
+ 853  0182 96            	ldw	x,sp
+ 854  0183 1c0008        	addw	x,#OFST-38
+ 855  0186 1f03          	ldw	(OFST-43,sp),x
+ 857  0188 7b2e          	ld	a,(OFST+0,sp)
+ 858  018a 5f            	clrw	x
+ 859  018b 97            	ld	xl,a
+ 860  018c 5a            	decw	x
+ 861  018d 72fb03        	addw	x,(OFST-43,sp)
+ 862  0190 f6            	ld	a,(x)
+ 863  0191 a120          	cp	a,#32
+ 864  0193 2711          	jreq	L152
+ 865                     ; 135 						str[str_index]=' ';
+ 867  0195 96            	ldw	x,sp
+ 868  0196 1c0008        	addw	x,#OFST-38
+ 869  0199 9f            	ld	a,xl
+ 870  019a 5e            	swapw	x
+ 871  019b 1b2e          	add	a,(OFST+0,sp)
+ 872  019d 2401          	jrnc	L05
+ 873  019f 5c            	incw	x
+ 874  01a0               L05:
+ 875  01a0 02            	rlwa	x,a
+ 876  01a1 a620          	ld	a,#32
+ 877  01a3 f7            	ld	(x),a
+ 878                     ; 136 						str_index++;
+ 880  01a4 0c2e          	inc	(OFST+0,sp)
+ 882  01a6               L152:
+ 883                     ; 107 	while(is_developer_valid()&&str_index<sizeof(str))
+ 885  01a6 cd0000        	call	_is_developer_valid
+ 887  01a9 4d            	tnz	a
+ 888  01aa 2709          	jreq	L352
+ 890  01ac 7b2e          	ld	a,(OFST+0,sp)
+ 891  01ae a125          	cp	a,#37
+ 892  01b0 2403          	jruge	L66
+ 893  01b2 cc0122        	jp	L542
+ 894  01b5               L66:
+ 895  01b5               L352:
+ 896                     ; 148 	*command=str[0];
+ 898  01b5 7b08          	ld	a,(OFST-38,sp)
+ 899  01b7 1e2f          	ldw	x,(OFST+1,sp)
+ 900  01b9 f7            	ld	(x),a
+ 901                     ; 149 	str[0]=0;
+ 903  01ba 0f08          	clr	(OFST-38,sp)
+ 905                     ; 150 	*parameter_count=0;
+ 907  01bc 1e35          	ldw	x,(OFST+7,sp)
+ 908  01be 7f            	clr	(x)
+ 909                     ; 151 	for(iter=1;iter<str_index;iter++)
+ 911  01bf a601          	ld	a,#1
+ 912  01c1 6b2d          	ld	(OFST-1,sp),a
+ 915  01c3 ac680268      	jpf	L503
+ 916  01c7               L103:
+ 917                     ; 153 		new_input_index=(*parameter_count-1)%MAX_TERMINAL_PARAMETERS;
+ 919  01c7 1e35          	ldw	x,(OFST+7,sp)
+ 920  01c9 f6            	ld	a,(x)
+ 921  01ca 5f            	clrw	x
+ 922  01cb 97            	ld	xl,a
+ 923  01cc 5a            	decw	x
+ 924  01cd a603          	ld	a,#3
+ 925  01cf cd0000        	call	c_smodx
+ 927  01d2 01            	rrwa	x,a
+ 928  01d3 6b07          	ld	(OFST-39,sp),a
+ 929  01d5 02            	rlwa	x,a
+ 931                     ; 154 		if(str[iter]==' ')
+ 933  01d6 96            	ldw	x,sp
+ 934  01d7 1c0008        	addw	x,#OFST-38
+ 935  01da 9f            	ld	a,xl
+ 936  01db 5e            	swapw	x
+ 937  01dc 1b2d          	add	a,(OFST-1,sp)
+ 938  01de 2401          	jrnc	L25
+ 939  01e0 5c            	incw	x
+ 940  01e1               L25:
+ 941  01e1 02            	rlwa	x,a
+ 942  01e2 f6            	ld	a,(x)
+ 943  01e3 a120          	cp	a,#32
+ 944  01e5 261e          	jrne	L113
+ 945                     ; 156 			(*parameters)[*parameter_count]=0;
+ 947  01e7 1e35          	ldw	x,(OFST+7,sp)
+ 948  01e9 f6            	ld	a,(x)
+ 949  01ea 97            	ld	xl,a
+ 950  01eb a604          	ld	a,#4
+ 951  01ed 42            	mul	x,a
+ 952  01ee 72fb33        	addw	x,(OFST+5,sp)
+ 953  01f1 a600          	ld	a,#0
+ 954  01f3 e703          	ld	(3,x),a
+ 955  01f5 a600          	ld	a,#0
+ 956  01f7 e702          	ld	(2,x),a
+ 957  01f9 a600          	ld	a,#0
+ 958  01fb e701          	ld	(1,x),a
+ 959  01fd a600          	ld	a,#0
+ 960  01ff f7            	ld	(x),a
+ 961                     ; 157 			(*parameter_count)++;
+ 963  0200 1e35          	ldw	x,(OFST+7,sp)
+ 964  0202 7c            	inc	(x)
+ 966  0203 2054          	jra	L313
+ 967  0205               L113:
+ 968                     ; 161 			(*parameters)[new_input_index]=(((*parameters)[new_input_index])<<3)+(((*parameters)[new_input_index])<<1)+str[iter]-'0';
+ 970  0205 7b07          	ld	a,(OFST-39,sp)
+ 971  0207 97            	ld	xl,a
+ 972  0208 a604          	ld	a,#4
+ 973  020a 42            	mul	x,a
+ 974  020b 72fb33        	addw	x,(OFST+5,sp)
+ 975  020e cd0000        	call	c_ltor
+ 977  0211 3803          	sll	c_lreg+3
+ 978  0213 3902          	rlc	c_lreg+2
+ 979  0215 3901          	rlc	c_lreg+1
+ 980  0217 3900          	rlc	c_lreg
+ 981  0219 96            	ldw	x,sp
+ 982  021a 1c0001        	addw	x,#OFST-45
+ 983  021d cd0000        	call	c_rtol
+ 986  0220 7b07          	ld	a,(OFST-39,sp)
+ 987  0222 97            	ld	xl,a
+ 988  0223 a604          	ld	a,#4
+ 989  0225 42            	mul	x,a
+ 990  0226 72fb33        	addw	x,(OFST+5,sp)
+ 991  0229 cd0000        	call	c_ltor
+ 993  022c a603          	ld	a,#3
+ 994  022e cd0000        	call	c_llsh
+ 996  0231 96            	ldw	x,sp
+ 997  0232 1c0001        	addw	x,#OFST-45
+ 998  0235 cd0000        	call	c_ladd
+1000  0238 96            	ldw	x,sp
+1001  0239 1c0008        	addw	x,#OFST-38
+1002  023c 9f            	ld	a,xl
+1003  023d 5e            	swapw	x
+1004  023e 1b2d          	add	a,(OFST-1,sp)
+1005  0240 2401          	jrnc	L45
+1006  0242 5c            	incw	x
+1007  0243               L45:
+1008  0243 02            	rlwa	x,a
+1009  0244 f6            	ld	a,(x)
+1010  0245 cd0000        	call	c_ladc
+1012  0248 a630          	ld	a,#48
+1013  024a cd0000        	call	c_lsbc
+1015  024d 7b07          	ld	a,(OFST-39,sp)
+1016  024f 97            	ld	xl,a
+1017  0250 a604          	ld	a,#4
+1018  0252 42            	mul	x,a
+1019  0253 72fb33        	addw	x,(OFST+5,sp)
+1020  0256 cd0000        	call	c_rtol
+1022  0259               L313:
+1023                     ; 163 		str[iter]=0;
+1025  0259 96            	ldw	x,sp
+1026  025a 1c0008        	addw	x,#OFST-38
+1027  025d 9f            	ld	a,xl
+1028  025e 5e            	swapw	x
+1029  025f 1b2d          	add	a,(OFST-1,sp)
+1030  0261 2401          	jrnc	L65
+1031  0263 5c            	incw	x
+1032  0264               L65:
+1033  0264 02            	rlwa	x,a
+1034  0265 7f            	clr	(x)
+1035                     ; 151 	for(iter=1;iter<str_index;iter++)
+1037  0266 0c2d          	inc	(OFST-1,sp)
+1039  0268               L503:
+1042  0268 7b2d          	ld	a,(OFST-1,sp)
+1043  026a 112e          	cp	a,(OFST+0,sp)
+1044  026c 2403          	jruge	L07
+1045  026e cc01c7        	jp	L103
+1046  0271               L07:
+1047                     ; 165 	*parameter_count=(*parameter_count)>MAX_TERMINAL_PARAMETERS?MAX_TERMINAL_PARAMETERS:*parameter_count;
+1049  0271 1e35          	ldw	x,(OFST+7,sp)
+1050  0273 f6            	ld	a,(x)
+1051  0274 a104          	cp	a,#4
+1052  0276 2504          	jrult	L06
+1053  0278 a603          	ld	a,#3
+1054  027a 2003          	jra	L26
+1055  027c               L06:
+1056  027c 1e35          	ldw	x,(OFST+7,sp)
+1057  027e f6            	ld	a,(x)
+1058  027f               L26:
+1059  027f 1e35          	ldw	x,(OFST+7,sp)
+1060  0281 f7            	ld	(x),a
+1061                     ; 166 }
+1064  0282 5b30          	addw	sp,#48
+1065  0284 81            	ret
+1162                     	switch	.const
+1163  0066               L47:
+1164  0066 0000000a      	dc.l	10
+1165  006a               L67:
+1166  006a 00000003      	dc.l	3
+1167  006e               L001:
+1168  006e 00000100      	dc.l	256
+1169  0072               L201:
+1170  0072 0000000c      	dc.l	12
+1171                     ; 168 void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETERS],u8 *parameter_count)
+1171                     ; 169 {
+1172                     	switch	.text
+1173  0285               _execute_terminal_command:
+1175  0285 89            	pushw	x
+1176  0286 89            	pushw	x
+1177       00000002      OFST:	set	2
+1180                     ; 171 	bool is_valid=0,is_command_exist=1;
+1182  0287 0f02          	clr	(OFST+0,sp)
+1186  0289 a601          	ld	a,#1
+1187  028b 6b01          	ld	(OFST-1,sp),a
+1189                     ; 172 	switch(*command)
+1191  028d f6            	ld	a,(x)
+1193                     ; 230 		default:{ is_command_exist=0; } break;
+1194  028e a00a          	sub	a,#10
+1195  0290 2603          	jrne	L401
+1196  0292 cc0330        	jp	L123
+1197  0295               L401:
+1198  0295 a027          	sub	a,#39
+1199  0297 2603          	jrne	L601
+1200  0299 cc033e        	jp	L323
+1201  029c               L601:
+1202  029c a00e          	sub	a,#14
+1203  029e 2603          	jrne	L011
+1204  02a0 cc0330        	jp	L123
+1205  02a3               L011:
+1206  02a3 a022          	sub	a,#34
+1207  02a5 2603          	jrne	L211
+1208  02a7 cc0419        	jp	L723
+1209  02aa               L211:
+1210  02aa a006          	sub	a,#6
+1211  02ac 2603          	jrne	L411
+1212  02ae cc0435        	jp	L133
+1213  02b1               L411:
+1214  02b1 4a            	dec	a
+1215  02b2 277c          	jreq	L123
+1216  02b4 a004          	sub	a,#4
+1217  02b6 2603          	jrne	L611
+1218  02b8 cc033e        	jp	L323
+1219  02bb               L611:
+1220  02bb a004          	sub	a,#4
+1221  02bd 2711          	jreq	L513
+1222  02bf a004          	sub	a,#4
+1223  02c1 2743          	jreq	L713
+1224  02c3 a003          	sub	a,#3
+1225  02c5 2603          	jrne	L021
+1226  02c7 cc03bb        	jp	L523
+1227  02ca               L021:
+1228  02ca               L333:
+1231  02ca 0f01          	clr	(OFST-1,sp)
+1235  02cc ac450445      	jpf	L104
+1236  02d0               L513:
+1237                     ; 175 			Serial_print_char(*command);
+1239  02d0 1e03          	ldw	x,(OFST+1,sp)
+1240  02d2 f6            	ld	a,(x)
+1241  02d3 cd0000        	call	_Serial_print_char
+1243                     ; 176 			for(iter=0;iter<*parameter_count;iter++)
+1245  02d6 0f02          	clr	(OFST+0,sp)
+1248  02d8 201d          	jra	L704
+1249  02da               L304:
+1250                     ; 178 				Serial_print_char(' ');
+1252  02da a620          	ld	a,#32
+1253  02dc cd0000        	call	_Serial_print_char
+1255                     ; 179 				Serial_print_u32((*parameters)[iter]);
+1257  02df 7b02          	ld	a,(OFST+0,sp)
+1258  02e1 97            	ld	xl,a
+1259  02e2 a604          	ld	a,#4
+1260  02e4 42            	mul	x,a
+1261  02e5 72fb07        	addw	x,(OFST+5,sp)
+1262  02e8 9093          	ldw	y,x
+1263  02ea ee02          	ldw	x,(2,x)
+1264  02ec 89            	pushw	x
+1265  02ed 93            	ldw	x,y
+1266  02ee fe            	ldw	x,(x)
+1267  02ef 89            	pushw	x
+1268  02f0 cd0000        	call	_Serial_print_u32
+1270  02f3 5b04          	addw	sp,#4
+1271                     ; 176 			for(iter=0;iter<*parameter_count;iter++)
+1273  02f5 0c02          	inc	(OFST+0,sp)
+1275  02f7               L704:
+1278  02f7 1e09          	ldw	x,(OFST+7,sp)
+1279  02f9 f6            	ld	a,(x)
+1280  02fa 1102          	cp	a,(OFST+0,sp)
+1281  02fc 22dc          	jrugt	L304
+1282                     ; 181 			is_valid=1;
+1284  02fe a601          	ld	a,#1
+1285  0300 6b02          	ld	(OFST+0,sp),a
+1287                     ; 182 		}break;
+1289  0302 ac450445      	jpf	L104
+1290  0306               L713:
+1291                     ; 184 			if(*parameter_count) set_millis((*parameters)[0]);
+1293  0306 1e09          	ldw	x,(OFST+7,sp)
+1294  0308 7d            	tnz	(x)
+1295  0309 270f          	jreq	L314
+1298  030b 1e07          	ldw	x,(OFST+5,sp)
+1299  030d 9093          	ldw	y,x
+1300  030f ee02          	ldw	x,(2,x)
+1301  0311 89            	pushw	x
+1302  0312 93            	ldw	x,y
+1303  0313 fe            	ldw	x,(x)
+1304  0314 89            	pushw	x
+1305  0315 cd0000        	call	_set_millis
+1307  0318 5b04          	addw	sp,#4
+1308  031a               L314:
+1309                     ; 185 			Serial_print_u32(millis());
+1311  031a cd0000        	call	_millis
+1313  031d be02          	ldw	x,c_lreg+2
+1314  031f 89            	pushw	x
+1315  0320 be00          	ldw	x,c_lreg
+1316  0322 89            	pushw	x
+1317  0323 cd0000        	call	_Serial_print_u32
+1319  0326 5b04          	addw	sp,#4
+1320                     ; 186 			is_valid=1;
+1322  0328 a601          	ld	a,#1
+1323  032a 6b02          	ld	(OFST+0,sp),a
+1325                     ; 187 		}break;
+1327  032c ac450445      	jpf	L104
+1328  0330               L123:
+1329                     ; 192 			Serial_print_string("h\np 9 0 255\np0-3#\nt0-1#\nl2-3#\nw1-2#\na\ng");//more cryptic version
+1331  0330 ae00c6        	ldw	x,#L514
+1332  0333 cd0000        	call	_Serial_print_string
+1334                     ; 193 			is_valid=1;
+1336  0336 a601          	ld	a,#1
+1337  0338 6b02          	ld	(OFST+0,sp),a
+1339                     ; 194 		}break;
+1341  033a ac450445      	jpf	L104
+1342  033e               L323:
+1343                     ; 197 			is_valid=1;
+1345  033e a601          	ld	a,#1
+1346  0340 6b02          	ld	(OFST+0,sp),a
+1348                     ; 198 			if((*parameter_count)<2) is_valid=0;
+1350  0342 1e09          	ldw	x,(OFST+7,sp)
+1351  0344 f6            	ld	a,(x)
+1352  0345 a102          	cp	a,#2
+1353  0347 2402          	jruge	L714
+1356  0349 0f02          	clr	(OFST+0,sp)
+1358  034b               L714:
+1359                     ; 199 			if(*parameter_count==2) (*parameters)[3]=255;
+1361  034b 1e09          	ldw	x,(OFST+7,sp)
+1362  034d f6            	ld	a,(x)
+1363  034e a102          	cp	a,#2
+1364  0350 2612          	jrne	L124
+1367  0352 1e07          	ldw	x,(OFST+5,sp)
+1368  0354 a6ff          	ld	a,#255
+1369  0356 e70f          	ld	(15,x),a
+1370  0358 a600          	ld	a,#0
+1371  035a e70e          	ld	(14,x),a
+1372  035c a600          	ld	a,#0
+1373  035e e70d          	ld	(13,x),a
+1374  0360 a600          	ld	a,#0
+1375  0362 e70c          	ld	(12,x),a
+1376  0364               L124:
+1377                     ; 200 			if((*parameters)[0]>=RGB_LED_COUNT) is_valid=0;
+1379  0364 1e07          	ldw	x,(OFST+5,sp)
+1380  0366 cd0000        	call	c_ltor
+1382  0369 ae0066        	ldw	x,#L47
+1383  036c cd0000        	call	c_lcmp
+1385  036f 2502          	jrult	L324
+1388  0371 0f02          	clr	(OFST+0,sp)
+1390  0373               L324:
+1391                     ; 201 			if((*parameters)[1]>=3) is_valid=0;
+1393  0373 1e07          	ldw	x,(OFST+5,sp)
+1394  0375 1c0004        	addw	x,#4
+1395  0378 cd0000        	call	c_ltor
+1397  037b ae006a        	ldw	x,#L67
+1398  037e cd0000        	call	c_lcmp
+1400  0381 2502          	jrult	L524
+1403  0383 0f02          	clr	(OFST+0,sp)
+1405  0385               L524:
+1406                     ; 202 			if((*parameters)[2]>255) is_valid=0;
+1408  0385 1e07          	ldw	x,(OFST+5,sp)
+1409  0387 1c0008        	addw	x,#8
+1410  038a cd0000        	call	c_ltor
+1412  038d ae006e        	ldw	x,#L001
+1413  0390 cd0000        	call	c_lcmp
+1415  0393 2502          	jrult	L724
+1418  0395 0f02          	clr	(OFST+0,sp)
+1420  0397               L724:
+1421                     ; 203 			if(is_valid)
+1423  0397 0d02          	tnz	(OFST+0,sp)
+1424  0399 2603          	jrne	L221
+1425  039b cc0445        	jp	L104
+1426  039e               L221:
+1427                     ; 205 				set_rgb((*parameters)[0],(*parameters)[1],(*parameters)[2]);
+1429  039e 1e07          	ldw	x,(OFST+5,sp)
+1430  03a0 e60b          	ld	a,(11,x)
+1431  03a2 88            	push	a
+1432  03a3 1e08          	ldw	x,(OFST+6,sp)
+1433  03a5 e607          	ld	a,(7,x)
+1434  03a7 97            	ld	xl,a
+1435  03a8 1608          	ldw	y,(OFST+6,sp)
+1436  03aa 90e603        	ld	a,(3,y)
+1437  03ad 95            	ld	xh,a
+1438  03ae cd0000        	call	_set_rgb
+1440  03b1 84            	pop	a
+1441                     ; 206 				flush_leds(2);//1 RGB led element and 1 for status led
+1443  03b2 a602          	ld	a,#2
+1444  03b4 cd0000        	call	_flush_leds
+1446  03b7 ac450445      	jpf	L104
+1447  03bb               L523:
+1448                     ; 210 			is_valid=1;
+1450  03bb a601          	ld	a,#1
+1451  03bd 6b02          	ld	(OFST+0,sp),a
+1453                     ; 211 			if(*parameter_count<1) is_valid=0;
+1455  03bf 1e09          	ldw	x,(OFST+7,sp)
+1456  03c1 7d            	tnz	(x)
+1457  03c2 2602          	jrne	L334
+1460  03c4 0f02          	clr	(OFST+0,sp)
+1462  03c6               L334:
+1463                     ; 212 			if(*parameter_count==1) (*parameters)[2]=255;
+1465  03c6 1e09          	ldw	x,(OFST+7,sp)
+1466  03c8 f6            	ld	a,(x)
+1467  03c9 a101          	cp	a,#1
+1468  03cb 2612          	jrne	L534
+1471  03cd 1e07          	ldw	x,(OFST+5,sp)
+1472  03cf a6ff          	ld	a,#255
+1473  03d1 e70b          	ld	(11,x),a
+1474  03d3 a600          	ld	a,#0
+1475  03d5 e70a          	ld	(10,x),a
+1476  03d7 a600          	ld	a,#0
+1477  03d9 e709          	ld	(9,x),a
+1478  03db a600          	ld	a,#0
+1479  03dd e708          	ld	(8,x),a
+1480  03df               L534:
+1481                     ; 213 			if((*parameters)[0]>=WHITE_LED_COUNT) is_valid=0;
+1483  03df 1e07          	ldw	x,(OFST+5,sp)
+1484  03e1 cd0000        	call	c_ltor
+1486  03e4 ae0072        	ldw	x,#L201
+1487  03e7 cd0000        	call	c_lcmp
+1489  03ea 2502          	jrult	L734
+1492  03ec 0f02          	clr	(OFST+0,sp)
+1494  03ee               L734:
+1495                     ; 214 			if((*parameters)[1]>255) is_valid=0;
+1497  03ee 1e07          	ldw	x,(OFST+5,sp)
+1498  03f0 1c0004        	addw	x,#4
+1499  03f3 cd0000        	call	c_ltor
+1501  03f6 ae006e        	ldw	x,#L001
+1502  03f9 cd0000        	call	c_lcmp
+1504  03fc 2502          	jrult	L144
+1507  03fe 0f02          	clr	(OFST+0,sp)
+1509  0400               L144:
+1510                     ; 215 			if(is_valid)
+1512  0400 0d02          	tnz	(OFST+0,sp)
+1513  0402 2741          	jreq	L104
+1514                     ; 217 				set_white((*parameters)[0],(*parameters)[1]);
+1516  0404 1e07          	ldw	x,(OFST+5,sp)
+1517  0406 e607          	ld	a,(7,x)
+1518  0408 97            	ld	xl,a
+1519  0409 1607          	ldw	y,(OFST+5,sp)
+1520  040b 90e603        	ld	a,(3,y)
+1521  040e 95            	ld	xh,a
+1522  040f cd0000        	call	_set_white
+1524                     ; 218 				flush_leds(2);//1 RGB led element and 1 for status led
+1526  0412 a602          	ld	a,#2
+1527  0414 cd0000        	call	_flush_leds
+1529  0417 202c          	jra	L104
+1530  0419               L723:
+1531                     ; 223 			Serial_print_u32(get_audio_level());
+1533  0419 cd0000        	call	_get_audio_level
+1535  041c b703          	ld	c_lreg+3,a
+1536  041e 3f02          	clr	c_lreg+2
+1537  0420 3f01          	clr	c_lreg+1
+1538  0422 3f00          	clr	c_lreg
+1539  0424 be02          	ldw	x,c_lreg+2
+1540  0426 89            	pushw	x
+1541  0427 be00          	ldw	x,c_lreg
+1542  0429 89            	pushw	x
+1543  042a cd0000        	call	_Serial_print_u32
+1545  042d 5b04          	addw	sp,#4
+1546                     ; 224 			is_valid=1;
+1548  042f a601          	ld	a,#1
+1549  0431 6b02          	ld	(OFST+0,sp),a
+1551                     ; 225 		}break;
+1553  0433 2010          	jra	L104
+1554  0435               L133:
+1555                     ; 227 			play_terminal_game(command,parameters,parameter_count);
+1557  0435 1e09          	ldw	x,(OFST+7,sp)
+1558  0437 89            	pushw	x
+1559  0438 1e09          	ldw	x,(OFST+7,sp)
+1560  043a 89            	pushw	x
+1561  043b 1e07          	ldw	x,(OFST+5,sp)
+1562  043d ad28          	call	_play_terminal_game
+1564  043f 5b04          	addw	sp,#4
+1565                     ; 228 			is_valid=1;
+1567  0441 a601          	ld	a,#1
+1568  0443 6b02          	ld	(OFST+0,sp),a
+1570                     ; 229 		}break;
+1572  0445               L104:
+1573                     ; 232 	if(!is_command_exist)
+1575  0445 0d01          	tnz	(OFST-1,sp)
+1576  0447 260e          	jrne	L544
+1577                     ; 234 		Serial_print_string("Invalid cmd: ");
+1579  0449 ae00b8        	ldw	x,#L744
+1580  044c cd0000        	call	_Serial_print_string
+1582                     ; 235 		Serial_print_char(*command);
+1584  044f 1e03          	ldw	x,(OFST+1,sp)
+1585  0451 f6            	ld	a,(x)
+1586  0452 cd0000        	call	_Serial_print_char
+1589  0455 200a          	jra	L154
+1590  0457               L544:
+1591                     ; 237 	else if(!is_valid) Serial_print_string("Invalid params");
+1593  0457 0d02          	tnz	(OFST+0,sp)
+1594  0459 2606          	jrne	L154
+1597  045b ae00a9        	ldw	x,#L554
+1598  045e cd0000        	call	_Serial_print_string
+1600  0461               L154:
+1601                     ; 238 	Serial_newline();
+1603  0461 cd0000        	call	_Serial_newline
+1605                     ; 239 }
+1608  0464 5b04          	addw	sp,#4
+1609  0466 81            	ret
+1749                     	switch	.const
+1750  0076               L641:
+1751  0076 00000008      	dc.l	8
+1752                     ; 242 void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETERS],u8 *parameter_count)
+1752                     ; 243 {
+1753                     	switch	.text
+1754  0467               _play_terminal_game:
+1756  0467 89            	pushw	x
+1757  0468 5216          	subw	sp,#22
+1758       00000016      OFST:	set	22
+1761                     ; 245 	u8 mine_count=0,hidden_count=0;
+1763  046a 0f0a          	clr	(OFST-12,sp)
+1767                     ; 246 	bool valid_input,is_lose=0;
+1769  046c 0f0b          	clr	(OFST-11,sp)
+1771                     ; 249 	for(row=0;row<MINESWEEPER_ROWS;row++)
+1773  046e 0f16          	clr	(OFST+0,sp)
+1775  0470               L545:
+1776                     ; 251 		mine_locations[row]=0;
+1778  0470 96            	ldw	x,sp
+1779  0471 1c000c        	addw	x,#OFST-10
+1780  0474 9f            	ld	a,xl
+1781  0475 5e            	swapw	x
+1782  0476 1b16          	add	a,(OFST+0,sp)
+1783  0478 2401          	jrnc	L621
+1784  047a 5c            	incw	x
+1785  047b               L621:
+1786  047b 02            	rlwa	x,a
+1787  047c 7f            	clr	(x)
+1788                     ; 252 		revealed_cells[row]=0;
+1790  047d 96            	ldw	x,sp
+1791  047e 1c0001        	addw	x,#OFST-21
+1792  0481 9f            	ld	a,xl
+1793  0482 5e            	swapw	x
+1794  0483 1b16          	add	a,(OFST+0,sp)
+1795  0485 2401          	jrnc	L031
+1796  0487 5c            	incw	x
+1797  0488               L031:
+1798  0488 02            	rlwa	x,a
+1799  0489 7f            	clr	(x)
+1800                     ; 249 	for(row=0;row<MINESWEEPER_ROWS;row++)
+1802  048a 0c16          	inc	(OFST+0,sp)
+1806  048c 7b16          	ld	a,(OFST+0,sp)
+1807  048e a109          	cp	a,#9
+1808  0490 25de          	jrult	L545
+1810  0492 2062          	jra	L555
+1811  0494               L355:
+1812                     ; 256 		row=(get_random(millis())>>3)%MINESWEEPER_ROWS;
+1814  0494 cd0000        	call	_millis
+1816  0497 be02          	ldw	x,c_lreg+2
+1817  0499 cd0000        	call	_get_random
+1819  049c 54            	srlw	x
+1820  049d 54            	srlw	x
+1821  049e 54            	srlw	x
+1822  049f a609          	ld	a,#9
+1823  04a1 62            	div	x,a
+1824  04a2 5f            	clrw	x
+1825  04a3 97            	ld	xl,a
+1826  04a4 01            	rrwa	x,a
+1827  04a5 6b16          	ld	(OFST+0,sp),a
+1828  04a7 02            	rlwa	x,a
+1830                     ; 257 		col=get_random(millis())%8;
+1832  04a8 cd0000        	call	_millis
+1834  04ab be02          	ldw	x,c_lreg+2
+1835  04ad cd0000        	call	_get_random
+1837  04b0 01            	rrwa	x,a
+1838  04b1 a407          	and	a,#7
+1839  04b3 5f            	clrw	x
+1840  04b4 6b15          	ld	(OFST-1,sp),a
+1842                     ; 258 		if(!((mine_locations[row]>>col)&0x01))
+1844  04b6 96            	ldw	x,sp
+1845  04b7 1c000c        	addw	x,#OFST-10
+1846  04ba 9f            	ld	a,xl
+1847  04bb 5e            	swapw	x
+1848  04bc 1b16          	add	a,(OFST+0,sp)
+1849  04be 2401          	jrnc	L231
+1850  04c0 5c            	incw	x
+1851  04c1               L231:
+1852  04c1 02            	rlwa	x,a
+1853  04c2 f6            	ld	a,(x)
+1854  04c3 88            	push	a
+1855  04c4 7b16          	ld	a,(OFST+0,sp)
+1856  04c6 5f            	clrw	x
+1857  04c7 97            	ld	xl,a
+1858  04c8 84            	pop	a
+1859  04c9 5d            	tnzw	x
+1860  04ca 2704          	jreq	L431
+1861  04cc               L631:
+1862  04cc 44            	srl	a
+1863  04cd 5a            	decw	x
+1864  04ce 26fc          	jrne	L631
+1865  04d0               L431:
+1866  04d0 5f            	clrw	x
+1867  04d1 a501          	bcp	a,#1
+1868  04d3 2621          	jrne	L555
+1869                     ; 260 			mine_locations[row]|=0x01<<col;
+1871  04d5 96            	ldw	x,sp
+1872  04d6 1c000c        	addw	x,#OFST-10
+1873  04d9 9f            	ld	a,xl
+1874  04da 5e            	swapw	x
+1875  04db 1b16          	add	a,(OFST+0,sp)
+1876  04dd 2401          	jrnc	L041
+1877  04df 5c            	incw	x
+1878  04e0               L041:
+1879  04e0 02            	rlwa	x,a
+1880  04e1 7b15          	ld	a,(OFST-1,sp)
+1881  04e3 905f          	clrw	y
+1882  04e5 9097          	ld	yl,a
+1883  04e7 a601          	ld	a,#1
+1884  04e9 905d          	tnzw	y
+1885  04eb 2705          	jreq	L241
+1886  04ed               L441:
+1887  04ed 48            	sll	a
+1888  04ee 905a          	decw	y
+1889  04f0 26fb          	jrne	L441
+1890  04f2               L241:
+1891  04f2 fa            	or	a,(x)
+1892  04f3 f7            	ld	(x),a
+1893                     ; 261 			mine_count++;
+1895  04f4 0c0a          	inc	(OFST-12,sp)
+1897  04f6               L555:
+1898                     ; 254 	while(mine_count<10)
+1900  04f6 7b0a          	ld	a,(OFST-12,sp)
+1901  04f8 a10a          	cp	a,#10
+1902  04fa 2598          	jrult	L355
+1904  04fc ac9d059d      	jpf	L565
+1905  0500               L365:
+1906                     ; 266 		valid_input=1;
+1908  0500 a601          	ld	a,#1
+1909  0502 6b16          	ld	(OFST+0,sp),a
+1911                     ; 267 		hidden_count=print_minesweeper(&mine_locations,&revealed_cells,is_lose);
+1913  0504 7b0b          	ld	a,(OFST-11,sp)
+1914  0506 88            	push	a
+1915  0507 96            	ldw	x,sp
+1916  0508 1c0002        	addw	x,#OFST-20
+1917  050b 89            	pushw	x
+1918  050c 96            	ldw	x,sp
+1919  050d 1c000f        	addw	x,#OFST-7
+1920  0510 cd05c1        	call	_print_minesweeper
+1922  0513 5b03          	addw	sp,#3
+1923  0515 6b15          	ld	(OFST-1,sp),a
+1925                     ; 268 		if(hidden_count<=mine_count || is_lose) break;//won game
+1927  0517 7b15          	ld	a,(OFST-1,sp)
+1928  0519 110a          	cp	a,(OFST-12,sp)
+1929  051b 2203          	jrugt	L251
+1930  051d cc05a6        	jp	L765
+1931  0520               L251:
+1933  0520 0d0b          	tnz	(OFST-11,sp)
+1934  0522 2703          	jreq	L451
+1935  0524 cc05a6        	jp	L765
+1936  0527               L451:
+1937                     ; 269 		Serial_print_string("Guess (row col), or quit: ");
+1939  0527 ae008e        	ldw	x,#L575
+1940  052a cd0000        	call	_Serial_print_string
+1942                     ; 270 		get_terminal_command(command,parameters,parameter_count);
+1944  052d 1e1d          	ldw	x,(OFST+7,sp)
+1945  052f 89            	pushw	x
+1946  0530 1e1d          	ldw	x,(OFST+7,sp)
+1947  0532 89            	pushw	x
+1948  0533 1e1b          	ldw	x,(OFST+5,sp)
+1949  0535 cd0119        	call	_get_terminal_command
+1951  0538 5b04          	addw	sp,#4
+1952                     ; 271 		if(*command=='q') return;
+1954  053a 1e17          	ldw	x,(OFST+1,sp)
+1955  053c f6            	ld	a,(x)
+1956  053d a171          	cp	a,#113
+1957  053f 276b          	jreq	L051
+1960                     ; 272 		if(*command<'0' || *command>'9') valid_input=0;
+1962  0541 1e17          	ldw	x,(OFST+1,sp)
+1963  0543 f6            	ld	a,(x)
+1964  0544 a130          	cp	a,#48
+1965  0546 2507          	jrult	L306
+1967  0548 1e17          	ldw	x,(OFST+1,sp)
+1968  054a f6            	ld	a,(x)
+1969  054b a13a          	cp	a,#58
+1970  054d 252c          	jrult	L106
+1971  054f               L306:
+1974  054f 0f16          	clr	(OFST+0,sp)
+1977  0551               L506:
+1978                     ; 275 		if(valid_input)
+1980  0551 0d16          	tnz	(OFST+0,sp)
+1981  0553 2742          	jreq	L516
+1982                     ; 277 			row=*command-'0';
+1984  0555 1e17          	ldw	x,(OFST+1,sp)
+1985  0557 f6            	ld	a,(x)
+1986  0558 a030          	sub	a,#48
+1987  055a 6b16          	ld	(OFST+0,sp),a
+1989                     ; 278 			col=(*parameters)[0];
+1991  055c 1e1b          	ldw	x,(OFST+5,sp)
+1992  055e e603          	ld	a,(3,x)
+1993  0560 6b15          	ld	(OFST-1,sp),a
+1995                     ; 279 			is_lose=make_guess(row,col,&mine_locations,&revealed_cells);
+1997  0562 96            	ldw	x,sp
+1998  0563 1c0001        	addw	x,#OFST-21
+1999  0566 89            	pushw	x
+2000  0567 96            	ldw	x,sp
+2001  0568 1c000e        	addw	x,#OFST-8
+2002  056b 89            	pushw	x
+2003  056c 7b19          	ld	a,(OFST+3,sp)
+2004  056e 97            	ld	xl,a
+2005  056f 7b1a          	ld	a,(OFST+4,sp)
+2006  0571 95            	ld	xh,a
+2007  0572 cd063e        	call	_make_guess
+2009  0575 5b04          	addw	sp,#4
+2010  0577 6b0b          	ld	(OFST-11,sp),a
+2013  0579 2022          	jra	L565
+2014  057b               L106:
+2015                     ; 273 		else if(*parameter_count!=1) valid_input=0;
+2017  057b 1e1d          	ldw	x,(OFST+7,sp)
+2018  057d f6            	ld	a,(x)
+2019  057e a101          	cp	a,#1
+2020  0580 2704          	jreq	L706
+2023  0582 0f16          	clr	(OFST+0,sp)
+2026  0584 20cb          	jra	L506
+2027  0586               L706:
+2028                     ; 274 		else if((*parameters)[0]>=8) valid_input=0;
+2030  0586 1e1b          	ldw	x,(OFST+5,sp)
+2031  0588 cd0000        	call	c_ltor
+2033  058b ae0076        	ldw	x,#L641
+2034  058e cd0000        	call	c_lcmp
+2036  0591 25be          	jrult	L506
+2039  0593 0f16          	clr	(OFST+0,sp)
+2041  0595 20ba          	jra	L506
+2042  0597               L516:
+2043                     ; 280 		}else Serial_print_string("Invalid\n");
+2045  0597 ae0085        	ldw	x,#L126
+2046  059a cd0000        	call	_Serial_print_string
+2048  059d               L565:
+2049                     ; 264 	while(is_developer_valid())
+2051  059d cd0000        	call	_is_developer_valid
+2053  05a0 4d            	tnz	a
+2054  05a1 2703          	jreq	L651
+2055  05a3 cc0500        	jp	L365
+2056  05a6               L651:
+2057  05a6               L765:
+2058                     ; 282 	if(!is_developer_valid()) return;//prevent displaying winner message because user left the menu manually
+2060  05a6 cd0000        	call	_is_developer_valid
+2062  05a9 4d            	tnz	a
+2063  05aa 2603          	jrne	L326
+2065  05ac               L051:
+2068  05ac 5b18          	addw	sp,#24
+2069  05ae 81            	ret
+2070  05af               L326:
+2071                     ; 283 	if(is_lose){ Serial_print_string("Game Over\n"); is_lose=0; }
+2073  05af 0d0b          	tnz	(OFST-11,sp)
+2074  05b1 2708          	jreq	L526
+2077  05b3 ae007a        	ldw	x,#L726
+2078  05b6 cd0000        	call	_Serial_print_string
+2083  05b9 2004          	jra	L136
+2084  05bb               L526:
+2085                     ; 284 	else print_ascii_art(0);
+2087  05bb 4f            	clr	a
+2088  05bc cd006e        	call	_print_ascii_art
+2090  05bf               L136:
+2091                     ; 285 }
+2093  05bf 20eb          	jra	L051
+2181                     ; 288 u8 print_minesweeper(u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_mines)[MINESWEEPER_ROWS],/*u8 (*marked_cells)[MINESWEEPER_ROWS],*/bool is_lose)
+2181                     ; 289 {
+2182                     	switch	.text
+2183  05c1               _print_minesweeper:
+2185  05c1 89            	pushw	x
+2186  05c2 5203          	subw	sp,#3
+2187       00000003      OFST:	set	3
+2190                     ; 290 	u8 row,col,hidden_count=0;
+2192  05c4 0f01          	clr	(OFST-2,sp)
+2194                     ; 294 	for(row=0;row<MINESWEEPER_ROWS;row++)
+2196  05c6 0f02          	clr	(OFST-1,sp)
+2198  05c8               L576:
+2199                     ; 296 		Serial_print_char('0'+row);
+2201  05c8 7b02          	ld	a,(OFST-1,sp)
+2202  05ca ab30          	add	a,#48
+2203  05cc cd0000        	call	_Serial_print_char
+2205                     ; 297 		Serial_print_char(' ');
+2207  05cf a620          	ld	a,#32
+2208  05d1 cd0000        	call	_Serial_print_char
+2210                     ; 298 		Serial_print_char('|');
+2212  05d4 a67c          	ld	a,#124
+2213  05d6 cd0000        	call	_Serial_print_char
+2215                     ; 299 		for(col=0;col<8;col++)
+2217  05d9 0f03          	clr	(OFST+0,sp)
+2219  05db               L307:
+2220                     ; 301 			Serial_print_char(' ');
+2222  05db a620          	ld	a,#32
+2223  05dd cd0000        	call	_Serial_print_char
+2225                     ; 302 			if(is_lose && is_mine_at(row,col,mine_locations)) Serial_print_char('X');
+2227  05e0 0d0a          	tnz	(OFST+7,sp)
+2228  05e2 2717          	jreq	L117
+2230  05e4 1e04          	ldw	x,(OFST+1,sp)
+2231  05e6 89            	pushw	x
+2232  05e7 7b05          	ld	a,(OFST+2,sp)
+2233  05e9 97            	ld	xl,a
+2234  05ea 7b04          	ld	a,(OFST+1,sp)
+2235  05ec 95            	ld	xh,a
+2236  05ed cd0740        	call	_is_mine_at
+2238  05f0 85            	popw	x
+2239  05f1 4d            	tnz	a
+2240  05f2 2707          	jreq	L117
+2243  05f4 a658          	ld	a,#88
+2244  05f6 cd0000        	call	_Serial_print_char
+2247  05f9 202b          	jra	L317
+2248  05fb               L117:
+2249                     ; 305 				if(is_mine_at(row,col,revealed_mines))
+2251  05fb 1e08          	ldw	x,(OFST+5,sp)
+2252  05fd 89            	pushw	x
+2253  05fe 7b05          	ld	a,(OFST+2,sp)
+2254  0600 97            	ld	xl,a
+2255  0601 7b04          	ld	a,(OFST+1,sp)
+2256  0603 95            	ld	xh,a
+2257  0604 cd0740        	call	_is_mine_at
+2259  0607 85            	popw	x
+2260  0608 4d            	tnz	a
+2261  0609 2714          	jreq	L517
+2262                     ; 306 					Serial_print_char('0'+get_nearby_count(row,col,mine_locations));
+2264  060b 1e04          	ldw	x,(OFST+1,sp)
+2265  060d 89            	pushw	x
+2266  060e 7b05          	ld	a,(OFST+2,sp)
+2267  0610 97            	ld	xl,a
+2268  0611 7b04          	ld	a,(OFST+1,sp)
+2269  0613 95            	ld	xh,a
+2270  0614 cd06df        	call	_get_nearby_count
+2272  0617 85            	popw	x
+2273  0618 ab30          	add	a,#48
+2274  061a cd0000        	call	_Serial_print_char
+2277  061d 2007          	jra	L317
+2278  061f               L517:
+2279                     ; 309 					Serial_print_char('.');
+2281  061f a62e          	ld	a,#46
+2282  0621 cd0000        	call	_Serial_print_char
+2284                     ; 310 					hidden_count++;
+2286  0624 0c01          	inc	(OFST-2,sp)
+2288  0626               L317:
+2289                     ; 299 		for(col=0;col<8;col++)
+2291  0626 0c03          	inc	(OFST+0,sp)
+2295  0628 7b03          	ld	a,(OFST+0,sp)
+2296  062a a108          	cp	a,#8
+2297  062c 25ad          	jrult	L307
+2298                     ; 314 		Serial_newline();
+2300  062e cd0000        	call	_Serial_newline
+2302                     ; 294 	for(row=0;row<MINESWEEPER_ROWS;row++)
+2304  0631 0c02          	inc	(OFST-1,sp)
+2308  0633 7b02          	ld	a,(OFST-1,sp)
+2309  0635 a109          	cp	a,#9
+2310  0637 258f          	jrult	L576
+2311                     ; 316 	return hidden_count;
+2313  0639 7b01          	ld	a,(OFST-2,sp)
+2316  063b 5b05          	addw	sp,#5
+2317  063d 81            	ret
+2404                     ; 320 bool make_guess(u8 row,u8 col,u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_cells)[MINESWEEPER_ROWS])
+2404                     ; 321 {
+2405                     	switch	.text
+2406  063e               _make_guess:
+2408  063e 89            	pushw	x
+2409  063f 89            	pushw	x
+2410       00000002      OFST:	set	2
+2413                     ; 323 	if(row>=MINESWEEPER_ROWS || col>=8) return 0;//if out of bounds, skip it
+2415  0640 9e            	ld	a,xh
+2416  0641 a109          	cp	a,#9
+2417  0643 2405          	jruge	L567
+2419  0645 9f            	ld	a,xl
+2420  0646 a108          	cp	a,#8
+2421  0648 2503          	jrult	L367
+2422  064a               L567:
+2425  064a 4f            	clr	a
+2427  064b 201c          	jra	L471
+2428  064d               L367:
+2429                     ; 324 	if(((*revealed_cells)[row]>>col) & 0x01) return 0;//if already revealed, skip it
+2431  064d 7b04          	ld	a,(OFST+2,sp)
+2432  064f 5f            	clrw	x
+2433  0650 97            	ld	xl,a
+2434  0651 7b03          	ld	a,(OFST+1,sp)
+2435  0653 905f          	clrw	y
+2436  0655 9097          	ld	yl,a
+2437  0657 72f909        	addw	y,(OFST+7,sp)
+2438  065a 90f6          	ld	a,(y)
+2439  065c 5d            	tnzw	x
+2440  065d 2704          	jreq	L461
+2441  065f               L661:
+2442  065f 44            	srl	a
+2443  0660 5a            	decw	x
+2444  0661 26fc          	jrne	L661
+2445  0663               L461:
+2446  0663 5f            	clrw	x
+2447  0664 a501          	bcp	a,#1
+2448  0666 2704          	jreq	L767
+2451  0668 4f            	clr	a
+2453  0669               L471:
+2455  0669 5b04          	addw	sp,#4
+2456  066b 81            	ret
+2457  066c               L767:
+2458                     ; 325 	(*revealed_cells)[row]|=0x01<<col;//reveal guess
+2460  066c 7b03          	ld	a,(OFST+1,sp)
+2461  066e 5f            	clrw	x
+2462  066f 97            	ld	xl,a
+2463  0670 72fb09        	addw	x,(OFST+7,sp)
+2464  0673 7b04          	ld	a,(OFST+2,sp)
+2465  0675 905f          	clrw	y
+2466  0677 9097          	ld	yl,a
+2467  0679 a601          	ld	a,#1
+2468  067b 905d          	tnzw	y
+2469  067d 2705          	jreq	L071
+2470  067f               L271:
+2471  067f 48            	sll	a
+2472  0680 905a          	decw	y
+2473  0682 26fb          	jrne	L271
+2474  0684               L071:
+2475  0684 fa            	or	a,(x)
+2476  0685 f7            	ld	(x),a
+2477                     ; 326 	if(get_nearby_count(row,col,mine_locations)==0)
+2479  0686 1e07          	ldw	x,(OFST+5,sp)
+2480  0688 89            	pushw	x
+2481  0689 7b06          	ld	a,(OFST+4,sp)
+2482  068b 97            	ld	xl,a
+2483  068c 7b05          	ld	a,(OFST+3,sp)
+2484  068e 95            	ld	xh,a
+2485  068f ad4e          	call	_get_nearby_count
+2487  0691 85            	popw	x
+2488  0692 4d            	tnz	a
+2489  0693 263c          	jrne	L177
+2490                     ; 328 		for(row_diff=0xFF;row_diff<=1 || row_diff==0xFF;row_diff++)
+2492  0695 a6ff          	ld	a,#255
+2493  0697 6b01          	ld	(OFST-1,sp),a
+2496  0699 202a          	jra	L777
+2497  069b               L377:
+2498                     ; 329 			for(col_diff=0xFF;col_diff<=1 || col_diff==0xFF;col_diff++)
+2500  069b a6ff          	ld	a,#255
+2501  069d 6b02          	ld	(OFST+0,sp),a
+2504  069f 2016          	jra	L7001
+2505  06a1               L3001:
+2506                     ; 330 				make_guess(row+row_diff,col+col_diff,mine_locations,revealed_cells);
+2508  06a1 1e09          	ldw	x,(OFST+7,sp)
+2509  06a3 89            	pushw	x
+2510  06a4 1e09          	ldw	x,(OFST+7,sp)
+2511  06a6 89            	pushw	x
+2512  06a7 7b08          	ld	a,(OFST+6,sp)
+2513  06a9 1b06          	add	a,(OFST+4,sp)
+2514  06ab 97            	ld	xl,a
+2515  06ac 7b07          	ld	a,(OFST+5,sp)
+2516  06ae 1b05          	add	a,(OFST+3,sp)
+2517  06b0 95            	ld	xh,a
+2518  06b1 ad8b          	call	_make_guess
+2520  06b3 5b04          	addw	sp,#4
+2521                     ; 329 			for(col_diff=0xFF;col_diff<=1 || col_diff==0xFF;col_diff++)
+2523  06b5 0c02          	inc	(OFST+0,sp)
+2525  06b7               L7001:
+2528  06b7 7b02          	ld	a,(OFST+0,sp)
+2529  06b9 a102          	cp	a,#2
+2530  06bb 25e4          	jrult	L3001
+2532  06bd 7b02          	ld	a,(OFST+0,sp)
+2533  06bf a1ff          	cp	a,#255
+2534  06c1 27de          	jreq	L3001
+2535                     ; 328 		for(row_diff=0xFF;row_diff<=1 || row_diff==0xFF;row_diff++)
+2537  06c3 0c01          	inc	(OFST-1,sp)
+2539  06c5               L777:
+2542  06c5 7b01          	ld	a,(OFST-1,sp)
+2543  06c7 a102          	cp	a,#2
+2544  06c9 25d0          	jrult	L377
+2546  06cb 7b01          	ld	a,(OFST-1,sp)
+2547  06cd a1ff          	cp	a,#255
+2548  06cf 27ca          	jreq	L377
+2549  06d1               L177:
+2550                     ; 332 	return is_mine_at(row,col,mine_locations);
+2552  06d1 1e07          	ldw	x,(OFST+5,sp)
+2553  06d3 89            	pushw	x
+2554  06d4 7b06          	ld	a,(OFST+4,sp)
+2555  06d6 97            	ld	xl,a
+2556  06d7 7b05          	ld	a,(OFST+3,sp)
+2557  06d9 95            	ld	xh,a
+2558  06da ad64          	call	_is_mine_at
+2560  06dc 85            	popw	x
+2562  06dd 208a          	jra	L471
+2644                     ; 335 u8 get_nearby_count(u8 row,u8 col,u8 (*mine_locations)[MINESWEEPER_ROWS])
+2644                     ; 336 {
+2645                     	switch	.text
+2646  06df               _get_nearby_count:
+2648  06df 89            	pushw	x
+2649  06e0 5203          	subw	sp,#3
+2650       00000003      OFST:	set	3
+2653                     ; 338 	u8 sum=0;
+2655  06e2 0f01          	clr	(OFST-2,sp)
+2657                     ; 339 	for(row_diff=0xFF;row_diff<=1 || row_diff==0xFF;row_diff++)
+2659  06e4 a6ff          	ld	a,#255
+2660  06e6 6b02          	ld	(OFST-1,sp),a
+2663  06e8 2045          	jra	L1601
+2664  06ea               L5501:
+2665                     ; 341 		for(col_diff=0xFF;col_diff<=1 || col_diff==0xFF;col_diff++)
+2667  06ea a6ff          	ld	a,#255
+2668  06ec 6b03          	ld	(OFST+0,sp),a
+2671  06ee 2031          	jra	L1701
+2672  06f0               L5601:
+2673                     ; 343 			if(row_diff==0 && col_diff==0)
+2675  06f0 0d02          	tnz	(OFST-1,sp)
+2676  06f2 2617          	jrne	L5701
+2678  06f4 0d03          	tnz	(OFST+0,sp)
+2679  06f6 2613          	jrne	L5701
+2680                     ; 345 				if(is_mine_at(row,col,mine_locations)) return 1;
+2682  06f8 1e08          	ldw	x,(OFST+5,sp)
+2683  06fa 89            	pushw	x
+2684  06fb 7b07          	ld	a,(OFST+4,sp)
+2685  06fd 97            	ld	xl,a
+2686  06fe 7b06          	ld	a,(OFST+3,sp)
+2687  0700 95            	ld	xh,a
+2688  0701 ad3d          	call	_is_mine_at
+2690  0703 85            	popw	x
+2691  0704 4d            	tnz	a
+2692  0705 2718          	jreq	L1011
+2695  0707 a601          	ld	a,#1
+2697  0709 2032          	jra	L002
+2698  070b               L5701:
+2699                     ; 347 				sum+=is_mine_at(row+row_diff,col+col_diff,mine_locations);
+2701  070b 1e08          	ldw	x,(OFST+5,sp)
+2702  070d 89            	pushw	x
+2703  070e 7b07          	ld	a,(OFST+4,sp)
+2704  0710 1b05          	add	a,(OFST+2,sp)
+2705  0712 97            	ld	xl,a
+2706  0713 7b06          	ld	a,(OFST+3,sp)
+2707  0715 1b04          	add	a,(OFST+1,sp)
+2708  0717 95            	ld	xh,a
+2709  0718 ad26          	call	_is_mine_at
+2711  071a 85            	popw	x
+2712  071b 1b01          	add	a,(OFST-2,sp)
+2713  071d 6b01          	ld	(OFST-2,sp),a
+2715  071f               L1011:
+2716                     ; 341 		for(col_diff=0xFF;col_diff<=1 || col_diff==0xFF;col_diff++)
+2718  071f 0c03          	inc	(OFST+0,sp)
+2720  0721               L1701:
+2723  0721 7b03          	ld	a,(OFST+0,sp)
+2724  0723 a102          	cp	a,#2
+2725  0725 25c9          	jrult	L5601
+2727  0727 7b03          	ld	a,(OFST+0,sp)
+2728  0729 a1ff          	cp	a,#255
+2729  072b 27c3          	jreq	L5601
+2730                     ; 339 	for(row_diff=0xFF;row_diff<=1 || row_diff==0xFF;row_diff++)
+2732  072d 0c02          	inc	(OFST-1,sp)
+2734  072f               L1601:
+2737  072f 7b02          	ld	a,(OFST-1,sp)
+2738  0731 a102          	cp	a,#2
+2739  0733 25b5          	jrult	L5501
+2741  0735 7b02          	ld	a,(OFST-1,sp)
+2742  0737 a1ff          	cp	a,#255
+2743  0739 27af          	jreq	L5501
+2744                     ; 351 	return sum;
+2746  073b 7b01          	ld	a,(OFST-2,sp)
+2748  073d               L002:
+2750  073d 5b05          	addw	sp,#5
+2751  073f 81            	ret
+2806                     ; 354 bool is_mine_at(u8 row,u8 col,u8 (*mine_locations)[MINESWEEPER_ROWS])
+2806                     ; 355 {
+2807                     	switch	.text
+2808  0740               _is_mine_at:
+2810  0740 89            	pushw	x
+2811       00000000      OFST:	set	0
+2814                     ; 356 	if(row>=MINESWEEPER_ROWS || col>=8) return 0;
+2816  0741 9e            	ld	a,xh
+2817  0742 a109          	cp	a,#9
+2818  0744 2405          	jruge	L3311
+2820  0746 9f            	ld	a,xl
+2821  0747 a108          	cp	a,#8
+2822  0749 2503          	jrult	L1311
+2823  074b               L3311:
+2826  074b 4f            	clr	a
+2828  074c 2018          	jra	L012
+2829  074e               L1311:
+2830                     ; 357 	return ((*mine_locations)[row]>>col)&0x01;
+2832  074e 7b02          	ld	a,(OFST+2,sp)
+2833  0750 5f            	clrw	x
+2834  0751 97            	ld	xl,a
+2835  0752 7b01          	ld	a,(OFST+1,sp)
+2836  0754 905f          	clrw	y
+2837  0756 9097          	ld	yl,a
+2838  0758 72f905        	addw	y,(OFST+5,sp)
+2839  075b 90f6          	ld	a,(y)
+2840  075d 5d            	tnzw	x
+2841  075e 2704          	jreq	L402
+2842  0760               L602:
+2843  0760 44            	srl	a
+2844  0761 5a            	decw	x
+2845  0762 26fc          	jrne	L602
+2846  0764               L402:
+2847  0764 a401          	and	a,#1
+2849  0766               L012:
+2851  0766 85            	popw	x
+2852  0767 81            	ret
+2865                     	xref	_Serial_print_u32
+2866                     	xref	_Serial_read_char
+2867                     	xref	_Serial_available
+2868                     	xref	_Serial_newline
+2869                     	xref	_Serial_print_string
+2870                     	xref	_Serial_print_char
+2871                     	xdef	_is_mine_at
+2872                     	xdef	_get_nearby_count
+2873                     	xdef	_make_guess
+2874                     	xdef	_print_minesweeper
+2875                     	xdef	_play_terminal_game
+2876                     	xdef	_print_ascii_art
+2877                     	xdef	_execute_terminal_command
+2878                     	xdef	_get_terminal_command
+2879                     	xdef	_run_developer
+2880                     	xdef	_setup_developer
+2881                     	xref	_set_millis
+2882                     	xref	_get_audio_level
+2883                     	xref	_get_random
+2884                     	xref	_clear_button_events
+2885                     	xref	_is_developer_valid
+2886                     	xref	_flush_leds
+2887                     	xref	_set_debug
+2888                     	xref	_set_white
+2889                     	xref	_set_rgb
+2890                     	xref	_millis
+2891                     	xref	_setup_serial
+2892                     	switch	.const
+2893  007a               L726:
+2894  007a 47616d65204f  	dc.b	"Game Over",10,0
+2895  0085               L126:
+2896  0085 496e76616c69  	dc.b	"Invalid",10,0
+2897  008e               L575:
+2898  008e 477565737320  	dc.b	"Guess (row col), o"
+2899  00a0 722071756974  	dc.b	"r quit: ",0
+2900  00a9               L554:
+2901  00a9 496e76616c69  	dc.b	"Invalid params",0
+2902  00b8               L744:
+2903  00b8 496e76616c69  	dc.b	"Invalid cmd: ",0
+2904  00c6               L514:
+2905  00c6 680a          	dc.b	"h",10
+2906  00c8 702039203020  	dc.b	"p 9 0 255",10
+2907  00d2 70302d33230a  	dc.b	"p0-3#",10
+2908  00d8 74302d31230a  	dc.b	"t0-1#",10
+2909  00de 6c322d33230a  	dc.b	"l2-3#",10
+2910  00e4 77312d32230a  	dc.b	"w1-2#",10
+2911  00ea 610a          	dc.b	"a",10
+2912  00ec 6700          	dc.b	"g",0
+2913  00ee               L75:
+2914  00ee 45786974696e  	dc.b	"Exiting Terminal",10,0
+2915  0100               L55:
+2916  0100 3e2000        	dc.b	"> ",0
+2917                     	xref.b	c_lreg
+2918                     	xref.b	c_x
+2919                     	xref.b	c_y
+2939                     	xref	c_lcmp
+2940                     	xref	c_lsbc
+2941                     	xref	c_ladc
+2942                     	xref	c_ladd
+2943                     	xref	c_rtol
+2944                     	xref	c_llsh
+2945                     	xref	c_ltor
+2946                     	xref	c_smodx
+2947                     	xref	c_idiv
+2948                     	xref	c_xymov
+2949                     	end

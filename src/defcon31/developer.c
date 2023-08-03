@@ -8,8 +8,11 @@ void setup_developer()
 	setup_serial(1,1);//enabled at high speed
 	clear_button_events();
 	flush_leds(0);//clear outstanding led buffer
-	//set_debug(255);
-	set_rgb(0,0,255);
+	#if HW_REVISION==1
+		set_rgb(0,0,255);
+	#else
+		set_debug(255);//show only one debug led ON
+	#endif
 	flush_leds(1);
 	Serial_newline();
 	print_ascii_art(1);
@@ -25,11 +28,14 @@ void run_developer()
 	{
 		Serial_print_string("> ");
 		get_terminal_command(&command,&parameters,&parameter_count);
-		//set_debug(255);//show only one debug led ON
-		set_rgb(0,0,255);
+		#if HW_REVISION==1
+			set_rgb(0,0,255);
+		#else
+			set_debug(255);//show only one debug led ON
+		#endif
 		execute_terminal_command(&command,&parameters,&parameter_count);
 	}
-	Serial_print_string("Exiting Terminal\n");
+	Serial_print_string("Bye\n");
 	flush_leds(0);//turn off debug led
 	flush_leds(1);//turn off debug led
 }
@@ -213,6 +219,7 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 			}
 		}break;
 		case 'a':{ //get audio level reading
+			//for(iter=0;iter<255;iter++) update_audio();
 			Serial_print_u32(get_audio_level());
 			is_valid=1;
 		}break;
