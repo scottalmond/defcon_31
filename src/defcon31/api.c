@@ -115,7 +115,7 @@ void setup_main()
 	
   ADC1_ConversionConfig(ADC1_CONVERSIONMODE_CONTINUOUS, ADC1_CHANNEL_4, ADC1_ALIGN_RIGHT);
   /* Select the prescaler division factor according to ADC1_PrescalerSelection values */
-  ADC1_PrescalerConfig(ADC1_PRESSEL_FCPU_D2);
+  ADC1_PrescalerConfig(ADC1_PRESSEL_FCPU_D18);
   
   /*-----------------CR2 configuration --------------------*/
   /* Configure the external trigger state and event respectively
