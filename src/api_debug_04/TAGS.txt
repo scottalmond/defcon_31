@@ -49,7 +49,6 @@ ADC1_ClearFlag	..\stm8s103f3_spl-master\src\stm8s_adc1.c	567;"	function	signatur
 ADC1_ClearITPendingBit	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	330;"	prototype	signature:(ADC1_IT_TypeDef ITPendingBit)
 ADC1_ClearITPendingBit	..\stm8s103f3_spl-master\src\stm8s_adc1.c	662;"	function	signature:(ADC1_IT_TypeDef ITPendingBit)
 ADC1_Cmd	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	309;"	prototype	signature:(FunctionalState NewState)
-ADC1_Cmd	..\stm8s103f3_spl-master\src\stm8s_adc1.c	126;"	function	signature:(FunctionalState NewState)
 ADC1_ConvMode_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	149;"	typedef	typeref:enum:__anon21
 ADC1_ConversionConfig	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	316;"	prototype	signature:(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_Align_TypeDef ADC1_Align)
 ADC1_ConversionConfig	..\stm8s103f3_spl-master\src\stm8s_adc1.c	286;"	function	signature:(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_Align_TypeDef ADC1_Align)
@@ -132,7 +131,6 @@ ADC1_SCHMITTTRIG_CHANNEL7	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	133;"	enumer
 ADC1_SCHMITTTRIG_CHANNEL8	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	134;"	enumerator	enum:__anon20
 ADC1_SCHMITTTRIG_CHANNEL9	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	135;"	enumerator	enum:__anon20
 ADC1_ScanModeCmd	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	310;"	prototype	signature:(FunctionalState NewState)
-ADC1_ScanModeCmd	..\stm8s103f3_spl-master\src\stm8s_adc1.c	146;"	function	signature:(FunctionalState NewState)
 ADC1_SchmittTrigg_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	139;"	typedef	typeref:enum:__anon20
 ADC1_SchmittTriggerConfig	..\stm8s103f3_spl-master\inc\stm8s_adc1.h	314;"	prototype	signature:(ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState NewState)
 ADC1_SchmittTriggerConfig	..\stm8s103f3_spl-master\src\stm8s_adc1.c	233;"	function	signature:(ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState NewState)
@@ -1010,7 +1008,6 @@ GPIO_DDR_RESET_VALUE	..\stm8s103f3_spl-master\inc\stm8s.h	284;"	macro
 GPIO_DeInit	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	139;"	prototype	signature:(GPIO_TypeDef* GPIOx)
 GPIO_DeInit	..\stm8s103f3_spl-master\src\stm8s_gpio.c	53;"	function	signature:(GPIO_TypeDef* GPIOx)
 GPIO_ExternalPullUpConfig	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	148;"	prototype	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin, FunctionalState NewState)
-GPIO_ExternalPullUpConfig	..\stm8s103f3_spl-master\src\stm8s_gpio.c	225;"	function	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin, FunctionalState NewState)
 GPIO_Init	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	140;"	prototype	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin, GPIO_Mode_TypeDef GPIO_Mode)
 GPIO_Init	..\stm8s103f3_spl-master\src\stm8s_gpio.c	71;"	function	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin, GPIO_Mode_TypeDef GPIO_Mode)
 GPIO_MODE_IN_FL_IT	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	58;"	enumerator	enum:__anon45
@@ -1040,20 +1037,14 @@ GPIO_PIN_HNIB	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	86;"	enumerator	enum:__a
 GPIO_PIN_LNIB	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	85;"	enumerator	enum:__anon46
 GPIO_Pin_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	88;"	typedef	typeref:enum:__anon46
 GPIO_ReadInputData	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	145;"	prototype	signature:(GPIO_TypeDef* GPIOx)
-GPIO_ReadInputData	..\stm8s103f3_spl-master\src\stm8s_gpio.c	202;"	function	signature:(GPIO_TypeDef* GPIOx)
 GPIO_ReadInputPin	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	147;"	prototype	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin)
 GPIO_ReadInputPin	..\stm8s103f3_spl-master\src\stm8s_gpio.c	213;"	function	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef GPIO_Pin)
 GPIO_ReadOutputData	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	146;"	prototype	signature:(GPIO_TypeDef* GPIOx)
-GPIO_ReadOutputData	..\stm8s103f3_spl-master\src\stm8s_gpio.c	191;"	function	signature:(GPIO_TypeDef* GPIOx)
 GPIO_TypeDef	..\stm8s103f3_spl-master\inc\stm8s.h	273;"	typedef	typeref:struct:GPIO_struct
 GPIO_Write	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	141;"	prototype	signature:(GPIO_TypeDef* GPIOx, uint8_t PortVal)
-GPIO_Write	..\stm8s103f3_spl-master\src\stm8s_gpio.c	141;"	function	signature:(GPIO_TypeDef* GPIOx, uint8_t PortVal)
 GPIO_WriteHigh	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	142;"	prototype	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
-GPIO_WriteHigh	..\stm8s103f3_spl-master\src\stm8s_gpio.c	154;"	function	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
 GPIO_WriteLow	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	143;"	prototype	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
-GPIO_WriteLow	..\stm8s103f3_spl-master\src\stm8s_gpio.c	167;"	function	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
 GPIO_WriteReverse	..\stm8s103f3_spl-master\inc\stm8s_gpio.h	144;"	prototype	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
-GPIO_WriteReverse	..\stm8s103f3_spl-master\src\stm8s_gpio.c	180;"	function	signature:(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins)
 GPIO_struct	..\stm8s103f3_spl-master\inc\stm8s.h	265;"	struct
 GTR	..\stm8s103f3_spl-master\inc\stm8s.h	1778;"	member	struct:UART1_struct
 GTR	..\stm8s103f3_spl-master\inc\stm8s.h	1877;"	member	struct:UART2_struct
@@ -2766,7 +2757,6 @@ UART1_CR5_SCEN	..\stm8s103f3_spl-master\inc\stm8s.h	1850;"	macro
 UART1_ClearFlag	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	369;"	prototype	signature:(UART1_Flag_TypeDef UART1_FLAG)
 UART1_ClearFlag	..\stm8s103f3_spl-master\src\stm8s_uart1.c	646;"	function	signature:(UART1_Flag_TypeDef UART1_FLAG)
 UART1_ClearITPendingBit	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	371;"	prototype	signature:(UART1_IT_TypeDef UART1_IT)
-UART1_ClearITPendingBit	..\stm8s103f3_spl-master\src\stm8s_uart1.c	775;"	function	signature:(UART1_IT_TypeDef UART1_IT)
 UART1_Cmd	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	349;"	prototype	signature:(FunctionalState NewState)
 UART1_Cmd	..\stm8s103f3_spl-master\src\stm8s_uart1.c	184;"	function	signature:(FunctionalState NewState)
 UART1_DeInit	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	345;"	prototype	signature:(void)
@@ -2823,7 +2813,6 @@ UART1_Parity_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	84;"	typedef	typ
 UART1_ReceiveData8	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	360;"	prototype	signature:(void)
 UART1_ReceiveData8	..\stm8s103f3_spl-master\src\stm8s_uart1.c	451;"	function	signature:(void)
 UART1_ReceiveData9	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	361;"	prototype	signature:(void)
-UART1_ReceiveData9	..\stm8s103f3_spl-master\src\stm8s_uart1.c	461;"	function	signature:(void)
 UART1_ReceiverWakeUpCmd	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	359;"	prototype	signature:(FunctionalState NewState)
 UART1_SR_FE	..\stm8s103f3_spl-master\inc\stm8s.h	1812;"	macro
 UART1_SR_IDLE	..\stm8s103f3_spl-master\inc\stm8s.h	1809;"	macro
@@ -2847,16 +2836,12 @@ UART1_SYNCMODE_CPOL_LOW	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	91;"	enumerat
 UART1_SYNCMODE_LASTBIT_DISABLE	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	95;"	enumerator	enum:__anon122
 UART1_SYNCMODE_LASTBIT_ENABLE	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	96;"	enumerator	enum:__anon122
 UART1_SendBreak	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	364;"	prototype	signature:(void)
-UART1_SendBreak	..\stm8s103f3_spl-master\src\stm8s_uart1.c	501;"	function	signature:(void)
 UART1_SendData8	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	362;"	prototype	signature:(uint8_t Data)
 UART1_SendData8	..\stm8s103f3_spl-master\src\stm8s_uart1.c	474;"	function	signature:(uint8_t Data)
 UART1_SendData9	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	363;"	prototype	signature:(uint16_t Data)
-UART1_SendData9	..\stm8s103f3_spl-master\src\stm8s_uart1.c	486;"	function	signature:(uint16_t Data)
 UART1_SetAddress	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	365;"	prototype	signature:(uint8_t UART1_Address)
-UART1_SetAddress	..\stm8s103f3_spl-master\src\stm8s_uart1.c	511;"	function	signature:(uint8_t UART1_Address)
 UART1_SetGuardTime	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	366;"	prototype	signature:(uint8_t UART1_GuardTime)
 UART1_SetPrescaler	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	367;"	prototype	signature:(uint8_t UART1_Prescaler)
-UART1_SetPrescaler	..\stm8s103f3_spl-master\src\stm8s_uart1.c	556;"	function	signature:(uint8_t UART1_Prescaler)
 UART1_SmartCardCmd	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	356;"	prototype	signature:(FunctionalState NewState)
 UART1_SmartCardNACKCmd	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	357;"	prototype	signature:(FunctionalState NewState)
 UART1_StopBits_TypeDef	..\stm8s103f3_spl-master\inc\stm8s_uart1.h	76;"	typedef	typeref:enum:__anon120

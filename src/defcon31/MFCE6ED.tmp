@@ -52,7 +52,7 @@ void setup_serial(bool is_enabled,bool is_fast_baud_rate)
 		GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
 		GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
 		UART1_DeInit();
-		UART1_Init(is_fast_baud_rate?57600:9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+		UART1_Init(is_fast_baud_rate?115200:9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
 		//unit can do 1Mbaud, but is not stable with other interrupts present (LED, buttons, audio) also running, causes reading character to be skipped
 		UART1_Cmd(ENABLE);
 	}else{
@@ -83,7 +83,7 @@ void setup_main()
 		
 	//run pwm interrupt at 2.000 kHz period (to allow for >40 Hz frames with all LEDs ON)
 	TIM2->CCR1H=0;//this will always be zero based on application architecutre
-	TIM2->PSCR= 5;// init divider register 16MHz/2^X
+	TIM2->PSCR= 6;// init divider register 16MHz/2^X
 	TIM2->ARRH= 0;// init auto reload register
 	TIM2->ARRL= PWM_MAX_PERIOD;// init auto reload register
 	TIM2->CR1|= TIM2_CR1_ARPE | TIM2_CR1_URS | TIM2_CR1_CEN;// enable timer
@@ -91,50 +91,29 @@ void setup_main()
 	
 	//TODO analog input for audio setup here...
 	
-	ADC1_DeInit();
-	/*ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
+	//ADC1_DeInit();
+	ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
 					 ADC1_CHANNEL_4,
 					 ADC1_PRESSEL_FCPU_D2,//D18 
 					 ADC1_EXTTRIG_TIM, 
 					 DISABLE, 
 					 ADC1_ALIGN_RIGHT, //left to put 8 bits in ADC1->DRH; right for all 10 bits with ADC1_GetConversionValue()
 					 ADC1_SCHMITTTRIG_ALL, 
-					 DISABLE);*/
+					 DISABLE);
 	//ADC1_Cmd(ENABLE);
 	
-	//void ADC1_Init(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_PresSel_TypeDef ADC1_PrescalerSelection, ADC1_ExtTrig_TypeDef ADC1_ExtTrigger, FunctionalState ADC1_ExtTriggerState, ADC1_Align_TypeDef ADC1_Align, ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState ADC1_SchmittTriggerState)
-	
-  ADC1_ConversionConfig(ADC1_CONVERSIONMODE_CONTINUOUS, ADC1_CHANNEL_4, ADC1_ALIGN_RIGHT);
-  /* Select the prescaler division factor according to ADC1_PrescalerSelection values */
-  ADC1_PrescalerConfig(ADC1_PRESSEL_FCPU_D2);
-  
-  /*-----------------CR2 configuration --------------------*/
-  /* Configure the external trigger state and event respectively
-  according to NewState, ADC1_ExtTrigger */
-  ADC1_ExternalTriggerConfig(ADC1_EXTTRIG_TIM, DISABLE);
-  
-  /*------------------TDR configuration ---------------------------*/
-  /* Configure the schmitt trigger channel and state respectively
-  according to ADC1_SchmittTriggerChannel & ADC1_SchmittTriggerNewState  values */
-	//ADC1_SchmittTriggerConfig(ADC1_SCHMITTTRIG_ALL, DISABLE);//causes hang-up?
-  
-  /* Enable the ADC1 peripheral */
-  ADC1->CR1 |= ADC1_CR1_ADON;
-	
-	ADC1_Cmd(ENABLE);
 	
 	enableInterrupts();
-	
 }
 
 u32 millis()
 {
-	return api_counter>>1;
+	return api_counter;
 }
 
 void set_millis(u32 new_time)
 {
-	api_counter=new_time<<1;
+	api_counter=new_time;
 }
 
 //log short or long rpess button events for applicatio layer to use as user input
@@ -207,7 +186,6 @@ bool is_button_down(u8 index)
 void update_audio()
 {
 	u8 reading,reading_residual;
-	//while(!ADC1_GetFlagStatus(ADC1_FLAG_EOC));
 	reading=ADC1->DRL;//only get 8 least significant bits of the 10 available, assuming reading is not changing fast enough or near enough the 1/4-full-scale point to matter
 	ADC1_ClearFlag(ADC1_FLAG_EOC);
 	audio_measurement_count++;
@@ -234,7 +212,6 @@ u8 get_audio_level()
 	//read buttons (if in application mode), update state
 	update_buttons();
 	//read audio, update state
-	update_audio();
 }
 
 //LED interrupt
@@ -251,7 +228,7 @@ u8 get_audio_level()
 		if(pwm_led_index<pwm_led_count[buffer_index])
 		{
 			set_led(pwm_brightness[pwm_led_index][0][buffer_index]);//turn on the next LED
-			pwm_sleep_remaining=/*0x00FF&*/(pwm_brightness[pwm_led_index][1][buffer_index]+32);//set how long to sleep in this state //+15 works ok here as magic number to correct timing errors from interrupts
+			pwm_sleep_remaining=0x00FF&(pwm_brightness[pwm_led_index][1][buffer_index]+15);//set how long to sleep in this state //+15 works ok here as magic number to correct timing errors from interrupts
 			pwm_led_index++;//prepare state machine to go to the next led later
 		}else{//sleep pading at the end with all LEDs OFF
 			pwm_led_index=0;//reset state machine to 0
@@ -275,7 +252,7 @@ void flush_leds(u8 led_count)
 	//write application layer data (brightness values) into the pwm volatile memory
 	for(led_read_index=0;(led_read_index<LED_COUNT && led_write_index<led_count);led_read_index++)
 	{
-		if(pwm_brightness_buffer[led_read_index]>7)//min brightness, below this value instaiblity occurs magic number to avoid interrupt timing error
+		if(pwm_brightness_buffer[led_read_index]>4)//min brightness, below this value instaiblity occurs magic number to avoid interrupt timing error
 		{//if these is an led with a non-zero brightness to be shown, then add it to the relevant list
 			pwm_brightness[led_write_index][0][buffer_index]=led_read_index;
 			pwm_brightness[led_write_index][1][buffer_index]=pwm_brightness_buffer[led_read_index];
