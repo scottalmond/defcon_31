@@ -42,6 +42,3 @@ When the user presses the button on the Joystick Shield:
 - Replace `<outputPin>` in the code with the actual pin number you want to use for the developer mode signal.
 - Ensure that the RTC module and Joystick Shield are connected properly to avoid any issues.
 - The on-board LED will briefly illuminate during task execution, indicating that the task is in progress.
-
----
-*Note: This README assumes that you are familiar with programming and using Arduino boards. If you need additional help or clarification, refer to the official Arduino documentation and community resources.*
