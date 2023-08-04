@@ -350,7 +350,7 @@ void set_frame_morse()
 #else
 	for(iter=0;iter<RGB_LED_COUNT;iter++)
 	{
-		set_rgb(iter,16);
+		set_rgb_max(iter,16);
 #endif
 		if(morse_index<sizeof(morse_units))//needs to be within the array to light any LEDs
 		{

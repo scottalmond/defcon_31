@@ -209,7 +209,7 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 		case 'w':{ //set white led (only populated on space SAOs
 			is_valid=1;
 			if(*parameter_count<1) is_valid=0;
-			if(*parameter_count==1) (*parameters)[2]=255;
+			if(*parameter_count==1) (*parameters)[1]=255;
 			if((*parameters)[0]>=WHITE_LED_COUNT) is_valid=0;
 			if((*parameters)[1]>255) is_valid=0;
 			if(is_valid)

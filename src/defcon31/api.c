@@ -7,13 +7,14 @@
 
 //time state
 u32 api_counter=0;//increments roughly every millisecond, give-or-take a factor of 2 based on clock divider settings, this is the basis of millis()
+#define 	to_HSE	0xB4			// definition of clock blocks (to be copied to SWR)
 
 //application space settings
 #define LED_COUNT 43 //10 RGB (3 LEDs each) + 12 white + 1 debug
 u8 pwm_brightness_buffer[LED_COUNT];//a space for the developer to place the brightness of each LED independent of the pwm volatile display
 
 //LED pwm control state machine
-#define PWM_MAX_PERIOD 250 //interrupt counter has max value, so delaying longer requires multiple interrupt triggers
+#define PWM_MAX_PERIOD 249 //interrupt counter has max value, so delaying longer requires multiple interrupt triggers
 u8 pwm_brightness[LED_COUNT][2][2];//array index, [led index, led pwm], [A vs B side live]
 u16 pwm_sleep[2];//[A vs B side live], how many LED LSBs to wait with LEDs OFF before putting LEDs back ON
 u8 pwm_led_count[2];//how many LEDs to cycle through
@@ -77,7 +78,15 @@ bool is_sleep_valid()
 
 void setup_main()
 {
+	u16 iter;
 	CLK->CKDIVR &= (u8)~(CLK_CKDIVR_HSIDIV);			// fhsi= fhsirc (HSIDIV= 0), run at 16 MHz
+	
+	CLK->SWCR &= ~CLK_SWCR_SWIF;
+	CLK->SWR= to_HSE;
+	for(iter=0;iter<0x0491;iter++);//timeout for clock switching
+	//now CLK->SWCR & CLK_SWCR_SWIF is FALSE
+	
+	CLK->SWCR|= CLK_SWCR_SWEN;
 	
 	GPIO_Init(GPIOD, GPIO_PIN_1, GPIO_MODE_IN_PU_NO_IT);//SWIM input to choose between application and developer modes
 		
@@ -124,6 +133,7 @@ void setup_main()
 	ADC1_Cmd(ENABLE);
 	
 	enableInterrupts();
+	
 	
 }
 
@@ -240,7 +250,7 @@ u8 get_audio_level()
 //LED interrupt
 @far @interrupt void TIM2_CapComp_IRQ_Handler (void) {
 	
-	u8 sleep_amount=PWM_MAX_PERIOD;//max sleep duration before wrap-over occurs
+	u8 sleep_amount=(PWM_MAX_PERIOD+1);//max sleep duration before wrap-over occurs
 	bool buffer_index=pwm_state&0x01;//primary vs redundant side to pull data from
 	
 	TIM2->SR1&=~TIM2_SR1_CC1IF;//reset interrupt
@@ -262,7 +272,7 @@ u8 get_audio_level()
 	sleep_amount=pwm_sleep_remaining<sleep_amount?pwm_sleep_remaining:sleep_amount;
 	pwm_sleep_remaining-=sleep_amount;
 	
-	TIM2->CCR1L = ( (TIM2->CCR1L) + sleep_amount )%PWM_MAX_PERIOD;//set wakeup alarm relative to current time
+	TIM2->CCR1L = ( (TIM2->CCR1L) + sleep_amount )%(PWM_MAX_PERIOD+1);//set wakeup alarm relative to current time
 }
 
 void flush_leds(u8 led_count)
