@@ -44,7 +44,7 @@ ptn_Child33=Bar-32
 
 [WorkState_v1_2.DockState.Bar-0]
 BarID=59419
-Bars=25
+Bars=21
 Bar#0=0
 Bar#1=59647
 Bar#2=0
@@ -66,10 +66,6 @@ Bar#17=0
 Bar#18=32768
 Bar#19=0
 Bar#20=0
-Bar#21=0
-Bar#22=0
-Bar#23=0
-Bar#24=0
 Style=0
 ExStyle=0
 PrevFloating=False
@@ -766,10 +762,10 @@ XPos=1
 YPos=5
 Docking=True
 MRUDockID=0
-MRUDockLeftPos=1
-MRUDockTopPos=5
-MRUDockRightPos=1920
-MRUDockBottomPos=155
+MRUDockLeftPos=8
+MRUDockTopPos=31
+MRUDockRightPos=1927
+MRUDockBottomPos=181
 MRUFloatStyle=4
 MRUFloatXPos=-1
 MRUFloatYPos=0
@@ -1248,7 +1244,7 @@ ptn_Child2=ChildFrames
 
 [WorkState_v1_2.Frames.MainFrame]
 WindowPlacement=MCAAAAAACAAAAAAADAAAAAAAAADIPPPPAADIPPPPPPPPPPPPPPPPPPPPHLAAAAAAEHAAAAAAEGEAAAAADBDAAAAA
-Title=ST Visual Develop - defcon31.stw - [developer.c]
+Title=ST Visual Develop - defcon31.stw - [api.h]
 
 [WorkState_v1_2.Frames.ChildFrames]
 ptn_Child1=Document-0
@@ -1274,28 +1270,6 @@ IsFrameVisible=True
 ptn_Child1=ViewFrame-0
 
 [WorkState_v1_2.Frames.ChildFrames.Document-1.ViewFrame-0]
-DocPathName=api.c
-DocumentString=
-DocTemplateIndex=0
-WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPBOPPPPPPEDAAAAAAEDAAAAAAOFFAAAAALACAAAAA
-IsActiveChildFrame=False
-IsFrameVisible=True
-
-[WorkState_v1_2.Frames.ChildFrames.Document-2]
-ptn_Child1=ViewFrame-0
-
-[WorkState_v1_2.Frames.ChildFrames.Document-2.ViewFrame-0]
-DocPathName=..\stm8s103f3_spl-master\src\stm8s_adc1.c
-DocumentString=
-DocTemplateIndex=0
-WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPBOPPPPPPOEAAAAAAOEAAAAAAIHFAAAAAFCCAAAAA
-IsActiveChildFrame=False
-IsFrameVisible=True
-
-[WorkState_v1_2.Frames.ChildFrames.Document-3]
-ptn_Child1=ViewFrame-0
-
-[WorkState_v1_2.Frames.ChildFrames.Document-3.ViewFrame-0]
 DocPathName=application.c
 DocumentString=
 DocTemplateIndex=0
@@ -1303,10 +1277,10 @@ WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPBOPPPPPPIGAAAAAA
 IsActiveChildFrame=False
 IsFrameVisible=True
 
-[WorkState_v1_2.Frames.ChildFrames.Document-4]
+[WorkState_v1_2.Frames.ChildFrames.Document-2]
 ptn_Child1=ViewFrame-0
 
-[WorkState_v1_2.Frames.ChildFrames.Document-4.ViewFrame-0]
+[WorkState_v1_2.Frames.ChildFrames.Document-2.ViewFrame-0]
 DocPathName=application.h
 DocumentString=
 DocTemplateIndex=0
@@ -1314,24 +1288,46 @@ WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPBOPPPPPPCIAAAAAA
 IsActiveChildFrame=False
 IsFrameVisible=True
 
+[WorkState_v1_2.Frames.ChildFrames.Document-3]
+ptn_Child1=ViewFrame-0
+
+[WorkState_v1_2.Frames.ChildFrames.Document-3.ViewFrame-0]
+DocPathName=developer.c
+DocumentString=
+DocTemplateIndex=0
+WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPBOPPPPPPMJAAAAAAMJAAAAAAGMFAAAAADHCAAAAA
+IsActiveChildFrame=False
+IsFrameVisible=True
+
+[WorkState_v1_2.Frames.ChildFrames.Document-4]
+ptn_Child1=ViewFrame-0
+
+[WorkState_v1_2.Frames.ChildFrames.Document-4.ViewFrame-0]
+DocPathName=api.h
+DocumentString=
+DocTemplateIndex=0
+WindowPlacement=MCAAAAAACAAAAAAADAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPBOPPPPPPGLAAAAAAGLAAAAAAAOFAAAAANICAAAAA
+IsActiveChildFrame=True
+IsFrameVisible=True
+
 [WorkState_v1_2.Frames.ChildFrames.Document-5]
 ptn_Child1=ViewFrame-0
 
 [WorkState_v1_2.Frames.ChildFrames.Document-5.ViewFrame-0]
-DocPathName=developer.c
+DocPathName=api.c
 DocumentString=
 DocTemplateIndex=0
-WindowPlacement=MCAAAAAACAAAAAAADAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPBOPPPPPPMJAAAAAAMJAAAAAAGMFAAAAADHCAAAAA
-IsActiveChildFrame=True
+WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPBOPPPPPPGLAAAAAAGLAAAAAAAOFAAAAANICAAAAA
+IsActiveChildFrame=False
 IsFrameVisible=True
 
 [WorkState_v1_2.Frames.ChildFrames.Document-6]
 ptn_Child1=ViewFrame-0
 
 [WorkState_v1_2.Frames.ChildFrames.Document-6.ViewFrame-0]
-DocPathName=api.h
+DocPathName=..\stm8s103f3_spl-master\inc\stm8s_adc1.h
 DocumentString=
 DocTemplateIndex=0
-WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPBOPPPPPPGLAAAAAAGLAAAAAAAOFAAAAANICAAAAA
+WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPBOPPPPPPKOAAAAAAKOAAAAAAEBGAAAAABMCAAAAA
 IsActiveChildFrame=False
 IsFrameVisible=True

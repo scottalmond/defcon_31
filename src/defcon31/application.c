@@ -3,7 +3,7 @@
 #include "api.h"
 
 #define SUBMENU_COUNT 4 //screen savers, games, puzzles
-#define SUBMENU_TIME_OUT_MS 512 //how long the top menu will display for before entering the submenu
+#define SUBMENU_TIME_OUT_MS 1024 //how long the top menu will display for before entering the submenu
 #define SCREEN_SAVER_COUNT_PONY 4//all SAOs have these screen savers
 #define SCREEN_SAVER_COUNT_SPACE 1//only space ones have these
 
