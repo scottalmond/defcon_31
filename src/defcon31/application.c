@@ -47,7 +47,7 @@ void run_application()
 	}
 }
 
-//if left button has been pushed, return 0
+//if left button has been pushed, return 0.  Implemented to ensure prompt response at all levels to go into sleep or developer mode
 bool is_submenu_valid()
 {
 	return is_application_valid()&&!get_button_event(0,0);
@@ -79,25 +79,6 @@ void show_screen_savers()
 	}
 }
 
-void show_counter()
-{//it counts the number of times you have clicked the right button.  Long-press to toggle clock mode.
-	u16 state=1;
-	bool is_clock_mode=0;
-	u8 iter;
-	while(is_submenu_valid())
-	{
-		if(is_clock_mode) state=millis()>>8;
-		else if(clear_button_event(1,0)) state++;
-		if(clear_button_event(1,1)) is_clock_mode=!is_clock_mode;
-		for(iter=0;iter<RGB_LED_COUNT;iter++)
-		{
-			if((state>>iter)&0x01)
-				set_hue_max(iter,millis()<<3);
-		}
-		flush_leds(21);
-	}
-}
-
 void set_frame_rainbow()
 {
 	u8 iter;
@@ -110,7 +91,6 @@ void set_frame_rainbow()
 void set_frame_audio()
 {
 	u8 audio_level,iter;
-	//update_audio();
 	audio_level=get_audio_level();
 	for(iter=0;iter<RGB_LED_COUNT;iter++)
 	{
@@ -133,6 +113,51 @@ void set_frame_audio()
 	flush_leds(RGB_LED_COUNT+3+1);//3 yellow LEDs is double-count, 1 for status led for button pushes
 }
 
+void set_frame_morse()
+{
+	u8 morse_units[]= {
+		#if IS_SPACE_SAO
+			 0b10101001,0b01110111,0b01001011,0b10011101,0b01110100,0b10011101,0b01010010,0b10011100,0b10101001,0b01110100,0b10101110,0b01010100 
+		#else
+			 0b11101010,0b01001010,0b11101001,0b11010111,0b01001110,0b11101110,0b01110100,0b10101011,0b10111001,0b01110111,0b01110111,0b00000000
+		#endif
+		};
+	u8 MORSE_PERIOD_UNITS=0x7F;//nearest power of 2 (-1) above the length of the list, *8 for byte --> bit conversion)
+	u8 morse_shift=sizeof(morse_units);//number of *bytes* in morse_list
+	u8 morse_bit;
+	u8 morse_index,iter;
+	morse_bit=(millis()>>7)&(MORSE_PERIOD_UNITS);//use time to index into the array
+	morse_index=morse_bit>>3;//get the byte-wise index within the array
+#if IS_SPACE_SAO
+	for(iter=0;iter<WHITE_LED_COUNT;iter++)
+	{
+		set_white(iter,16);//default brightness - trying to be less obnoxious than full-on/full-off
+#else
+	for(iter=0;iter<RGB_LED_COUNT;iter++)
+	{
+		set_rgb_max(iter,16);
+#endif
+		if(morse_index<sizeof(morse_units))//needs to be within the array to light any LEDs
+		{
+			morse_shift=morse_bit&0x07;//3 LSBs are which bit within the byte to fetch
+			if(morse_units[morse_index]>>(7-morse_shift)&0x01)//use "7-" to make it easier to generate and read the list constructor left-to-right
+			{
+				#if IS_SPACE_SAO
+					set_white_max(iter);
+				#else
+					set_rgb_max(iter,2);
+				#endif
+			}
+		}//else all LEDs OFF
+	}
+	#if IS_SPACE_SAO
+		flush_leds(WHITE_LED_COUNT+1);
+	#else
+		flush_leds(WHITE_LED_COUNT+1);
+	#endif
+}
+
+//blink a deterministic random pattern
 void set_frame_blink()
 {
 	const u8 MAX_SIMULTANEOUS_LEDS_ON=5;
@@ -154,7 +179,7 @@ void set_frame_blink()
 	flush_leds(MAX_SIMULTANEOUS_LEDS_ON<<1+1);
 }
 
-//2 words per second
+//display a pattern highligting each word in the team name
 void set_frame_space_bits()
 {
 	switch((millis()>>9)&0x03)
@@ -190,7 +215,7 @@ void set_frame_space_bits()
 	flush_leds(5);
 }
 
-//multiple games, selected by initial game state (allows re-use of ending game animation and loop logic with less code space)
+//multiple games, selected by initial game state (this structure allows re-use of ending game animation and loop logic with less code space)
 void show_game(u8 state)
 {
 	u32 start_state_ms=millis();
@@ -328,46 +353,21 @@ void show_game(u8 state)
 	}
 }
 
-void set_frame_morse()
-{
-	u8 morse_units[]= {
-		#if IS_SPACE_SAO
-			 0b10101001,0b01110111,0b01001011,0b10011101,0b01110100,0b10011101,0b01010010,0b10011100,0b10101001,0b01110100,0b10101110,0b01010100 
-		#else
-			 0b11101010,0b01001010,0b11101001,0b11010111,0b01001110,0b11101110,0b01110100,0b10101011,0b10111001,0b01110111,0b01110111,0b00000000
-		#endif
-		};
-	u8 MORSE_PERIOD_UNITS=0x7F;//nearest power of 2 (-1) above the length of the list, *8 for byte --> bit conversion)
-	u8 morse_shift=sizeof(morse_units);//number of *bytes* in morse_list
-	u8 morse_bit;
-	u8 morse_index,iter;
-	morse_bit=(millis()>>7)&(MORSE_PERIOD_UNITS);//use time to index into the array
-	morse_index=morse_bit>>3;//get the byte-wise index within the array
-#if IS_SPACE_SAO
-	for(iter=0;iter<WHITE_LED_COUNT;iter++)
+void show_counter()
+{//it counts the number of times you have clicked the right button.  Long-press to toggle clock mode.
+	u16 state=1;
+	bool is_clock_mode=0;
+	u8 iter;
+	while(is_submenu_valid())
 	{
-		set_white(iter,16);//default brightness - trying to be less obnoxious than full-on/full-off
-#else
-	for(iter=0;iter<RGB_LED_COUNT;iter++)
-	{
-		set_rgb_max(iter,16);
-#endif
-		if(morse_index<sizeof(morse_units))//needs to be within the array to light any LEDs
+		if(is_clock_mode) state=millis()>>8;
+		else if(clear_button_event(1,0)) state++;
+		if(clear_button_event(1,1)) is_clock_mode=!is_clock_mode;
+		for(iter=0;iter<RGB_LED_COUNT;iter++)
 		{
-			morse_shift=morse_bit&0x07;//3 LSBs are which bit within the byte to fetch
-			if(morse_units[morse_index]>>(7-morse_shift)&0x01)//use "7-" to make it easier to generate and read the list constructor left-to-right
-			{
-				#if IS_SPACE_SAO
-					set_white_max(iter);
-				#else
-					set_rgb_max(iter,2);
-				#endif
-			}
-		}//else all LEDs OFF
+			if((state>>iter)&0x01)
+				set_hue_max(iter,millis()<<3);
+		}
+		flush_leds(21);
 	}
-	#if IS_SPACE_SAO
-		flush_leds(WHITE_LED_COUNT+1);
-	#else
-		flush_leds(WHITE_LED_COUNT+1);
-	#endif
 }

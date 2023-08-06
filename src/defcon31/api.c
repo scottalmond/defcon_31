@@ -3,7 +3,7 @@
 #include "stm8s_adc1.h"
 
 //1: v1r1 has MAT0 on PD3 and mic on PD4, which precludes audio input (no analog connection) <-- prototype units
-//2: v1r2 moved MAT0 to PD4, and audio input to PD3 <-- defcon31 as-built/delivered version
+//2: v1r2 moved MAT0 to PD4, and audio input to PD3 <-- defcon31 as-built/delivered/production version
 
 //time state
 u32 api_counter=0;//increments roughly every millisecond, give-or-take a factor of 2 based on clock divider settings, this is the basis of millis()
@@ -11,9 +11,9 @@ u32 api_counter=0;//increments roughly every millisecond, give-or-take a factor 
 
 //application space settings
 #define LED_COUNT 43 //10 RGB (3 LEDs each) + 12 white + 1 debug
-u8 pwm_brightness_buffer[LED_COUNT];//a space for the developer to place the brightness of each LED independent of the pwm volatile display
+u8 pwm_brightness_buffer[LED_COUNT];//a swap space for the developer to place the brightness of each LED independent of the pwm volatile display
 
-//LED pwm control state machine
+//LED pwm volatile control state machine
 #define PWM_MAX_PERIOD 249 //interrupt counter has max value, so delaying longer requires multiple interrupt triggers
 u8 pwm_brightness[LED_COUNT][2][2];//array index, [led index, led pwm], [A vs B side live]
 u16 pwm_sleep[2];//[A vs B side live], how many LED LSBs to wait with LEDs OFF before putting LEDs back ON
@@ -85,56 +85,31 @@ void setup_main()
 	CLK->SWR= to_HSE;
 	for(iter=0;iter<0x0491;iter++);//timeout for clock switching
 	//now CLK->SWCR & CLK_SWCR_SWIF is FALSE
-	
 	CLK->SWCR|= CLK_SWCR_SWEN;
 	
-	GPIO_Init(GPIOD, GPIO_PIN_1, GPIO_MODE_IN_PU_NO_IT);//SWIM input to choose between application and developer modes
+	GPIO_Init(GPIOD, GPIO_PIN_1, GPIO_MODE_IN_PU_NO_IT);//SWIM input used to choose between application and developer modes
 		
 	//run pwm interrupt at 2.000 kHz period (to allow for >40 Hz frames with all LEDs ON)
-	TIM2->CCR1H=0;//this will always be zero based on application architecutre
+	TIM2->CCR1H=0;//this will always be zero based on application architecutre (analog mic voltage input below quarter of full range)
 	TIM2->PSCR= 5;// init divider register 16MHz/2^X
 	TIM2->ARRH= 0;// init auto reload register
 	TIM2->ARRL= PWM_MAX_PERIOD;// init auto reload register
 	TIM2->CR1|= TIM2_CR1_ARPE | TIM2_CR1_URS | TIM2_CR1_CEN;// enable timer
 	TIM2->IER= TIM2_IER_UIE | TIM2_IER_CC1IE;// enable TIM2 interrupt
 	
-	//TODO analog input for audio setup here...
-	
 	ADC1_DeInit();
-	/*ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
-					 ADC1_CHANNEL_4,
-					 ADC1_PRESSEL_FCPU_D2,//D18 
-					 ADC1_EXTTRIG_TIM, 
-					 DISABLE, 
-					 ADC1_ALIGN_RIGHT, //left to put 8 bits in ADC1->DRH; right for all 10 bits with ADC1_GetConversionValue()
-					 ADC1_SCHMITTTRIG_ALL, 
-					 DISABLE);*/
-	//ADC1_Cmd(ENABLE);
-	
-	//void ADC1_Init(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_PresSel_TypeDef ADC1_PrescalerSelection, ADC1_ExtTrig_TypeDef ADC1_ExtTrigger, FunctionalState ADC1_ExtTriggerState, ADC1_Align_TypeDef ADC1_Align, ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState ADC1_SchmittTriggerState)
-	
   ADC1_ConversionConfig(ADC1_CONVERSIONMODE_CONTINUOUS, ADC1_CHANNEL_4, ADC1_ALIGN_RIGHT);
   /* Select the prescaler division factor according to ADC1_PrescalerSelection values */
   ADC1_PrescalerConfig(ADC1_PRESSEL_FCPU_D18);
-  
   /*-----------------CR2 configuration --------------------*/
   /* Configure the external trigger state and event respectively
   according to NewState, ADC1_ExtTrigger */
   ADC1_ExternalTriggerConfig(ADC1_EXTTRIG_TIM, DISABLE);
-  
-  /*------------------TDR configuration ---------------------------*/
-  /* Configure the schmitt trigger channel and state respectively
-  according to ADC1_SchmittTriggerChannel & ADC1_SchmittTriggerNewState  values */
-	//ADC1_SchmittTriggerConfig(ADC1_SCHMITTTRIG_ALL, DISABLE);//causes hang-up?
-  
   /* Enable the ADC1 peripheral */
   ADC1->CR1 |= ADC1_CR1_ADON;
-	
 	ADC1_Cmd(ENABLE);
 	
 	enableInterrupts();
-	
-	
 }
 
 u32 millis()
@@ -147,7 +122,7 @@ void set_millis(u32 new_time)
 	api_counter=new_time<<1;
 }
 
-//log short or long rpess button events for applicatio layer to use as user input
+//log short or long press button events for application layer to use as user input
 //PRECON: don't press buttons at the same time (state machine gets confused).  Leveraging just one u32 to store timestamp of button press start to conserve memory
 void update_buttons()
 {
@@ -217,7 +192,6 @@ bool is_button_down(u8 index)
 void update_audio()
 {
 	u8 reading,reading_residual;
-	//while(!ADC1_GetFlagStatus(ADC1_FLAG_EOC));
 	reading=ADC1->DRL;//only get 8 least significant bits of the 10 available, assuming reading is not changing fast enough or near enough the 1/4-full-scale point to matter
 	ADC1_ClearFlag(ADC1_FLAG_EOC);
 	audio_measurement_count++;
@@ -275,6 +249,7 @@ u8 get_audio_level()
 	TIM2->CCR1L = ( (TIM2->CCR1L) + sleep_amount )%(PWM_MAX_PERIOD+1);//set wakeup alarm relative to current time
 }
 
+//take the values stored in RAM and start displaying live on the LEDs.  Recommend to set led_count to the number of LEDs being commanded to a non-zero value (to maximize LED brightness by reducing revisit time to each LED), plus one to account for the red status led to acknwoledge buttons puchses, which is set wihtin the API layer and otherwise not accunted for.
 void flush_leds(u8 led_count)
 {
 	u8 led_read_index=0,led_write_index=0;
@@ -363,11 +338,13 @@ void set_debug(u8 brightness)
 	pwm_brightness_buffer[30]=brightness;
 }
 
+//common method calls
 void set_rgb_max(u8 index,u8 color)
 { set_rgb(index,color,255); }
 void set_white_max(u8 index)
 { set_white(index,255); }
 
+//used to force all LEDs to float as part of the Charelieplexiing routine
 void set_matrix_high_z()
 {
 	#if HW_REVISION==1
@@ -387,19 +364,8 @@ void set_led(u8 led_index)
 	u8 is_high;
 	//0-(10*3-1) is RGB
 	//(10*3) is debug
-	//(10*3+1) to (10*3+1+12) is white LEDs
+	//(10*3+1) to (10*3+1+12) is white LEDs (if populated)
 	const u8 led_lookup[LED_COUNT][2]={//[0] is HIGH mat, [1] is LOW mat
-		//{0,1},{0,2},{1,2},//LED7  RGB
-		//{1,0},{2,0},{2,1},//LED3  RGB
-		//{5,0},{5,1},{5,2},//LED1  RGB
-		//{6,0},{6,1},{6,2},//LED20 RGB
-		//{6,5},{6,4},{5,4},//LED22 RGB
-		//{4,3},{5,3},{6,3},//LED23 RGB
-		//{3,4},{3,5},{3,6},//LED21 RGB
-		//{0,5},{0,6},{1,6},//LED19 RGB
-		//{0,4},{1,4},{2,4},//LED18 RGB
-		//{0,3},{1,3},{2,3},//LED2  RGB
-		
 		{0,1},{1,0},{5,0},{6,0},{6,5},{4,3},{3,4},{0,5},{0,4},{0,3},//reds
 		{0,2},{2,0},{5,1},{6,1},{6,4},{5,3},{3,5},{0,6},{1,4},{1,3},//greens
 		{1,2},{2,1},{5,2},{6,2},{5,4},{6,3},{3,6},{1,6},{2,4},{2,3},//blues
@@ -424,7 +390,7 @@ void set_led(u8 led_index)
 		switch(led_lookup[led_index][!is_high])
 		{
 			case 0:{
-				GPIOx=GPIOD;//GPIOD,GPIO_PIN_3
+				GPIOx=GPIOD;
 				#if HW_REVISION==1
 					PortPin=GPIO_PIN_3;
 				#else
@@ -432,31 +398,31 @@ void set_led(u8 led_index)
 				#endif
 			}break;
 			case 1:{
-				GPIOx=GPIOD;//GPIOD,GPIO_PIN_2
+				GPIOx=GPIOD;
 				PortPin=GPIO_PIN_2;
 			}break;
 			case 2:{
-				GPIOx=GPIOC;//GPIOC,GPIO_PIN_7
+				GPIOx=GPIOC;
 				PortPin=GPIO_PIN_7;
 			}break;
 			case 3:{
-				GPIOx=GPIOC;//GPIOC,GPIO_PIN_6
+				GPIOx=GPIOC;
 				PortPin=GPIO_PIN_6;
 			}break;
 			case 4:{
-				GPIOx=GPIOC;//GPIOC,GPIO_PIN_5
+				GPIOx=GPIOC;
 				PortPin=GPIO_PIN_5;
 			}break;
 			case 5:{
-				GPIOx=GPIOC;//GPIOC,GPIO_PIN_4
+				GPIOx=GPIOC;
 				PortPin=GPIO_PIN_4;
 			}break;
 			case 6:{
-				GPIOx=GPIOC;//GPIOC,GPIO_PIN_3
+				GPIOx=GPIOC;
 				PortPin=GPIO_PIN_3;
 			}break;
 			case 7:{
-				GPIOx=GPIOA;//GPIOA,GPIO_PIN_3
+				GPIOx=GPIOA;
 				PortPin=GPIO_PIN_3;
 			}break;
 		}

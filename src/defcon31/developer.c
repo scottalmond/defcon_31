@@ -206,7 +206,7 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 				flush_leds(2);//1 RGB led element and 1 for status led
 			}
 		}break;
-		case 'w':{ //set white led (only populated on space SAOs
+		case 'w':{ //set white led (only populated on space SAOs)
 			is_valid=1;
 			if(*parameter_count<1) is_valid=0;
 			if(*parameter_count==1) (*parameters)[1]=255;
@@ -219,7 +219,6 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 			}
 		}break;
 		case 'a':{ //get audio level reading
-			//for(iter=0;iter<255;iter++) update_audio();
 			Serial_print_u32(get_audio_level());
 			is_valid=1;
 		}break;
@@ -238,12 +237,12 @@ void execute_terminal_command(char (*command),u32 (*parameters)[MAX_TERMINAL_PAR
 	Serial_newline();
 }
 
-//minesweeper.
+//minesweeper
 void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETERS],u8 *parameter_count)
 {
 	u8 row,col;
 	u8 mine_count=0,hidden_count=0;
-	bool valid_input,is_lose=0;
+	bool is_valid_input,is_lose=0;
 	u8 mine_locations[MINESWEEPER_ROWS];
 	u8 revealed_cells[MINESWEEPER_ROWS];
 	for(row=0;row<MINESWEEPER_ROWS;row++)
@@ -252,7 +251,7 @@ void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETER
 		revealed_cells[row]=0;
 	}
 	while(mine_count<10)
-	{
+	{//populate random mines
 		row=(get_random(millis())>>3)%MINESWEEPER_ROWS;
 		col=get_random(millis())%8;
 		if(!((mine_locations[row]>>col)&0x01))
@@ -262,17 +261,17 @@ void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETER
 		}
 	}
 	while(is_developer_valid())
-	{
-		valid_input=1;
+	{//game loop to collect user input and update board
+		is_valid_input=1;
 		hidden_count=print_minesweeper(&mine_locations,&revealed_cells,is_lose);
 		if(hidden_count<=mine_count || is_lose) break;//won game
 		Serial_print_string("Guess (row col), or quit: ");
 		get_terminal_command(command,parameters,parameter_count);
 		if(*command=='q') return;
-		if(*command<'0' || *command>'9') valid_input=0;
-		else if(*parameter_count!=1) valid_input=0;
-		else if((*parameters)[0]>=8) valid_input=0;
-		if(valid_input)
+		if(*command<'0' || *command>'9') is_valid_input=0;
+		else if(*parameter_count!=1) is_valid_input=0;
+		else if((*parameters)[0]>=8) is_valid_input=0;
+		if(is_valid_input)
 		{
 			row=*command-'0';
 			col=(*parameters)[0];
@@ -284,7 +283,7 @@ void play_terminal_game(char (*command),u32 (*parameters)[MAX_TERMINAL_PARAMETER
 	else print_ascii_art(0);
 }
 
-//return number of cells still hiden from user (game is won when hidden_count==mine_count)
+//return number of cells still hidden from user (game is won when hidden_count==mine_count)
 u8 print_minesweeper(u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*revealed_mines)[MINESWEEPER_ROWS],/*u8 (*marked_cells)[MINESWEEPER_ROWS],*/bool is_lose)
 {
 	u8 row,col,hidden_count=0;
@@ -332,6 +331,7 @@ bool make_guess(u8 row,u8 col,u8 (*mine_locations)[MINESWEEPER_ROWS],u8 (*reveal
 	return is_mine_at(row,col,mine_locations);
 }
 
+//look in 8 adjacent cells for mines
 u8 get_nearby_count(u8 row,u8 col,u8 (*mine_locations)[MINESWEEPER_ROWS])
 {
 	u8 row_diff,col_diff;
