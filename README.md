@@ -22,17 +22,13 @@ This is the team badge for those competing in the Hack-a-Sat competition.  These
 
 ![Non-PCB units](/doc/non-pcb_pony_designs.jpg)
 
-[![Bumper reel and general information]
-(https://img.youtube.com/vi/0cRPfB8QzD0/0.jpg)]
-(https://www.youtube.com/watch?v=0cRPfB8QzD0)
+[![Bumper reel and general information](https://img.youtube.com/vi/0cRPfB8QzD0/0.jpg)](https://www.youtube.com/watch?v=0cRPfB8QzD0)
 
 # User Guide
 
 All relevant information about this project has been summarized in this video:
 
-[![Features and Interfaces]
-(https://img.youtube.com/vi/XXXXXXX/0.jpg)]
-(https://www.youtube.com/watch?v=XXXXX)
+[![Features and Interfaces](https://img.youtube.com/vi/XXXXXXX/0.jpg)](https://www.youtube.com/watch?v=XXXXX)
 
 # Features
 
