@@ -2,27 +2,37 @@
 
 This repo contains the project files for two Silly Add-On (SAO) Printed Circuit Boards (PCBs) for DEFCON 31.
 
-TODO: Example Image
-
-TODO: User Guide Video Here
-
 ## Space Bits R Us
 
 This is the team badge for those competing in the Hack-a-Sat competition.  These are exclusive badges for the team and not for general sale.
 
-TODO: Example Image
+![Space Bits R Us](/doc/space_design.jpg)
 
 ## Pony Circuit Board
 
 - These badges present "My Little Pony Friendship is Magic" characters surrounded by LEDs.
-- These badges are for sale, MSRP $20 each.  There are over 10 unique designs.
+- These badges are for sale, $20 per unit.  There are 11 unique designs.
 - Each "Space Bits R Us" team member (identifiable because they are wearing the "Space Bits" badge described above) will have several units for sale.
 - Visit the Hack-a-sat competition area immediately before, or immediately after competition each day to acquire one.
 	- Specifically: before 10 AM Friday/Saturday, after 8 PM Friday/Saturday, before Noon Sunday, or after 1:30 PM Sunday.
+- Excess stickers were attached to colored acrylic for general distribution
+	- Only white acrylic units have LEDs
+
+![PCB designs](/doc/pcb_pony_designs.jpg)
+
+![Non-PCB units](/doc/non-pcb_pony_designs.jpg)
 
 [![Bumper reel and general information]
 (https://img.youtube.com/vi/0cRPfB8QzD0/0.jpg)]
 (https://www.youtube.com/watch?v=0cRPfB8QzD0)
+
+# User Guide
+
+All relevant information about this project has been summarized in this video:
+
+[![Features and Interfaces]
+(https://img.youtube.com/vi/XXXXXXX/0.jpg)]
+(https://www.youtube.com/watch?v=XXXXX)
 
 # Features
 
@@ -38,17 +48,18 @@ TODO: Example Image
 	- 500 mAh 502540 LiPo (Space Bits R Us SAO)
 		- ~25 hours battery life at max brightness
 - LiPo Charger
-	- ~2 hours to charge from 3V to 4.2V
+	- ~3 hours to charge from 3V to 4.2V
 - Developer header
 	- 5V charging input
 	- ST SWIM Interface
-	- 1 MBaud UART
+	- 57600 MBaud UART
 	- I2C
 - SAO 4-pin header pads
 	- Under BT1 (Pony SAO)
 	- Under Acrylic (Space Bits R Us SAO)
 - 10x RGB LEDs
-- 12x White LEDs (Space Bits R Us SAO Only)
+- 12x White LEDs
+	- Space Bits R Us SAO Only
 - 1x Status LED
 	- Green
 		- 5V input is present
@@ -56,53 +67,31 @@ TODO: Example Image
 	- Green + Blue = Cyan
 		- Battery Charging is Underway
 	- Red
-		- A user button is pressed
+		- A user button is pressed, or UART terminal is active
 
 # Schematic
 
 ![DefCon31 v1r2](/pcb/fab/v1r2/schematic.png)
 
-# User Guide
-
-- Power Modes
-	- Turn ON
-	- 5V
-	- Charging
-	- Sleep
-	- OFF
-	- External Power
-- Terminal Access
-	- Ground the SWIM pin to enable the terminal
-		- DO NOT press the buttons while the SWIM pin is grounded.  This will short the RX/TX pins.
-	- Connection of TxD to Rx, RxD to Tx (crossover)
-	- Recognized commands
-- Developer header pinout
-- STM8 setup
-- LED matrix pinout/numbering
-
-# Menus
-
-TODO
-
 # Hardware
 
 ## Design
 
-Concept, Project Management, PCB Design, Software Architecture: [Scott Almond](https://github.com/scottalmond)
-Morse Code, Cyclone Game, Terminal Artwork: [Brian Wilkins](SpaceHamBrian@gmail.com)
-Pony & space artwork: [Sugar Morning](https://twitter.com/itssugarmorning)
+- Concept, Project Management, PCB Design, Software Architecture: [Scott Almond](https://github.com/scottalmond)
+- Morse Code, Cyclone Game, Terminal Artwork: [Brian Wilkins](SpaceHamBrian@gmail.com)
+- Pony & space artwork: [Sugar Morning](https://twitter.com/itssugarmorning)
 
 ## Fabrication & Tools
 
-PCB design in [EasyEDA](https://easyeda.com/); PCB/PCBA fabrication through [JLCPCB](https://jlcpcb.com/)
-Acrylic stock, 45% lighting white, 1/8" thick through [TAP Plastics](https://www.tapplastics.com/)
-Acrylic cutting in-house using a LC40 Dremel laser cutter
-Stickers fabricated by [Sticker Mule](https://www.stickermule.com/)
-Through-hole LEDs, batteries, and support hardware (protoboards, pogo pins, etc) purchased through [Aliexpress](https://www.aliexpress.us) vendors
+- PCB design in [EasyEDA](https://easyeda.com/); PCB/PCBA fabrication through [JLCPCB](https://jlcpcb.com/)
+- Acrylic stock, 45% lighting white, 1/8" thick through [TAP Plastics](https://www.tapplastics.com/)
+- Acrylic cutting in-house using a LC40 Dremel laser cutter
+- Stickers fabricated by [Sticker Mule](https://www.stickermule.com/)
+- Through-hole LEDs, batteries, and support hardware (protoboards, pogo pins, etc) purchased through [Aliexpress](https://www.aliexpress.us) vendors
 
 # Eratta
 
-How to fix git login: https://www.youtube.com/watch?v=EaN7TnD8RvM
-STM8 programming ref: https://hackaday.io/project/161239-stm8s-development-board
-STM8 programmer setup: https://circuitdigest.com/microcontroller-projects/getting-started-with-stm8s-using-stvd-and-cosmic-c-compiler
-including Cosmic C license request (allow 2 business days to get a key) ref. https://github.com/NevynUK/The-Way-of-the-Register
+- STM8 programming reference: https://hackaday.io/project/161239-stm8s-development-board
+- STM8 programmer setup: https://circuitdigest.com/microcontroller-projects/getting-started-with-stm8s-using-stvd-and-cosmic-c-compiler
+	- Including Cosmic C license request (allow 2 business days to get a key) ref. https://github.com/NevynUK/The-Way-of-the-Register
+- How to fix git login: https://www.youtube.com/watch?v=EaN7TnD8RvM
