@@ -28,7 +28,7 @@ This is the team badge for those competing in the Hack-a-Sat competition.  These
 
 All relevant information about this project has been summarized in this video:
 
-[![Features and Interfaces](https://img.youtube.com/vi/XXXXXXX/0.jpg)](https://www.youtube.com/watch?v=XXXXX)
+[![Features and Interfaces](https://img.youtube.com/vi/cUO3zqiO3F0/0.jpg)](https://www.youtube.com/watch?v=cUO3zqiO3F0)
 
 # Features
 
