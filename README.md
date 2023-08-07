@@ -16,9 +16,7 @@ A summary of the key features and interfaces are documented in the following vid
 
 This is the team badge for those competing in the Hack-a-Sat competition.  These are exclusive badges for the team and not for general sale.
 
-![Space single unit](/doc/space_design.jpg) ![Space batch](/doc/space_batch.jpg)
-
-<img src="/doc/space_design.jpg" width="480"><img src="/doc/space_batch.jpg" width="480">
+<img src="/doc/space_design.jpg" width="320"><img src="/doc/space_batch.jpg" width="320">
 
 ## Pony Circuit Board
 
@@ -30,7 +28,7 @@ This is the team badge for those competing in the Hack-a-Sat competition.  These
 - Excess stickers were attached to colored acrylic for general distribution
 	- Only white acrylic units have LEDs
 
-![Pony single units](/doc/pcb_pony_designs.jpg) ![Pony batch](/doc/pony_batch.jpg) ![Non-PCB batch](/doc/non-pcb_pony_designs.jpg)
+<img src="/doc/pcb_pony_designs.jpg" width="320"><img src="/doc/pony_batch.jpg" width="320">img src="/doc/non-pcb_pony_designs.jpg" width="320">
 
 # Features
 
