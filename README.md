@@ -28,7 +28,7 @@ This is the team badge for those competing in the Hack-a-Sat competition.  These
 - Excess stickers were attached to colored acrylic for general distribution
 	- Only white acrylic units have LEDs
 
-<img src="/doc/pcb_pony_designs.jpg" width="320"><img src="/doc/pony_batch.jpg" width="320">img src="/doc/non-pcb_pony_designs.jpg" width="320">
+<img src="/doc/pcb_pony_designs.jpg" width="320"><img src="/doc/pony_batch.jpg" width="320"><img src="/doc/non-pcb_pony_designs.jpg" width="320">
 
 # Features
 
