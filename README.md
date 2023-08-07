@@ -2,11 +2,19 @@
 
 This repo contains the project files for two Silly Add-On (SAO) Printed Circuit Boards (PCBs) for DEFCON 31.
 
+## User Guide
+
+Where to buy the units is documented below:
+[![Bumper reel and general information](https://img.youtube.com/vi/0cRPfB8QzD0/0.jpg)](https://www.youtube.com/watch?v=0cRPfB8QzD0)
+
+A summary of the key features and interfaces are documented in the following video:
+[![Features and Interfaces](https://img.youtube.com/vi/cUO3zqiO3F0/0.jpg)](https://www.youtube.com/watch?v=cUO3zqiO3F0)
+
 ## Space Bits R Us
 
 This is the team badge for those competing in the Hack-a-Sat competition.  These are exclusive badges for the team and not for general sale.
 
-![Space Bits R Us](/doc/space_design.jpg)
+![Space single unit](/doc/space_design.jpg | width=480) ![Space batch](/doc/space_batch.jpg | width=480)
 
 ## Pony Circuit Board
 
@@ -18,17 +26,7 @@ This is the team badge for those competing in the Hack-a-Sat competition.  These
 - Excess stickers were attached to colored acrylic for general distribution
 	- Only white acrylic units have LEDs
 
-![PCB designs](/doc/pcb_pony_designs.jpg)
-
-![Non-PCB units](/doc/non-pcb_pony_designs.jpg)
-
-[![Bumper reel and general information](https://img.youtube.com/vi/0cRPfB8QzD0/0.jpg)](https://www.youtube.com/watch?v=0cRPfB8QzD0)
-
-# User Guide
-
-All relevant information about this project has been summarized in this video:
-
-[![Features and Interfaces](https://img.youtube.com/vi/cUO3zqiO3F0/0.jpg)](https://www.youtube.com/watch?v=cUO3zqiO3F0)
+![Pony single units](/doc/pcb_pony_designs.jpg | width=480) ![Pony batch](/doc/pony_batch.jpg | width=480) ![Non-PCB batch](/doc/non-pcb_pony_designs.jpg | width=480)
 
 # Features
 
