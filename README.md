@@ -18,6 +18,8 @@ This is the team badge for those competing in the Hack-a-Sat competition.  These
 
 ![Space single unit](/doc/space_design.jpg) ![Space batch](/doc/space_batch.jpg)
 
+<img src="/doc/space_design.jpg" width="480"><img src="/doc/space_batch.jpg" width="480">
+
 ## Pony Circuit Board
 
 - These badges present "My Little Pony Friendship is Magic" characters surrounded by LEDs.
