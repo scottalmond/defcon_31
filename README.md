@@ -30,7 +30,7 @@ This is the team badge for those competing in the Hack-a-Sat competition.  These
 
 <img src="/doc/pcb_pony_designs.jpg" width="640">
 
-<img src="/doc/pony_batch.jpg" hwidth="640">
+<img src="/doc/pony_batch.jpg" width="640">
 
 <img src="/doc/non-pcb_pony_designs.jpg" width="420">
 
