@@ -1,3 +1,5 @@
+EDIT THR_8/10: SAOs will be given out at the END of the competition day in the Aerospace Village (after 8 PM, until they kick us out) Friday/Saturday only (NOT before the competition).  Sunday I aim to have them available for most of the day (8 AM - noon and 1:30 PM to 4 PM).  Watch this space for updates.
+
 # Space Pony Overview
 
 This repo contains the project files for two Silly Add-On (SAO) Printed Circuit Boards (PCBs) for DEFCON 31.
@@ -24,7 +26,7 @@ This is the team badge for those competing in the Hack-a-Sat competition.  These
 - These badges are for sale, $20 per unit.  There are 11 unique designs.
 - Each "Space Bits R Us" team member (identifiable because they are wearing the "Space Bits" badge described above) will have several units for sale.
 - Visit the Hack-a-sat competition area immediately before, or immediately after competition each day to acquire one.
-	- Specifically: before 10 AM Friday/Saturday, after 8 PM Friday/Saturday, before Noon Sunday, or after 1:30 PM Sunday.
+	- Specifically: ---before 10 AM Friday/Saturday---, after 8 PM Friday/Saturday, before Noon Sunday, or after 1:30 PM Sunday.
 - Excess stickers were attached to colored acrylic for general distribution
 	- Only white acrylic units have LEDs
 
