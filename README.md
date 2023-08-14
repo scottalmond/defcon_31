@@ -1,5 +1,3 @@
-EDIT THR_8/10: SAOs will be given out at the END of the competition day in the Aerospace Village (after 8 PM, until they kick us out) Friday/Saturday only (NOT before the competition).  Sunday I aim to have them available for most of the day (8 AM - noon and 1:30 PM to 4 PM).  Watch this space for updates.
-
 # Space Pony Overview
 
 This repo contains the project files for two Silly Add-On (SAO) Printed Circuit Boards (PCBs) for DEFCON 31.
